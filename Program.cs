@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TasksFollow.Data;
+using TasksFollow.Data.Migrations;
 using TasksFollow.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,11 +12,28 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+    options.SignIn.RequireConfirmedAccount = false)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var userManager =
+        services.GetRequiredService<UserManager<ApplicationUser>>();
+
+    var roleManager =
+        services.GetRequiredService<RoleManager<IdentityRole>>();
+
+    await RoleSet.SetRolesAndAdmin(
+        userManager,
+        roleManager);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
