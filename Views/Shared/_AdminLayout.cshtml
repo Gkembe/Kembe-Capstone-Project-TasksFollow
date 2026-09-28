@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - TasksFollow</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/admin.css"
+          asp-append-version="true" />
+</head>
+
+<body>
+
+    <!-- MOBILE/TABLET TOP NAVBAR -->
+    <nav class="navbar admin-mobile-navbar d-lg-none">
+        <div class="container-fluid">
+
+            <button class="btn sidebar-toggle"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#adminSidebar"
+                    aria-controls="adminSidebar">
+
+                <i class="bi bi-list"></i>
+            </button>
+
+            <a class="navbar-brand text-white fw-bold" asp-controller="Admin" asp-action="Index">
+                TasksFollow
+            </a>
+
+            <i class="bi bi-person-circle text-white fs-4"></i>
+        </div>
+    </nav>
+
+
+    <!-- ADMIN SIDEBAR -->
+    <aside class="offcanvas-lg offcanvas-start admin-sidebar"
+           tabindex="-1"
+           id="adminSidebar"
+           aria-labelledby="adminSidebarLabel">
+
+        <!-- Sidebar Header -->
+        <div class="offcanvas-header sidebar-header">
+
+            <a asp-controller="Admin"
+               asp-action="Index"
+               class="sidebar-logo"
+               id="adminSidebarLabel">
+
+                <i class="bi bi-check2-square"></i>
+                <span>TasksFollow</span>
+            </a>
+
+            <button type="button"
+                    class="btn-close btn-close-white d-lg-none"
+                    data-bs-dismiss="offcanvas"
+                    data-bs-target="#adminSidebar"
+                    aria-label="Close">
+            </button>
+
+        </div>
+
+
+        <div class="offcanvas-body sidebar-body">
+
+            <!-- ADMIN PROFILE -->
+            <div class="admin-profile">
+
+                <div class="admin-avatar">
+                    <i class="bi bi-person"></i>
+                </div>
+
+                <div>
+                    <h6 class="mb-0">Administrator</h6>
+                    <small>System Admin</small>
+                </div>
+
+            </div>
+
+
+            <!-- MAIN -->
+            <p class="sidebar-section-title">MAIN</p>
+
+            <nav class="sidebar-nav">
+
+                <a asp-controller="Admin"
+                   asp-action="Index"
+                   class="sidebar-link">
+
+                    <i class="bi bi-grid"></i>
+                    <span>Dashboard</span>
+                </a>
+
+
+                <!-- MANAGEMENT -->
+
+                <p class="sidebar-section-title">MANAGEMENT</p>
+
+                <a asp-controller="Company"
+                   asp-action="Index"
+                   class="sidebar-link">
+
+                    <i class="bi bi-buildings"></i>
+                    <span>Companies</span>
+                </a>
+
+                <a asp-controller="Manager"
+                   asp-action="Index"
+                   class="sidebar-link">
+
+                    <i class="bi bi-people"></i>
+                    <span>Managers</span>
+                </a>
+
+
+                <!-- ANALYTICS -->
+
+                <p class="sidebar-section-title">ANALYTICS</p>
+
+                <a asp-controller="Reports"
+                   asp-action="Index"
+                   class="sidebar-link">
+
+                    <i class="bi bi-bar-chart"></i>
+                    <span>Reports</span>
+                </a>
+
+
+                <!-- SYSTEM -->
+
+                <p class="sidebar-section-title">SYSTEM</p>
+
+                <a asp-controller="Settings"
+                   asp-action="Index"
+                   class="sidebar-link">
+
+                    <i class="bi bi-gear"></i>
+                    <span>Settings</span>
+                </a>
+
+            </nav>
+
+
+            <!-- LOGOUT -->
+            <div class="sidebar-footer">
+
+                <form asp-area="Identity"
+                      asp-page="/Account/Logout"
+                      method="post">
+
+                    <button type="submit" class="logout-button">
+
+                        <i class="bi bi-box-arrow-left"></i>
+                        <span>Logout</span>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- PAGE CONTENT -->
+    <main class="admin-main">
+
+        <div class="admin-content">
+
+            @RenderBody()
+
+        </div>
+
+    </main>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

@@ -1,0 +1,239 @@
+@model TasksFollow.Models.Company
+
+@{
+    ViewData["Title"] = "Edit Company";
+    Layout = "_AdminLayout";
+}
+
+<div class="company-create-page">
+
+    <!-- PAGE HEADER -->
+    <div class="company-page-header">
+
+        <div>
+            <h1>Edit Company</h1>
+            <p>Update the company information.</p>
+        </div>
+
+        <a asp-action="Index"
+           class="btn btn-outline-secondary">
+
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Companies
+
+        </a>
+
+    </div>
+
+
+    <!-- FORM CARD -->
+    <div class="company-form-card">
+
+        <!-- CARD HEADER -->
+        <div class="company-form-header">
+
+            <div class="company-form-icon">
+                <i class="bi bi-pencil-square"></i>
+            </div>
+
+            <div>
+                <h4>Company Information</h4>
+                <p>Update the company's information below.</p>
+            </div>
+
+        </div>
+
+
+        <form asp-action="Edit" method="post">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3">
+            </div>
+
+
+            <!-- COMPANY ID -->
+            <input type="hidden"
+                   asp-for="CompanyId" />
+
+
+            <!-- COMPANY NAME -->
+            <div class="mb-4">
+
+                <label asp-for="Name"
+                       class="form-label">
+                </label>
+
+                <input asp-for="Name"
+                       class="form-control"
+                       placeholder="Enter company name" />
+
+                <span asp-validation-for="Name"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+            <div class="mb-4">
+
+                <label asp-for="Description"
+                       class="form-label">
+                </label>
+
+                <textarea asp-for="Description"
+                          class="form-control"
+                          rows="4"
+                          placeholder="Enter company description">
+                </textarea>
+
+                <span asp-validation-for="Description"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+
+            <!-- PHONE + EMAIL -->
+            <div class="row">
+
+                <div class="col-12 col-md-6 mb-4">
+
+                    <label asp-for="Phone"
+                           class="form-label">
+                    </label>
+
+                    <input asp-for="Phone"
+                           class="form-control"
+                           placeholder="Enter phone number" />
+
+                    <span asp-validation-for="Phone"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <div class="col-12 col-md-6 mb-4">
+
+                    <label asp-for="Email"
+                           class="form-label">
+                    </label>
+
+                    <input asp-for="Email"
+                           class="form-control"
+                           placeholder="Enter email address" />
+
+                    <span asp-validation-for="Email"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ADDRESS -->
+            <div class="mb-4">
+
+                <label asp-for="Address"
+                       class="form-label">
+                </label>
+
+                <input asp-for="Address"
+                       class="form-control"
+                       placeholder="Enter company address" />
+
+                <span asp-validation-for="Address"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+
+            <!-- CREATED DATE -->
+            <div class="mb-4">
+
+                <label asp-for="CreatedDate"
+                       class="form-label">
+                </label>
+
+                <input asp-for="CreatedDate"
+                       class="form-control"
+                       readonly />
+
+                <span asp-validation-for="CreatedDate"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+
+            <!-- COMPANY STATUS -->
+            <div class="company-status-edit mb-4">
+
+                <div>
+
+                    <label asp-for="IsActive"
+                           class="form-label mb-1">
+                        Company Status
+                    </label>
+
+                    <p class="company-status-help">
+                        Enable or disable this company.
+                    </p>
+
+                </div>
+
+
+                <div class="form-check form-switch">
+
+                    <input asp-for="IsActive"
+                           class="form-check-input"
+                           role="switch" />
+
+                </div>
+
+            </div>
+
+            <span asp-validation-for="IsActive"
+                  class="text-danger">
+            </span>
+
+
+            <!-- ACTION BUTTONS -->
+            <div class="company-form-actions">
+
+                <a asp-action="Details"
+                   asp-route-id="@Model.CompanyId"
+                   class="btn btn-light company-cancel-btn">
+
+                    Cancel
+
+                </a>
+
+
+                <button type="submit"
+                        class="btn btn-primary company-submit-btn">
+
+                    <i class="bi bi-check-lg me-1"></i>
+                    Save Changes
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}

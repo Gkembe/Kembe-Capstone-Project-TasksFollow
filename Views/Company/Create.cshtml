@@ -1,0 +1,173 @@
+@model TasksFollow.Models.Company
+
+@{
+    ViewData["Title"] = "Create Company";
+    Layout = "_AdminLayout";
+}
+
+<div class="company-create-page">
+
+    <!-- PAGE HEADER -->
+    <div class="company-page-header">
+        <div>
+            <h1>Create Company</h1>
+            <p>Add a new company to TasksFollow.</p>
+        </div>
+
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Companies
+        </a>
+    </div>
+
+
+    <!-- FORM CARD -->
+    <div class="company-form-card">
+
+        <div class="company-form-header">
+            <div class="company-form-icon">
+                <i class="bi bi-building"></i>
+            </div>
+
+            <div>
+                <h4>Company Information</h4>
+                <p>Enter the company's basic information below.</p>
+            </div>
+        </div>
+
+
+        <form asp-action="Create" method="post">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3">
+            </div>
+
+
+            <!-- COMPANY NAME -->
+            <div class="mb-4">
+
+                <label asp-for="Name"
+                       class="form-label">
+                </label>
+
+                <input asp-for="Name"
+                       class="form-control"
+                       placeholder="Enter company name" />
+
+                <span asp-validation-for="Name"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+            <div class="mb-4">
+
+                <label asp-for="Description"
+                       class="form-label">
+                </label>
+
+                <textarea asp-for="Description"
+                          class="form-control"
+                          rows="4"
+                          placeholder="Enter company description">
+                </textarea>
+
+                <span asp-validation-for="Description"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+
+            <!-- PHONE AND EMAIL -->
+            <div class="row">
+
+                <div class="col-12 col-md-6 mb-4">
+
+                    <label asp-for="Phone"
+                           class="form-label">
+                    </label>
+
+                    <input asp-for="Phone"
+                           class="form-control"
+                           placeholder="Enter phone number" />
+
+                    <span asp-validation-for="Phone"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <div class="col-12 col-md-6 mb-4">
+
+                    <label asp-for="Email"
+                           class="form-label">
+                    </label>
+
+                    <input asp-for="Email"
+                           class="form-control"
+                           placeholder="Enter email address" />
+
+                    <span asp-validation-for="Email"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ADDRESS -->
+            <div class="mb-4">
+
+                <label asp-for="Address"
+                       class="form-label">
+                </label>
+
+                <input asp-for="Address"
+                       class="form-control"
+                       placeholder="Enter company address" />
+
+                <span asp-validation-for="Address"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+
+            <!-- BUTTONS -->
+            <div class="company-form-actions">
+
+                <a asp-action="Index"
+                   class="btn btn-light company-cancel-btn">
+
+                    Cancel
+
+                </a>
+
+                <button type="submit"
+                        class="btn btn-primary company-submit-btn">
+
+                    <i class="bi bi-plus-lg me-1"></i>
+
+                    Create Company
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

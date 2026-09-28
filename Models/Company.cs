@@ -25,7 +25,11 @@ namespace TasksFollow.Models
         [Required(ErrorMessage = "You must add an address")]
         public string? Address { get; set; }
 
+        [Display(Name = "Create Date")]
+        [DataType(DataType.Date)]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+        [Display(Name = "Status")]
         public bool IsActive { get; set; } = true;
 
         public ICollection<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
