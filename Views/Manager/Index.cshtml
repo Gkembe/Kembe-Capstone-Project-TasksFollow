@@ -6,211 +6,105 @@
 }
 
 <div class="company-index-page">
-
-    <!-- PAGE HEADER -->
     <div class="company-index-header">
-
         <div>
             <h1>Managers</h1>
-
-            <p>
-                View and manage company managers in TasksFollow.
-            </p>
+            <p>View and manage company managers in TasksFollow.</p>
         </div>
-
     </div>
 
-
-    <!-- MANAGER TABLE CARD -->
     <div class="company-table-card">
-
-        <!-- CARD HEADER -->
         <div class="company-table-header">
-
             <div>
                 <h4>All Managers</h4>
-
-                <p>
-                    View managers and the companies they belong to.
-                </p>
+                <p>View managers and the companies they belong to.</p>
             </div>
-
-            <div class="company-count">
-                @Model.Count() Managers
-            </div>
-
+            <div class="company-count">@Model.Count() Managers</div>
         </div>
 
-
-        <!-- TABLE -->
         <div class="table-responsive">
-
             <table class="table company-table align-middle mb-0">
-
                 <thead>
                     <tr>
-                        <th>
-                            Manager
-                        </th>
-
-                        <th>
-                            Email
-                        </th>
-
-                        <th>
-                            Company
-                        </th>
-
-                        <th class="text-end">
-                            Actions
-                        </th>
+                        <th>Manager</th>
+                        <th>Email</th>
+                        <th>Company</th>
+                        <th class="text-end">Actions</th>
                     </tr>
                 </thead>
 
                 <tbody>
-
                     @if (Model.Any())
                     {
                         @foreach (var item in Model)
                         {
                             <tr>
-
-                                <!-- MANAGER -->
                                 <td>
                                     <div class="company-table-name">
-
-                                        <div class="company-table-icon">
-                                            <i class="bi bi-person-badge"></i>
-                                        </div>
-
+                                        <div class="company-table-icon"><i class="bi bi-person-badge"></i></div>
                                         <div>
-                                            <span class="company-name-link">
-                                                @item.FirstName @item.MiddleName @item.LastName
-                                            </span>
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="company-name-link">@item.FirstName @item.MiddleName @item.LastName</a>
                                         </div>
-
                                     </div>
                                 </td>
 
-
-                                <!-- EMAIL -->
                                 <td>
-
                                     @if (!string.IsNullOrWhiteSpace(item.Email))
                                     {
                                         @item.Email
                                     }
                                     else
                                     {
-                                        <span class="company-empty-value">
-                                            —
-                                        </span>
+                                        <span class="company-empty-value">—</span>
                                     }
-
                                 </td>
 
-
-                                <!-- COMPANY -->
                                 <td>
-
                                     @if (item.CompanyId != null)
                                     {
-                                        <a asp-controller="Company"
-                                           asp-action="Details"
-                                           asp-route-id="@item.CompanyId"
-                                           class="company-name-link">
-
-                                            <i class="bi bi-building me-1"></i>
-
-                                            @item.CompanyName
-
-                                        </a>
+                                        <a asp-controller="Company" asp-action="Details" asp-route-id="@item.CompanyId" class="company-name-link"><i class="bi bi-building me-1"></i> @item.CompanyName</a>
                                     }
                                     else
                                     {
-                                        <span class="company-empty-value">
-                                            No Company
-                                        </span>
+                                        <span class="company-empty-value">No Company</span>
                                     }
-
                                 </td>
 
-
-                                <!-- ACTIONS -->
                                 <td>
-
                                     <div class="company-table-actions">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="company-action-btn company-action-edit" title="Edit Manager"><i class="bi bi-pencil"></i></a>
 
-                                        <!-- DETAILS -->
-                                        <a asp-action="Details"
-                                           asp-route-id="@item.Id"
-                                           class="company-action-btn"
-                                           title="Manager Details">
-
-                                            <i class="bi bi-eye"></i>
-
-                                        </a>
-
-
-                                        <!-- EDIT -->
-                                        <a asp-action="Edit"
-                                           asp-route-id="@item.Id"
-                                           class="company-action-btn company-action-edit"
-                                           title="Edit Manager">
-
-                                            <i class="bi bi-pencil"></i>
-
-                                        </a>
-
-
-                                        <!-- DELETE -->
-                                        <a asp-action="Delete"
-                                           asp-route-id="@item.Id"
-                                           class="company-action-btn company-action-delete"
-                                           title="Delete Manager">
-
-                                            <i class="bi bi-trash"></i>
-
-                                        </a>
-
+                                        @if (item.IsActive)
+                                        {
+                                            <form asp-action="Deactivate" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Deactivate Manager"><i class="bi bi-slash-circle"></i></button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="Activate" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-success" title="Activate Manager"><i class="bi bi-check-circle"></i></button>
+                                            </form>
+                                        }
                                     </div>
-
                                 </td>
-
                             </tr>
                         }
                     }
                     else
                     {
                         <tr>
-
                             <td colspan="4">
-
                                 <div class="company-empty-state">
-
-                                    <div class="company-empty-icon">
-                                        <i class="bi bi-person-badge"></i>
-                                    </div>
-
+                                    <div class="company-empty-icon"><i class="bi bi-person-badge"></i></div>
                                     <h5>No managers yet</h5>
-
-                                    <p>
-                                        Managers are created from a company's details page.
-                                    </p>
-
+                                    <p>Managers are created from a company's details page.</p>
                                 </div>
-
                             </td>
-
                         </tr>
                     }
-
                 </tbody>
-
             </table>
-
         </div>
-
     </div>
-
 </div>

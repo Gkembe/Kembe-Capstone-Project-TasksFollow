@@ -40,6 +40,8 @@ namespace TasksFollow.Models
 
         public ICollection<GroupChat> GroupChats { get; set; } = new List<GroupChat>();
 
+        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
+
 
     }
 }

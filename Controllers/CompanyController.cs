@@ -21,7 +21,7 @@ public class CompanyController : Controller
         return View(await _context.Companies.ToListAsync());
     }
 
-    // GET: COMPANYS/Details/5
+    // GET: Companies/Details/5
     public async Task<IActionResult> Details(int? id)
     {
         if (id == null)
@@ -30,7 +30,10 @@ public class CompanyController : Controller
         }
 
         var company = await _context.Companies
-            .FirstOrDefaultAsync(m => m.CompanyId == id);
+            .Include(c => c.Payments)
+            .ThenInclude(p => p.SubscriptionPlan)
+            .FirstOrDefaultAsync(c => c.CompanyId == id);
+
         if (company == null)
         {
             return NotFound();
@@ -110,6 +113,44 @@ public class CompanyController : Controller
             return RedirectToAction(nameof(Index));
         }
         return View(company);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Activate(int id)
+    {
+        var company = await _context.Companies
+            .FirstOrDefaultAsync(c => c.CompanyId == id);
+
+        if (company == null)
+        {
+            return NotFound();
+        }
+
+        company.IsActive = true;
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Deactivate(int id)
+    {
+        var company = await _context.Companies
+            .FirstOrDefaultAsync(c => c.CompanyId == id);
+
+        if (company == null)
+        {
+            return NotFound();
+        }
+
+        company.IsActive = false;
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
     }
 
     // GET: COMPANYS/Delete/5

@@ -1,0 +1,74 @@
+﻿@model TasksFollow.Models.Payment
+
+@{
+    ViewData["Title"] = "Delete Payment";
+    Layout = "_AdminLayout";
+}
+
+<div class="company-details-page">
+    <div class="company-details-header">
+        <div>
+            <h1>Delete Payment</h1>
+            <p>Review the payment before deleting it.</p>
+        </div>
+        <a asp-action="CompanyHistory" asp-route-companyId="@Model.CompanyId" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i> Back</a>
+    </div>
+
+    <div class="company-details-card payment-delete-card">
+        <div class="company-details-card-header">
+            <div class="company-details-icon payment-delete-icon"><i class="bi bi-trash"></i></div>
+            <div>
+                <h4>Delete Payment</h4>
+                <p>This action will remove this payment from the company history.</p>
+            </div>
+        </div>
+
+        <div class="payment-delete-warning">
+            <i class="bi bi-exclamation-triangle"></i>
+            <div>
+                <strong>Are you sure you want to delete this payment?</strong>
+                <p>This action cannot be undone.</p>
+            </div>
+        </div>
+
+        <div class="company-details-grid">
+            <div class="company-detail-item">
+                <div class="detail-icon"><i class="bi bi-building"></i></div>
+                <div><span class="detail-label">Company</span><p class="detail-value">@Model.Company.Name</p></div>
+            </div>
+
+            <div class="company-detail-item">
+                <div class="detail-icon"><i class="bi bi-tags"></i></div>
+                <div><span class="detail-label">Plan</span><p class="detail-value">@Model.SubscriptionPlan.Name</p></div>
+            </div>
+
+            <div class="company-detail-item">
+                <div class="detail-icon"><i class="bi bi-cash-stack"></i></div>
+                <div><span class="detail-label">Amount Paid</span><p class="detail-value">$@Model.AmountPaid.ToString("0.00")</p></div>
+            </div>
+
+            <div class="company-detail-item">
+                <div class="detail-icon"><i class="bi bi-calendar-month"></i></div>
+                <div><span class="detail-label">Months Paid</span><p class="detail-value">@Model.MonthsPaid months</p></div>
+            </div>
+
+            <div class="company-detail-item">
+                <div class="detail-icon"><i class="bi bi-calendar-check"></i></div>
+                <div><span class="detail-label">Coverage Start</span><p class="detail-value">@Model.CoverageStartDate.ToString("MMM dd, yyyy")</p></div>
+            </div>
+
+            <div class="company-detail-item">
+                <div class="detail-icon"><i class="bi bi-calendar-x"></i></div>
+                <div><span class="detail-label">Coverage End</span><p class="detail-value">@Model.CoverageEndDate.ToString("MMM dd, yyyy")</p></div>
+            </div>
+        </div>
+
+        <div class="company-details-footer">
+            <form asp-action="Delete" method="post" class="payment-delete-actions">
+                <input type="hidden" asp-for="PaymentId" />
+                <a asp-action="CompanyHistory" asp-route-companyId="@Model.CompanyId" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i> Delete Payment</button>
+            </form>
+        </div>
+    </div>
+</div>

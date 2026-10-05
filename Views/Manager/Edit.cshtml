@@ -1,0 +1,157 @@
+﻿@model TasksFollow.Models.ManagerEditViewModel
+
+@{
+    ViewData["Title"] = "Edit Manager";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="mb-1">Edit Manager</h2>
+            <p class="text-muted mb-0">Update manager information and company assignment</p>
+        </div>
+
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back</a>
+
+    </div>
+
+
+    <!-- EDIT CARD -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body p-4">
+
+            <form asp-action="Edit" method="post">
+
+                <input type="hidden" asp-for="Id" />
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+
+                <!-- PERSONAL INFORMATION -->
+
+                <h5 class="mb-3">
+                    <i class="bi bi-person-vcard me-2"></i>
+                    Personal Information
+                </h5>
+
+                <div class="row">
+
+                    <!-- FIRST NAME -->
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="FirstName" class="form-label"></label>
+
+                        <input asp-for="FirstName" class="form-control" />
+
+                        <span asp-validation-for="FirstName" class="text-danger"> </span>
+
+                    </div>
+
+
+                    <!-- LAST NAME -->
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="LastName" class="form-label"> </label>
+
+                        <input asp-for="LastName" class="form-control" />
+
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+
+                    </div>
+
+
+                    <!-- MIDDLE NAME -->
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="MiddleName" class="form-label"> </label>
+
+                        <input asp-for="MiddleName" class="form-control" />
+
+                        <span asp-validation-for="MiddleName" class="text-danger"> </span>
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="Email" class="form-label"> </label>
+
+                        <input asp-for="Email" class="form-control" />
+
+                        <span asp-validation-for="Email" class="text-danger"></span>
+
+                    </div>
+
+
+                    <!-- PHONE -->
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="PhoneNumber" class="form-label"> </label>
+
+                        <input asp-for="PhoneNumber" class="form-control" />
+
+                        <span asp-validation-for="PhoneNumber" class="text-danger"> </span>
+
+                    </div>
+
+                </div>
+
+
+                <hr class="my-4" />
+
+
+                <!-- COMPANY -->
+
+                <h5 class="mb-3"><i class="bi bi-building me-2"></i>Company Assignment</h5>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="CompanyId" class="form-label">Company </label>
+
+                        <select asp-for="CompanyId" asp-items="Model.Companies" class="form-select">
+
+                            <option value="">Select Company</option>
+
+                        </select>
+
+                        <span asp-validation-for="CompanyId"class="text-danger"></span>
+
+                    </div>
+
+                </div>
+
+
+                <hr class="my-4" />
+
+
+                <!-- BUTTONS -->
+
+                <div class="d-flex gap-2">
+
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save Changes </button>
+
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Cancel</a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

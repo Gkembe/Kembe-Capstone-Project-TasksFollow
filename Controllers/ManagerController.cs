@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.Design;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -6,8 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using TasksFollow.Data;
 using TasksFollow.Models;
 
+
 namespace TasksFollow.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ManagerController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -29,22 +32,39 @@ namespace TasksFollow.Controllers
                 .Select(m => m.Id)
                 .ToList();
 
-            var managerList = await _context.Users
+            var users = await _context.Users
                 .Where(u => managerIds.Contains(u.Id))
                 .Include(u => u.Company)
-                .Select(u => new ManagerIndexViewModel
-                {
-                    Id = u.Id,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    MiddleName = u.MiddleName,
-                    Email = u.Email ?? "",
-                    CompanyId = u.CompanyID,
-                    CompanyName = u.Company != null
-                        ? u.Company.Name
-                        : "No Company"
-                })
                 .ToListAsync();
+
+            var managerList = new List<ManagerIndexViewModel>();
+
+            foreach (var user in users)
+            {
+                var manager = new ManagerIndexViewModel
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    MiddleName = user.MiddleName,
+                    Email = user.Email,
+                    IsActive = user.IsActive,
+                    CompanyId = user.CompanyID
+                   
+                };
+
+
+                if (user.Company != null)
+                {
+                    manager.CompanyName = user.Company.Name;
+                }
+                else
+                {
+                    manager.CompanyName = "No Company";
+                }
+
+                managerList.Add(manager);
+            }
 
             return View(managerList);
         }
@@ -128,6 +148,221 @@ namespace TasksFollow.Controllers
             ViewBag.CompanyName = company.Name;
 
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var isManager = await _userManager.IsInRoleAsync(user, "Manager");
+
+            if (!isManager)
+            {
+                return NotFound();
+            }
+
+            var manager = new ManagerEditViewModel
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                MiddleName = user.MiddleName,
+                LastName = user.LastName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                CompanyId = user.CompanyID
+            };
+
+            var companies = await _context.Companies
+                .Where(c => c.IsActive)
+                .ToListAsync();
+
+            foreach (var company in companies)
+            {
+                manager.Companies.Add(new SelectListItem
+                {
+                    Value = company.CompanyId.ToString(),
+                    Text = company.Name
+                });
+            }
+
+            return View(manager);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(ManagerEditViewModel manager)
+        {
+            if (!ModelState.IsValid)
+            {
+                var companies = await _context.Companies
+                    .Where(c => c.IsActive)
+                    .ToListAsync();
+
+                foreach (var company in companies)
+                {
+                    manager.Companies.Add(new SelectListItem
+                    {
+                        Value = company.CompanyId.ToString(),
+                        Text = company.Name
+                    });
+                }
+
+                return View(manager);
+            }
+
+            var user = await _userManager.FindByIdAsync(manager.Id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.FirstName = manager.FirstName;
+            user.MiddleName = manager.MiddleName;
+            user.LastName = manager.LastName;
+            user.Email = manager.Email;
+            user.UserName = manager.Email;
+            user.PhoneNumber = manager.PhoneNumber;
+            user.CompanyID = manager.CompanyId;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+
+                return View(manager);
+            }
+
+            return RedirectToAction("Details", new { id = user.Id });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            var user = await _context.Users
+                .Include(u => u.Company)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var isManager = await _userManager.IsInRoleAsync(user, "Manager");
+
+            if (!isManager)
+            {
+                return NotFound();
+            }
+
+            var manager = new ManagerDetailsViewModel
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                MiddleName = user.MiddleName,
+                LastName = user.LastName,
+                Email = user.Email ?? "",
+                PhoneNumber = user.PhoneNumber,
+
+                CompanyId = user.CompanyID,
+
+                
+            };
+
+            if (user.Company != null)
+            {
+                manager.CompanyName = user.Company.Name;
+                manager.CompanyIsActive = user.Company.IsActive;
+            }
+            else
+            {
+                manager.CompanyName = "No Company";
+                manager.CompanyIsActive = false;
+            }
+
+            return View(manager);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Deactivate(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var manager = await _userManager.FindByIdAsync(id);
+
+            if (manager == null)
+            {
+                return NotFound();
+            }
+
+            var isManager = await _userManager.IsInRoleAsync(manager, "Manager");
+
+            if (!isManager)
+            {
+                return NotFound();
+            }
+
+            manager.IsActive = false;
+
+            await _userManager.UpdateAsync(manager);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Activate(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var manager = await _userManager.FindByIdAsync(id);
+
+            if (manager == null)
+            {
+                return NotFound();
+            }
+
+            var isManager = await _userManager.IsInRoleAsync(manager, "Manager");
+
+            if (!isManager)
+            {
+                return NotFound();
+            }
+
+            manager.IsActive = true;
+
+            await _userManager.UpdateAsync(manager);
+
+            return RedirectToAction(nameof(Index));
         }
 
 

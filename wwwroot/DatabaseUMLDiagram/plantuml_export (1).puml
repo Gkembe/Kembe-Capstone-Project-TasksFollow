@@ -1,0 +1,171 @@
+@startuml
+title TasksFollow - Database UML Diagram
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam shadowing false
+
+' =====================================================
+' TABLES / CLASSES
+' =====================================================
+
+class ApplicationUser {
+    + Id : string
+}
+
+class Company {
+    + CompanyId : int
+}
+
+class Employee {
+    + EmployeeId : int
+    + ApplicationUserId : string
+}
+
+class Project {
+    + ProjectId : int
+    + CreatedByUserId : string
+}
+
+class ProjectTask {
+    + ProjectTaskId : int
+    + ProjectId : int
+    + CreatedByUserId : string
+}
+
+class ProjectMember {
+    + ProjectMemberId : int
+    + ProjectId : int
+    + EmployeeId : int
+}
+
+class TaskAssignment {
+    + TaskAssignmentId : int
+    + ProjectTaskId : int
+    + EmployeeId : int
+}
+
+class Comment {
+    + CommentId : int
+    + ProjectTaskId : int
+    + ParentCommentId : int?
+}
+
+class GroupChat {
+    + GroupChatId : int
+    + CreatedByUserId : string
+}
+
+class GroupMember {
+    + GroupMemberId : int
+    + GroupChatId : int
+    + EmployeeId : int
+}
+
+class Message {
+    + MessageId : int
+    + GroupChatId : int?
+    + ParentMessageId : int?
+}
+
+
+' =====================================================
+' APPLICATION USER / EMPLOYEE
+' =====================================================
+
+ApplicationUser "1" -- "0..1" Employee : Employee profile
+
+
+' =====================================================
+' PROJECT CREATOR
+' =====================================================
+
+ApplicationUser "1" -- "0..*" Project : creates
+
+
+' =====================================================
+' PROJECT MEMBERSHIP
+' =====================================================
+
+Project "1" -- "0..*" ProjectMember : has members
+
+Employee "1" -- "0..*" ProjectMember : joins projects
+
+
+' =====================================================
+' PROJECT TASK
+' =====================================================
+
+Project "1" -- "0..*" ProjectTask : contains
+
+ApplicationUser "1" -- "0..*" ProjectTask : creates
+
+
+' =====================================================
+' TASK ASSIGNMENT
+' =====================================================
+
+ProjectTask "1" -- "0..*" TaskAssignment : assignments
+
+Employee "1" -- "0..*" TaskAssignment : receives
+
+
+' =====================================================
+' COMMENTS
+' =====================================================
+
+ProjectTask "1" -- "0..*" Comment : comments
+
+Comment "0..1" -- "0..*" Comment : replies
+
+
+' =====================================================
+' GROUP CHAT
+' =====================================================
+
+ApplicationUser "1" -- "0..*" GroupChat : creates
+
+GroupChat "1" -- "0..*" GroupMember : members
+
+Employee "1" -- "0..*" GroupMember : joins
+
+
+' =====================================================
+' MESSAGES
+' =====================================================
+
+GroupChat "0..1" -- "0..*" Message : messages
+
+Message "0..1" -- "0..*" Message : replies
+
+
+' =====================================================
+' NOTES FOR UNIQUE CONSTRAINTS
+' =====================================================
+
+note right of ProjectMember
+Unique:
+ProjectId + EmployeeId
+
+An employee cannot join
+the same project twice.
+end note
+
+note right of TaskAssignment
+Unique:
+ProjectTaskId + EmployeeId
+
+The same task cannot be
+assigned twice to the
+same employee.
+end note
+
+note right of GroupMember
+Unique:
+GroupChatId + EmployeeId
+
+An employee cannot join
+the same group twice.
+end note
+
+@enduml

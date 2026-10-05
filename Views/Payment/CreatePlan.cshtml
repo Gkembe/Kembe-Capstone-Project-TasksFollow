@@ -1,0 +1,77 @@
+﻿@model TasksFollow.Models.SubscriptionPlan
+
+@{
+    ViewData["Title"] = "Create Subscription Plan";
+    Layout = "_AdminLayout";
+}
+
+<div class="company-create-page">
+    <div class="company-page-header">
+        <div>
+            <h1>Create Subscription Plan</h1>
+            <p>Add a new subscription plan to TasksFollow.</p>
+        </div>
+
+        <a asp-action="Plans" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Plans
+        </a>
+    </div>
+
+    <div class="company-form-card">
+        <div class="company-form-header">
+            <div class="company-form-icon"><i class="bi bi-credit-card"></i></div>
+
+            <div>
+                <h4>Plan Information</h4>
+                <p>Enter the subscription plan information below.</p>
+            </div>
+        </div>
+
+        <form asp-action="CreatePlan" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-4">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" placeholder="Enter plan name" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter plan description"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="MonthlyPrice" class="form-label"></label>
+                <input asp-for="MonthlyPrice" class="form-control" placeholder="Enter monthly price" />
+                <span asp-validation-for="MonthlyPrice" class="text-danger"></span>
+            </div>
+
+            <div class="company-status-edit mb-4">
+                <div>
+                    <label asp-for="IsActive" class="form-label mb-1">Plan Status</label>
+                    <p class="company-status-help">Enable or disable this subscription plan.</p>
+                </div>
+
+                <div class="form-check form-switch">
+                    <input asp-for="IsActive" class="form-check-input" role="switch" />
+                </div>
+            </div>
+
+            <div class="company-form-actions">
+                <a asp-action="Plans" class="btn btn-light company-cancel-btn">Cancel</a>
+
+                <button type="submit" class="btn btn-primary company-submit-btn">
+                    <i class="bi bi-plus-lg me-1"></i> Create Plan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

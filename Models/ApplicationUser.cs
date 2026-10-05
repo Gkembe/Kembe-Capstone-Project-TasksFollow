@@ -16,7 +16,11 @@ public class ApplicationUser : IdentityUser
     [Required(ErrorMessage = "Last name is required.")]
     [StringLength(50, MinimumLength = 2)]
     [Display(Name = "Last Name")]
+
+
     public string LastName { get; set; } = string.Empty;
+
+    public bool IsActive { get; set; } = true;
     public int? CompanyID { get; set; }
 
     public Company? Company { get; set; }

@@ -159,6 +159,47 @@ namespace TasksFollow.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Payment", b =>
+                {
+                    b.Property<int>("PaymentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentId"));
+
+                    b.Property<decimal>("AmountPaid")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CoverageEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CoverageStartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("MonthlyPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("MonthsPaid")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SubscriptionPlanId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PaymentId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("SubscriptionPlanId");
+
+                    b.ToTable("Payments");
+                });
+
             modelBuilder.Entity("TasksFollow.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -185,6 +226,9 @@ namespace TasksFollow.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -603,6 +647,36 @@ namespace TasksFollow.Data.Migrations
                     b.ToTable("ProjectTasks");
                 });
 
+            modelBuilder.Entity("TasksFollow.Models.SubscriptionPlan", b =>
+                {
+                    b.Property<int>("SubscriptionPlanId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SubscriptionPlanId"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("MonthlyPrice")
+                        .IsRequired()
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("SubscriptionPlanId");
+
+                    b.ToTable("SubscriptionPlans");
+                });
+
             modelBuilder.Entity("TasksFollow.Models.TaskAssignment", b =>
                 {
                     b.Property<int>("TaskAssignmentId")
@@ -691,6 +765,25 @@ namespace TasksFollow.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Payment", b =>
+                {
+                    b.HasOne("TasksFollow.Models.Company", "Company")
+                        .WithMany("Payments")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TasksFollow.Models.SubscriptionPlan", "SubscriptionPlan")
+                        .WithMany("Payments")
+                        .HasForeignKey("SubscriptionPlanId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("SubscriptionPlan");
                 });
 
             modelBuilder.Entity("TasksFollow.Models.ApplicationUser", b =>
@@ -911,6 +1004,8 @@ namespace TasksFollow.Data.Migrations
 
                     b.Navigation("GroupChats");
 
+                    b.Navigation("Payments");
+
                     b.Navigation("Projects");
 
                     b.Navigation("Users");
@@ -949,6 +1044,11 @@ namespace TasksFollow.Data.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("TaskAssignments");
+                });
+
+            modelBuilder.Entity("TasksFollow.Models.SubscriptionPlan", b =>
+                {
+                    b.Navigation("Payments");
                 });
 #pragma warning restore 612, 618
         }

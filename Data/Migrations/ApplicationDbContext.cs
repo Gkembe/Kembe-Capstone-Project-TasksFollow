@@ -22,6 +22,8 @@ namespace TasksFollow.Data
         public DbSet<GroupChat> GroupChats { get; set; }
         public DbSet<GroupMember> GroupMembers { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -151,6 +153,18 @@ namespace TasksFollow.Data
                 .HasOne(m => m.ParentMessage)
                 .WithMany(m => m.Replies)
                 .HasForeignKey(m => m.ParentMessageId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Payment>()
+                .HasOne(p => p.Company)
+                .WithMany(c => c.Payments)
+                .HasForeignKey(p => p.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Payment>()
+                .HasOne(p => p.SubscriptionPlan)
+                .WithMany(s => s.Payments)
+                .HasForeignKey(p => p.SubscriptionPlanId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

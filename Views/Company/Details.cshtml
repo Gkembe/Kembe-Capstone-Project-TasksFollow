@@ -3,241 +3,158 @@
 @{
     ViewData["Title"] = "Company Details";
     Layout = "_AdminLayout";
+
+    var currentPayment = Model.Payments.OrderByDescending(p => p.CoverageEndDate).FirstOrDefault();
 }
 
 <div class="company-details-page">
-
-    <!-- PAGE HEADER -->
     <div class="company-details-header">
-
         <div>
             <h1>Company Details</h1>
-
-            <p>
-                View and manage company information.
-            </p>
+            <p>View and manage company information.</p>
         </div>
 
         <div class="company-header-actions">
-
-            <!-- ADD MANAGER -->
-            <a asp-controller="Manager"
-               asp-action="Create"
-               asp-route-Id="@Model.CompanyId"
-               class="btn btn-primary">
-
-                <i class="bi bi-person-plus me-1"></i>
-                Add Manager
-
-            </a>
-
-            <!-- BACK -->
-            <a asp-action="Index"
-               class="btn btn-outline-secondary">
-
-                <i class="bi bi-arrow-left me-1"></i>
-                Back to Companies
-
-            </a>
-
+            <a asp-controller="Manager" asp-action="Create" asp-route-companyId="@Model.CompanyId" class="btn btn-primary"><i class="bi bi-person-plus me-1"></i> Add Manager</a>
+            <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i> Back to Companies</a>
         </div>
-
     </div>
 
-
-    <!-- COMPANY INFORMATION CARD -->
     <div class="company-details-card">
-
-        <!-- CARD HEADER -->
         <div class="company-details-card-header">
-
-            <div class="company-details-icon">
-                <i class="bi bi-building"></i>
-            </div>
-
+            <div class="company-details-icon"><i class="bi bi-building"></i></div>
             <div>
                 <h4>@Model.Name</h4>
                 <p>Company Information</p>
             </div>
-
         </div>
 
-
-        <!-- DETAILS -->
         <div class="company-details-grid">
-
-
-            <!-- NAME -->
             <div class="company-detail-item">
-
-                <div class="detail-icon">
-                    <i class="bi bi-building"></i>
-                </div>
-
-                <div>
-                    <span class="detail-label">
-                        Company Name
-                    </span>
-
-                    <p class="detail-value">
-                        @Html.DisplayFor(model => model.Name)
-                    </p>
-                </div>
-
+                <div class="detail-icon"><i class="bi bi-building"></i></div>
+                <div><span class="detail-label">Company Name</span><p class="detail-value">@Model.Name</p></div>
             </div>
 
-
-            <!-- PHONE -->
             <div class="company-detail-item">
-
-                <div class="detail-icon">
-                    <i class="bi bi-telephone"></i>
-                </div>
-
-                <div>
-                    <span class="detail-label">
-                        Phone
-                    </span>
-
-                    <p class="detail-value">
-                        @Html.DisplayFor(model => model.Phone)
-                    </p>
-                </div>
-
+                <div class="detail-icon"><i class="bi bi-telephone"></i></div>
+                <div><span class="detail-label">Phone</span><p class="detail-value">@Model.Phone</p></div>
             </div>
 
-
-            <!-- EMAIL -->
             <div class="company-detail-item">
-
-                <div class="detail-icon">
-                    <i class="bi bi-envelope"></i>
-                </div>
-
-                <div>
-                    <span class="detail-label">
-                        Email
-                    </span>
-
-                    <p class="detail-value">
-                        @Html.DisplayFor(model => model.Email)
-                    </p>
-                </div>
-
+                <div class="detail-icon"><i class="bi bi-envelope"></i></div>
+                <div><span class="detail-label">Email</span><p class="detail-value">@Model.Email</p></div>
             </div>
 
-
-            <!-- ADDRESS -->
             <div class="company-detail-item">
-
-                <div class="detail-icon">
-                    <i class="bi bi-geo-alt"></i>
-                </div>
-
-                <div>
-                    <span class="detail-label">
-                        Address
-                    </span>
-
-                    <p class="detail-value">
-                        @Html.DisplayFor(model => model.Address)
-                    </p>
-                </div>
-
+                <div class="detail-icon"><i class="bi bi-geo-alt"></i></div>
+                <div><span class="detail-label">Address</span><p class="detail-value">@Model.Address</p></div>
             </div>
 
-
-            <!-- CREATED DATE -->
             <div class="company-detail-item">
-
-                <div class="detail-icon">
-                    <i class="bi bi-calendar3"></i>
-                </div>
-
-                <div>
-                    <span class="detail-label">
-                        Created Date
-                    </span>
-
-                    <p class="detail-value">
-                        @Html.DisplayFor(model => model.CreatedDate)
-                    </p>
-                </div>
-
+                <div class="detail-icon"><i class="bi bi-calendar3"></i></div>
+                <div><span class="detail-label">Created Date</span><p class="detail-value">@Model.CreatedDate.ToString("MMM dd, yyyy")</p></div>
             </div>
 
-
-            <!-- STATUS -->
             <div class="company-detail-item">
-
-                <div class="detail-icon">
-                    <i class="bi bi-check-circle"></i>
-                </div>
-
+                <div class="detail-icon"><i class="bi bi-check-circle"></i></div>
                 <div>
-                    <span class="detail-label">
-                        Status
-                    </span>
-
+                    <span class="detail-label">Status</span>
                     <div class="detail-value">
-
                         @if (Model.IsActive)
                         {
-                            <span class="company-status company-status-active">
-                                <i class="bi bi-circle-fill"></i>
-                                Active
-                            </span>
+                            <span class="company-status company-status-active"><i class="bi bi-circle-fill"></i> Active</span>
                         }
                         else
                         {
-                            <span class="company-status company-status-inactive">
-                                <i class="bi bi-circle-fill"></i>
-                                Inactive
-                            </span>
+                            <span class="company-status company-status-inactive"><i class="bi bi-circle-fill"></i> Inactive</span>
                         }
-
                     </div>
                 </div>
-
             </div>
 
-
-            <!-- DESCRIPTION -->
             <div class="company-detail-item company-description-item">
-
-                <div class="detail-icon">
-                    <i class="bi bi-card-text"></i>
-                </div>
-
-                <div>
-                    <span class="detail-label">
-                        Description
-                    </span>
-
-                    <p class="detail-value detail-description">
-                        @Html.DisplayFor(model => model.Description)
-                    </p>
-                </div>
-
+                <div class="detail-icon"><i class="bi bi-card-text"></i></div>
+                <div><span class="detail-label">Description</span><p class="detail-value detail-description">@Model.Description</p></div>
             </div>
-
         </div>
 
-
-        <!-- BOTTOM ACTIONS -->
         <div class="company-details-footer">
-
-            <a asp-action="Edit"
-               asp-route-id="@Model.CompanyId"
-               class="btn btn-outline-primary">
-
-                <i class="bi bi-pencil me-1"></i>
-                Edit Company
-
-            </a>
-
+            <a asp-action="Edit" asp-route-id="@Model.CompanyId" class="btn btn-outline-primary"><i class="bi bi-pencil me-1"></i> Edit Company</a>
         </div>
-
     </div>
 
+    <div class="company-details-card mt-4">
+        <div class="company-details-card-header">
+            <div class="company-details-icon"><i class="bi bi-credit-card"></i></div>
+            <div>
+                <h4>Subscription</h4>
+                <p>View and manage the company's subscription.</p>
+            </div>
+        </div>
+
+        @if (currentPayment != null)
+        {
+            <div class="company-details-grid">
+                <div class="company-detail-item">
+                    <div class="detail-icon"><i class="bi bi-tags"></i></div>
+                    <div><span class="detail-label">Current Plan</span><p class="detail-value">@currentPayment.SubscriptionPlan.Name</p></div>
+                </div>
+
+                <div class="company-detail-item">
+                    <div class="detail-icon"><i class="bi bi-currency-dollar"></i></div>
+                    <div><span class="detail-label">Monthly Price</span><p class="detail-value">$@currentPayment.MonthlyPrice.ToString("0.00")</p></div>
+                </div>
+
+                <div class="company-detail-item">
+                    <div class="detail-icon"><i class="bi bi-cash-stack"></i></div>
+                    <div><span class="detail-label">Last Payment</span><p class="detail-value">$@currentPayment.AmountPaid.ToString("0.00")</p></div>
+                </div>
+
+                <div class="company-detail-item">
+                    <div class="detail-icon"><i class="bi bi-calendar-month"></i></div>
+                    <div><span class="detail-label">Months Paid</span><p class="detail-value">@currentPayment.MonthsPaid months</p></div>
+                </div>
+
+                <div class="company-detail-item">
+                    <div class="detail-icon"><i class="bi bi-calendar-check"></i></div>
+                    <div><span class="detail-label">Coverage Start</span><p class="detail-value">@currentPayment.CoverageStartDate.ToString("MMM dd, yyyy")</p></div>
+                </div>
+
+                <div class="company-detail-item">
+                    <div class="detail-icon"><i class="bi bi-calendar-x"></i></div>
+                    <div><span class="detail-label">Coverage End</span><p class="detail-value">@currentPayment.CoverageEndDate.ToString("MMM dd, yyyy")</p></div>
+                </div>
+
+                <div class="company-detail-item">
+                    <div class="detail-icon"><i class="bi bi-check-circle"></i></div>
+                    <div>
+                        <span class="detail-label">Subscription Status</span>
+                        <div class="detail-value">
+                            @if (currentPayment.CoverageEndDate >= DateTime.Today)
+                            {
+                                <span class="company-status company-status-active"><i class="bi bi-circle-fill"></i> Active</span>
+                            }
+                            else
+                            {
+                                <span class="company-status company-status-inactive"><i class="bi bi-circle-fill"></i> Expired</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="company-empty-state">
+                <div class="company-empty-icon"><i class="bi bi-credit-card"></i></div>
+                <h5>No Subscription</h5>
+                <p>This company does not have any subscription payments yet.</p>
+            </div>
+        }
+
+        <div class="company-details-footer">
+            <a asp-controller="Payment" asp-action="Create" asp-route-companyId="@Model.CompanyId" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i> Add Payment</a>
+            <a asp-controller="Payment" asp-action="CompanyHistory" asp-route-companyId="@Model.CompanyId" class="btn btn-outline-primary"><i class="bi bi-clock-history me-1"></i>Payment History</a>
+        </div>
+    </div>
 </div>
