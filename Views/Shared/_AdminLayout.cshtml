@@ -49,8 +49,11 @@
                 <p class="sidebar-section-title">MANAGEMENT</p>
 
                 <a asp-controller="Company" asp-action="Index" class="sidebar-link"><i class="bi bi-buildings"></i><span>Companies</span></a>
+
                 <a asp-controller="Manager" asp-action="Index" class="sidebar-link"><i class="bi bi-people"></i><span>Managers</span></a>
+
                 <a asp-controller="Payment" asp-action="Plans" class="sidebar-link"><i class="bi bi-tags"></i><span>Payment Plans</span></a>
+
                 <a asp-controller="Payment" asp-action="Index" class="sidebar-link"><i class="bi bi-credit-card"></i><span>Payments</span></a>
 
                 <p class="sidebar-section-title">ANALYTICS</p>
@@ -63,10 +66,23 @@
             </nav>
 
             <!-- Logout -->
-            <div class="sidebar-footer">
-                <form asp-area="Identity" asp-page="/Account/Logout" method="post">
-                    <button type="submit" class="logout-button"><i class="bi bi-box-arrow-left"></i><span>Logout</span></button>
-                </form>
+           
+
+             <div class="sidebar-footer">
+
+            @{
+                if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                            <button type="submit" class="logout-button"><i class="bi bi-box-arrow-left"></i><span>Logout</span></button>
+                    </form>
+                }
+                else
+                {
+                    <p>You have successfully logged out of the application.</p>
+                }
+            }
+
             </div>
 
         </div>

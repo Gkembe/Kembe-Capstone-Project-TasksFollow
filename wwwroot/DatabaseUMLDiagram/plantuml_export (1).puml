@@ -11,6 +11,7 @@ skinparam shadowing false
 
 class ApplicationUser {
     + Id : string
+    + CompanyId : int?
 }
 
 class Company {
@@ -19,11 +20,13 @@ class Company {
 
 class Employee {
     + EmployeeId : int
+    + CompanyId : int
     + ApplicationUserId : string
 }
 
 class Project {
     + ProjectId : int
+    + CompanyId : int
     + CreatedByUserId : string
 }
 
@@ -53,6 +56,7 @@ class Comment {
 
 class GroupChat {
     + GroupChatId : int
+    + CompanyId : int
     + CreatedByUserId : string
 }
 
@@ -68,6 +72,41 @@ class Message {
     + ParentMessageId : int?
 }
 
+class SubscriptionPlan {
+    + SubscriptionPlanId : int
+    + Name : string
+    + Description : string
+    + MonthlyPrice : decimal?
+    + IsActive : bool
+}
+
+class Payment {
+    + PaymentId : int
+    + CompanyId : int
+    + SubscriptionPlanId : int
+    + AmountPaid : decimal
+    + MonthlyPrice : decimal
+    + MonthsPaid : int
+    + PaymentDate : DateTime
+    + CoverageStartDate : DateTime
+    + CoverageEndDate : DateTime
+}
+
+
+' =====================================================
+' COMPANY / WORKSPACE
+' =====================================================
+
+Company "1" -- "0..*" ApplicationUser : has users
+
+Company "1" -- "0..*" Employee : has employees
+
+Company "1" -- "0..*" Project : has projects
+
+Company "1" -- "0..*" GroupChat : has groups
+
+Company "1" -- "0..*" Payment : makes payments
+
 
 ' =====================================================
 ' APPLICATION USER / EMPLOYEE
@@ -77,15 +116,10 @@ ApplicationUser "1" -- "0..1" Employee : Employee profile
 
 
 ' =====================================================
-' PROJECT CREATOR
+' PROJECT
 ' =====================================================
 
 ApplicationUser "1" -- "0..*" Project : creates
-
-
-' =====================================================
-' PROJECT MEMBERSHIP
-' =====================================================
 
 Project "1" -- "0..*" ProjectMember : has members
 
@@ -140,7 +174,14 @@ Message "0..1" -- "0..*" Message : replies
 
 
 ' =====================================================
-' NOTES FOR UNIQUE CONSTRAINTS
+' SUBSCRIPTION / PAYMENT
+' =====================================================
+
+SubscriptionPlan "1" -- "0..*" Payment : used for
+
+
+' =====================================================
+' UNIQUE CONSTRAINTS
 ' =====================================================
 
 note right of ProjectMember
