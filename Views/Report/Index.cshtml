@@ -15,18 +15,29 @@
     </div>
 
     <div class="company-details-card report-filter-card mb-4">
+
         <div class="company-details-card-header">
+
             <div class="company-details-icon"><i class="bi bi-funnel"></i></div>
+
             <div>
+
                 <h4>Report Filters</h4>
+
                 <p>Filter payments by date, company, or subscription plan.</p>
             </div>
+
+
         </div>
 
         <form asp-action="Index" method="get">
+
             <div class="row g-3">
+
                 <div class="col-md-6 col-lg-3">
+
                     <label asp-for="StartDate" class="form-label">Start Date</label>
+
                     <input asp-for="StartDate" type="date" class="form-control" />
                 </div>
 
@@ -58,42 +69,72 @@
     </div>
 
     <div class="row g-3 mb-4">
+
+
         <div class="col-md-4">
+
             <div class="dashboard-card">
+
+
                 <div class="dashboard-icon"><i class="bi bi-cash-stack"></i></div>
+
                 <div><p>Total Revenue</p><h3>$@Model.TotalRevenue.ToString("0.00")</h3></div>
             </div>
+
+
         </div>
 
         <div class="col-md-4">
+
             <div class="dashboard-card">
+
                 <div class="dashboard-icon"><i class="bi bi-credit-card"></i></div>
+
                 <div><p>Total Payments</p><h3>@Model.TotalPayments</h3></div>
+
             </div>
         </div>
 
         <div class="col-md-4">
+
             <div class="dashboard-card">
+
                 <div class="dashboard-icon"><i class="bi bi-building-check"></i></div>
+
                 <div><p>Companies Paid</p><h3>@Model.CompaniesPaid</h3></div>
+
             </div>
+
         </div>
+
     </div>
 
     <div class="company-table-card">
+
         <div class="company-table-header">
+
             <div>
+
                 <h4><i class="bi bi-bar-chart me-2"></i> Payment & Revenue Report</h4>
                 <p>Payments matching the selected report filters.</p>
+
             </div>
+
+
             <span class="company-count">@Model.TotalPayments Payments</span>
         </div>
 
         @if (Model.Payments.Any())
+
         {
             <div class="table-responsive">
+
                 <table class="table company-table align-middle mb-0">
+
+
                     <thead>
+
+
                         <tr>
                             <th>Company</th>
                             <th>Plan</th>
@@ -105,26 +146,42 @@
                             <th>Coverage End</th>
                             <th>Status</th>
                         </tr>
+
+
+
                     </thead>
 
                     <tbody>
                         @foreach (var payment in Model.Payments)
                         {
                             <tr>
+
                                 <td>
+
                                     <div class="company-table-name">
+
                                         <div class="company-table-icon"><i class="bi bi-building"></i></div>
+
+
                                         <a asp-controller="Company" asp-action="Details" asp-route-id="@payment.CompanyId" class="company-name-link">@payment.Company.Name</a>
                                     </div>
+
                                 </td>
 
                                 <td>@payment.SubscriptionPlan.Name</td>
+
                                 <td><strong>$@payment.AmountPaid.ToString("0.00")</strong></td>
+
                                 <td>$@payment.MonthlyPrice.ToString("0.00")</td>
+
                                 <td>@payment.MonthsPaid</td>
+
                                 <td class="text-nowrap">@payment.PaymentDate.ToString("MMM dd, yyyy")</td>
+
                                 <td class="text-nowrap">@payment.CoverageStartDate.ToString("MMM dd, yyyy")</td>
+
                                 <td class="text-nowrap">@payment.CoverageEndDate.ToString("MMM dd, yyyy")</td>
+
 
                                 <td>
                                     @if (payment.CoverageEndDate >= DateTime.Today)
@@ -142,19 +199,31 @@
 
                     <tfoot>
                         <tr class="report-table-total">
+
                             <td colspan="2"><strong>Total</strong></td>
+
+
                             <td><strong>$@Model.TotalRevenue.ToString("0.00")</strong></td>
+
+
+
                             <td colspan="6"></td>
+
                         </tr>
+
                     </tfoot>
+
                 </table>
             </div>
         }
         else
         {
             <div class="company-empty-state">
+
                 <div class="company-empty-icon"><i class="bi bi-bar-chart"></i></div>
+
                 <h5>No Payments Found</h5>
+
                 <p>No payments match the selected report filters.</p>
             </div>
         }

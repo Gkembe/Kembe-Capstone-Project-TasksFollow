@@ -7,29 +7,26 @@
 
 <div class="container-fluid">
 
-    <!-- HEADER -->
+    <!-- PAGE HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-
         <div>
             <h2 class="mb-1">Manager Details</h2>
-            <p class="text-muted mb-0">
-                View manager and company information.
-            </p>
+            <p class="text-muted mb-0">View manager and company information.</p>
         </div>
 
-        <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back</a>
-
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
     </div>
 
-
     <!-- MANAGER CARD -->
-    <div class="card border-0 shadow-sm">
 
+    <div class="card border-0 shadow-sm">
         <div class="card-body p-4">
 
             <!-- MANAGER NAME -->
-            <div class="d-flex align-items-center mb-4">
 
+            <div class="d-flex align-items-center mb-4">
                 <div class="manager-icon me-3">
                     <i class="bi bi-person"></i>
                 </div>
@@ -48,31 +45,30 @@
 
                     <span class="badge bg-primary">Manager</span>
                 </div>
-
             </div>
 
-
-            <hr />
-
+            <hr class="my-4" />
 
             <!-- PERSONAL INFORMATION -->
-            <h5 class="mb-3">
-                <i class="bi bi-person-vcard me-2"></i>Personal Information</h5>
 
-            <div class="row mb-4">
+            <h5 class="mb-4">
+                <i class="bi bi-person-vcard me-2"></i> Personal Information
+            </h5>
 
-                <div class="col-md-6 mb-3">
-                    <small class="text-muted d-block">First Name</small>
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-6">
+                    <small class="text-muted d-block mb-1">First Name</small>
                     <strong>@Model.FirstName</strong>
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <small class="text-muted d-block">Last Name</small>
+                <div class="col-md-6">
+                    <small class="text-muted d-block mb-1">Last Name</small>
                     <strong>@Model.LastName</strong>
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <small class="text-muted d-block">Middle Name</small>
+                <div class="col-md-6">
+                    <small class="text-muted d-block mb-1">Middle Name</small>
 
                     @if (!string.IsNullOrEmpty(Model.MiddleName))
                     {
@@ -84,13 +80,13 @@
                     }
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <small class="text-muted d-block">Email</small>
+                <div class="col-md-6">
+                    <small class="text-muted d-block mb-1">Email</small>
                     <strong>@Model.Email</strong>
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <small class="text-muted d-block">Phone Number</small>
+                <div class="col-md-6">
+                    <small class="text-muted d-block mb-1">Phone Number</small>
 
                     @if (!string.IsNullOrEmpty(Model.PhoneNumber))
                     {
@@ -100,65 +96,60 @@
                     {
                         <strong>Not provided</strong>
                     }
-
                 </div>
-
             </div>
 
+            <hr class="my-4" />
 
-            <hr />
+            <!-- COMPANY INFORMATION -->
 
+            <h5 class="mb-4">
+                <i class="bi bi-building me-2"></i> Company Information
+            </h5>
 
-            <!-- COMPANY -->
-            <h5 class="mb-3"><i class="bi bi-building me-2"></i>Company Information</h5>
+            <div class="row g-3 mb-4">
 
-            <div class="row">
-
-                <div class="col-md-6 mb-3">
-                    <small class="text-muted d-block">Company Name</small>
+                <div class="col-md-6">
+                    <small class="text-muted d-block mb-1">Company Name</small>
                     <strong>@Model.CompanyName</strong>
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <small class="text-muted d-block">Company Status</small>
+                <div class="col-md-6">
+                    <small class="text-muted d-block mb-1">Company Status</small>
 
                     @if (Model.CompanyIsActive)
                     {
                         <span class="badge bg-success">
-                            <i class="bi bi-check-circle me-1"></i>
-                            Active
+                            <i class="bi bi-check-circle me-1"></i> Active
                         </span>
                     }
                     else
                     {
                         <span class="badge bg-secondary">
-                            <i class="bi bi-slash-circle me-1"></i>
-                            Inactive
+                            <i class="bi bi-slash-circle me-1"></i> Inactive
                         </span>
                     }
-
                 </div>
-
             </div>
 
+            <hr class="my-4" />
 
-            <hr />
+            <!-- ACTION BUTTONS -->
 
+            <div class="d-flex flex-wrap gap-3 mt-4">
 
-            <!-- BUTTONS -->
-            <div class="d-flex gap-2">
-
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="bi bi-pencil me-1"></i>Edit</a>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                    <i class="bi bi-pencil me-1"></i> Edit
+                </a>
 
                 @if (Model.CompanyId != null)
                 {
-                    <a asp-controller="Company" asp-action="Details" asp-route-id="@Model.CompanyId" class="btn btn-outline-secondary"><i class="bi bi-building me-1"></i>View Company</a>
+                    <a asp-controller="Company" asp-action="Details" asp-route-id="@Model.CompanyId" class="btn btn-outline-secondary">
+                        <i class="bi bi-building me-1"></i> View Company
+                    </a>
                 }
 
             </div>
-
         </div>
-
     </div>
-
 </div>

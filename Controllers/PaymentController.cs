@@ -152,12 +152,22 @@ namespace TasksFollow.Controllers
             // Find the company
             var company = await _context.Companies.FindAsync(model.CompanyId);
 
-            if (company == null) { return NotFound(); }
+            if (company == null) 
+            { 
+                
+                return NotFound();
+            }
 
             // Find the selected subscription plan
+
             var plan = await _context.SubscriptionPlans.FindAsync(model.SubscriptionPlanId);
 
-            if (plan == null) { ModelState.AddModelError("SubscriptionPlanId", "Please select a valid subscription plan."); }
+            if (plan == null) 
+            { 
+                
+                ModelState.AddModelError("SubscriptionPlanId", "Please select a valid subscription plan.");
+            
+            }
 
             // Return to the form if validation fails
             if (!ModelState.IsValid)
@@ -170,6 +180,7 @@ namespace TasksFollow.Controllers
 
             // Get the plan price and payment amount
             decimal monthlyPrice = plan!.MonthlyPrice!.Value;
+
             decimal amountPaid = model.AmountPaid!.Value;
 
             // Calculate how many months the payment covers
@@ -179,9 +190,12 @@ namespace TasksFollow.Controllers
             if (monthsPaid < 1)
             {
                 ModelState.AddModelError("AmountPaid", "The payment must cover at least one month.");
+
                 model.CompanyName = company.Name;
+
                 var plans = await _context.SubscriptionPlans.Where(p => p.IsActive).ToListAsync();
                 ViewBag.Plans = new SelectList(plans, "SubscriptionPlanId", "Name");
+
                 return View(model);
             }
 
@@ -189,13 +203,18 @@ namespace TasksFollow.Controllers
             if (amountPaid % monthlyPrice != 0)
             {
                 ModelState.AddModelError("AmountPaid", $"Payment must be a multiple of ${monthlyPrice:0.00}.");
+
                 model.CompanyName = company.Name;
+
                 var plans = await _context.SubscriptionPlans.Where(p => p.IsActive).ToListAsync();
+
                 ViewBag.Plans = new SelectList(plans, "SubscriptionPlanId", "Name");
+
                 return View(model);
             }
 
             // Get the company's latest subscription payment
+
             var lastPayment = await _context.Payments
                 .Where(p => p.CompanyId == company.CompanyId)
                 .OrderByDescending(p => p.CoverageEndDate)
@@ -206,7 +225,11 @@ namespace TasksFollow.Controllers
 
             // If the company still has active coverage, extend from its current end date
             if (lastPayment != null && lastPayment.CoverageEndDate > DateTime.Today)
+            {
                 coverageStartDate = lastPayment.CoverageEndDate;
+
+            }
+                
 
             // Calculate the new subscription end date
             DateTime coverageEndDate = coverageStartDate.AddMonths(monthsPaid);
@@ -260,6 +283,7 @@ namespace TasksFollow.Controllers
                 .ToListAsync();
 
             ViewBag.CompanyId = company.CompanyId;
+
             ViewBag.CompanyName = company.Name;
 
             return View(payments);

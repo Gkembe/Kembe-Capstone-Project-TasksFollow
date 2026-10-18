@@ -1,0 +1,198 @@
+﻿@model TasksFollow.Models.ProjectTask
+
+@{
+    ViewData["Title"] = "Task Assignments";
+    Layout = "_ManagerLayout";
+    var members = ViewBag.Members as List<TasksFollow.Models.ProjectMember> ?? new List<TasksFollow.Models.ProjectMember>();
+    var assignedIds = Model.TaskAssignments.Select(a => a.EmployeeId).ToList();
+}
+
+<div class="manager-index-page">
+
+    <!-- Header -->
+    <div class="manager-page-header">
+        <div>
+            <h2>Task Assignments</h2>
+            <p>@Model.Title — @Model.Project?.Name</p>
+        </div>
+        <a asp-action="Details" asp-route-id="@Model.ProjectTaskId" class="btn btn-outline-light">
+            <i class="bi bi-arrow-left me-1"></i> Back to Task
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <!-- Assign Employee -->
+
+    <div class="manager-form-card mb-4">
+
+        <div class="manager-form-header">
+
+            <div class="manager-form-icon"><i class="bi bi-person-plus"></i></div>
+
+            <div>
+
+                <h4>Assign Employee</h4>
+
+                <p>Select a project member to assign to this task.</p>
+            </div>
+
+        </div>
+
+
+        <form asp-action="AssignEmployee" method="post">
+
+            <input type="hidden" name="taskId" value="@Model.ProjectTaskId" />
+
+
+            <div class="row g-3 align-items-end">
+
+                <div class="col-md-9">
+
+                    <label class="form-label">Select Project Member</label>
+
+                    <select name="employeeId" class="form-select" required>
+
+                        <option value="">Select Project Member</option>
+
+                        @foreach (var member in members)
+
+                        {
+                            if (!assignedIds.Contains(member.EmployeeId))
+                            {
+                                <option value="@member.EmployeeId">
+
+                                    @member.Employee.ApplicationUser.FirstName @member.Employee.ApplicationUser.LastName
+
+                                </option>
+                            }
+                        }
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <button type="submit" class="btn btn-primary w-100">
+
+                        <i class="bi bi-plus-circle me-1"></i> Assign Employee
+
+                    </button>
+                </div>
+            </div>
+
+            <p class="text-muted mt-3 mb-0">
+
+                <i class="bi bi-info-circle me-1"></i>
+
+                Only active employees who belong to this project can be assigned.
+
+            </p>
+        </form>
+    </div>
+
+    <!-- Assigned Employees -->
+
+    <div class="manager-table-card">
+
+        <div class="manager-table-header">
+
+            <div>
+
+                <h4><i class="bi bi-people me-2"></i> Assigned Employees</h4>
+
+                <p>Employees currently assigned to this task.</p>
+
+            </div>
+            <span class="manager-count">@Model.TaskAssignments.Count Employees</span>
+
+        </div>
+
+        @if (Model.TaskAssignments.Any())
+        {
+
+            <div class="table-responsive">
+
+                <table class="table manager-table align-middle mb-0">
+
+                    <thead>
+
+                        <tr>
+                            <th>Employee</th>
+                            <th>Email</th>
+                            <th>Job Title</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var assignment in Model.TaskAssignments)
+                        {
+
+
+                            <tr>
+                                <td>
+                                    <div class="manager-table-name">
+                                        <div class="manager-table-icon"><i class="bi bi-person"></i></div>
+                                        <span class="manager-name-link">
+                                            @assignment.Employee.ApplicationUser.FirstName @assignment.Employee.ApplicationUser.LastName
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <td>@assignment.Employee.ApplicationUser.Email</td>
+
+                                <td>@assignment.Employee.JobTitle</td>
+
+                                <td>
+                                    <form asp-action="RemoveAssignment" method="post" onsubmit="return confirm('Remove this task assignment?');">
+
+
+                                        <input type="hidden" name="id" value="@assignment.TaskAssignmentId" />
+
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+
+                                            <i class="bi bi-person-dash me-1"></i> Remove
+
+                                        </button>
+
+
+                                    </form>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="manager-empty-state">
+
+                <div class="manager-empty-icon"><i class="bi bi-people"></i></div>
+
+                <h5>No Assigned Employees</h5>
+
+                <p>No employees have been assigned to this task yet.</p>
+            </div>
+        }
+    </div>
+
+</div>

@@ -1,0 +1,113 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TasksFollow</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/manager.css" asp-append-version="true" />
+</head>
+<body>
+
+    <!-- Mobile Navbar -->
+    <nav class="navbar manager-mobile-navbar d-lg-none">
+
+        <div class="container-fluid">
+
+            <button class="btn manager-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#managerSidebar"><i class="bi bi-list"></i></button>
+
+
+            <a asp-controller="ManagerDashboard" asp-action="Index" class="navbar-brand text-white fw-bold">TasksFollow</a>
+
+            <i class="bi bi-person-circle text-white fs-4"></i>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="offcanvas-lg offcanvas-start manager-sidebar" tabindex="-1" id="managerSidebar" aria-labelledby="managerSidebarLabel">
+
+        <div class="offcanvas-header manager-sidebar-header">
+
+            <a asp-controller="ManagerDashboard" asp-action="Index" class="manager-logo" id="managerSidebarLabel"><i class="bi bi-check2-square"></i><span>TasksFollow</span></a>
+
+            <button type="button" class="btn-close btn-close-white d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#managerSidebar" aria-label="Close"></button>
+        </div>
+
+        <div class="offcanvas-body manager-sidebar-body">
+
+            <!-- Profile -->
+            <div class="manager-profile">
+
+                <div class="manager-avatar"><i class="bi bi-person-badge"></i></div>
+                <div>
+                    <h6 class="mb-0">Manager</h6>
+
+                    <small>Company Workspace</small>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="manager-nav">
+
+                <p class="manager-section-title">MAIN</p>
+
+                <a asp-controller="ManagerDashboard" asp-action="Index" class="manager-link"><i class="bi bi-grid"></i><span>Dashboard</span></a>
+
+                <p class="manager-section-title">MANAGEMENT</p>
+
+                <a asp-controller="ManagerEmployee" asp-action="Index" class="manager-link"><i class="bi bi-people"></i><span>Employees</span></a>
+
+                <a asp-controller="ManagerProject" asp-action="Index" class="manager-link"><i class="bi bi-folder"></i><span>Projects</span></a>
+
+                <a asp-controller="ManagerTask" asp-action="Index" class="manager-link"><i class="bi bi-list-task"></i><span>Tasks</span></a>
+
+
+                <p class="manager-section-title">COMMUNICATION</p>
+
+                <a asp-controller="Message" asp-action="Index" class="manager-link"><i class="bi bi-chat-dots"></i><span>Messages</span></a>
+
+                <a asp-controller="GroupChat" asp-action="Index" class="manager-link"><i class="bi bi-people-fill"></i><span>Group Chats</span></a>
+
+                <p class="manager-section-title">ANALYTICS</p>
+
+                <a asp-controller="ManagerReport" asp-action="Index" class="manager-link"><i class="bi bi-bar-chart"></i><span>Reports</span></a>
+
+                <p class="manager-section-title">SYSTEM</p>
+
+                <a asp-controller="ManagerSettings" asp-action="Index" class="manager-link"><i class="bi bi-gear"></i><span>Settings</span></a>
+            </nav>
+
+         
+            <!-- Logout -->
+            <!-- Logout -->
+                <div class="manager-sidebar-footer">
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post">
+
+                            <button type="submit" class="manager-logout">
+
+                                <i class="bi bi-box-arrow-left"></i>
+
+                                <span>Logout</span>
+                            </button>
+                        </form>
+                    }
+                </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="manager-main">
+        <div class="manager-content">
+            @RenderBody()
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

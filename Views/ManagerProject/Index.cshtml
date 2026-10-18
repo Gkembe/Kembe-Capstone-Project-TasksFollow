@@ -1,0 +1,160 @@
+﻿@model IEnumerable<TasksFollow.Models.Project>
+
+@{
+    ViewData["Title"] = "Projects";
+    Layout = "_ManagerLayout";
+}
+
+<div class="manager-index-page">
+
+    <!-- Header -->
+    <div class="manager-page-header">
+        <div>
+            <h2>Projects</h2>
+
+
+            <p>Manage projects in your company's workspace.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary"><i class="bi bi-folder-plus me-1"></i> Create Project</a>
+    </div>
+
+   
+
+    <!-- Search and Filters -->
+    <div class="manager-filter-card mb-4">
+
+
+        <div class="manager-filter-header">
+
+
+            <h5><i class="bi bi-funnel me-2"></i>Search & Filters</h5>
+            <p>Find projects by name, description, status, or date.</p>
+        </div>
+
+        <form asp-action="Index" method="get">
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+
+                    <label class="form-label">Search Project</label>
+
+                    <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Search name or description..." />
+                </div>
+                <div class="col-md-2">
+
+                    <label class="form-label">Status</label>
+
+                    <select name="status" class="form-select">
+
+                        <option value="">All Statuses</option>
+                        <option value="" selected="@(ViewBag.Status == "")">All Statuses</option>
+                        <option value="Not Started" selected="@(ViewBag.Status == "Not Started")">Not Started</option>
+                        <option value="In Progress" selected="@(ViewBag.Status == "In Progress")">In Progress</option>
+                        <option value="Completed" selected="@(ViewBag.Status == "Completed")">Completed</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+
+                    <label class="form-label">Start From</label>
+                    <input type="date" name="startDate" value="@(ViewBag.StartDate?.ToString("yyyy-MM-dd"))" class="form-control" />
+                </div>
+                <div class="col-md-2">
+
+                    <label class="form-label">Due Before</label>
+                    <input type="date" name="dueDate" value="@(ViewBag.DueDate?.ToString("yyyy-MM-dd"))" class="form-control" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end gap-2">
+
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Search</button>
+
+                    <a asp-action="Index" class="btn btn-outline-secondary" title="Clear Filters"><i class="bi bi-arrow-clockwise"></i></a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Project Table -->
+    <div class="manager-table-card">
+        <div class="manager-table-header">
+            <div>
+                <h4><i class="bi bi-folder me-2"></i> Projects List</h4>
+
+                <p>View and manage projects in your workspace.</p>
+            </div>
+            <span class="manager-count">@Model.Count() Projects</span>
+        </div>
+
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+
+                <table class="table manager-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Project</th>
+                            <th>Start Date</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Created By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var project in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="manager-table-name">
+
+                                        <div class="manager-table-icon"><i class="bi bi-folder"></i></div>
+
+                                        <a asp-action="Details" asp-route-id="@project.ProjectId" class="manager-name-link">@project.Name</a>
+                                    </div>
+                                </td>
+                                <td class="text-nowrap">@project.StartDate?.ToString("MMM dd, yyyy")</td>
+
+                                <td class="text-nowrap">@project.DueDate?.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    @if (project.Status == "Completed")
+                                    {
+                                        <span class="manager-status manager-status-active"><i class="bi bi-circle-fill" style="color:green; font-size:20px"></i> Completed</span>
+                                    }
+                                    else if (project.Status == "In Progress")
+                                    {
+                                        <span class="manager-status manager-status-progress"><i class="bi bi-circle-fill" style="color:yellow; font-size:15px"></i> In Progress</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="manager-status manager-status-pending"><i class="bi bi-circle-fill" style="color:blue"></i> @project.Status</span>
+                                    }
+                                </td>
+                                <td>@project.CreatedByUser.FirstName @project.CreatedByUser.LastName</td>
+                                <td>
+                                    <div class="manager-table-actions">
+
+                                        <a asp-action="Details" asp-route-id="@project.ProjectId" class="manager-action-btn" title="Details"><i class="bi bi-eye"></i></a>
+
+                                        <a asp-action="Edit" asp-route-id="@project.ProjectId" class="manager-action-btn" title="Edit"><i class="bi bi-pencil"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="manager-empty-state">
+
+                <div class="manager-empty-icon"><i class="bi bi-folder-x"></i></div>
+
+
+                <h5>No Projects Found</h5>
+                <p>No projects match your search or filters.</p>
+                <a asp-action="Index" class="btn btn-outline-primary mt-3"><i class="bi bi-arrow-clockwise me-1"></i> Clear Filters</a>
+            </div>
+        }
+    </div>
+</div>

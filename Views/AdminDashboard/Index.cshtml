@@ -6,112 +6,364 @@
 }
 
 <div class="admin-dashboard">
+
+    <!-- HEADER -->
     <div class="dashboard-header">
         <h1>Admin Dashboard</h1>
         <p>Overview of TasksFollow.</p>
     </div>
 
+    <!-- DASHBOARD STATISTICS -->
+
     <div class="row g-3">
-        <div class="col-md-6 col-lg-3"><div class="dashboard-card"><div class="dashboard-icon"><i class="bi bi-building"></i></div><div><p>Total Companies</p><h3>@Model.TotalCompanies</h3></div></div></div>
 
-        <div class="col-md-6 col-lg-3"><div class="dashboard-card"><div class="dashboard-icon"><i class="bi bi-building-check"></i></div><div><p>Active Companies</p><h3>@Model.ActiveCompanies</h3></div></div></div>
+        <div class="col-md-6 col-lg-3">
 
-        <div class="col-md-6 col-lg-3"><div class="dashboard-card"><div class="dashboard-icon"><i class="bi bi-people"></i></div><div><p>Total Managers</p><h3>@Model.TotalManagers</h3></div></div></div>
+            <div class="dashboard-card">
 
-        <div class="col-md-6 col-lg-3"><div class="dashboard-card"><div class="dashboard-icon"><i class="bi bi-person-check"></i></div><div><p>Active Managers</p><h3>@Model.ActiveManagers</h3></div></div></div>
+                <div class="dashboard-icon">
 
-    </div>
+                    <i class="bi bi-building"></i>
+                </div>
+                <div>
+                    <p>Total Companies</p>
 
-    <div class="row g-3 mt-1">
-        <div class="col-md-6 col-lg-3"><div class="dashboard-card"><div class="dashboard-icon"><i class="bi bi-cash-stack"></i></div><div><p>Total Revenue</p><h3>$@Model.TotalRevenue.ToString("0.00")</h3></div></div></div>
-
-        <div class="col-md-6 col-lg-3"><div class="dashboard-card"><div class="dashboard-icon"><i class="bi bi-calendar-check"></i></div><div><p>This Month</p><h3>$@Model.MonthlyRevenue.ToString("0.00")</h3></div></div></div>
-
-        <div class="col-md-6 col-lg-3"><div class="dashboard-card"><div class="dashboard-icon"><i class="bi bi-check-circle"></i></div><div><p>Active Subscriptions</p><h3>@Model.ActiveSubscriptions</h3></div></div></div>
-
-        <div class="col-md-6 col-lg-3"><div class="dashboard-card"><div class="dashboard-icon"><i class="bi bi-exclamation-circle"></i></div><div><p>Expired Subscriptions</p><h3>@Model.ExpiredSubscriptions</h3></div></div></div>
-    </div>
-
-    <div class="row g-3 mt-1">
-        <div class="col-md-6">
-            <div class="dashboard-info-card">
-                <h5><i class="bi bi-building me-2"></i> Companies</h5>
-                <div class="dashboard-stat"><span>Active</span><strong>@Model.ActiveCompanies</strong></div>
-
-                <div class="dashboard-stat"><span>Inactive</span><strong>@Model.InactiveCompanies</strong></div>
-
-                <div class="dashboard-stat"><span>No Subscription</span><strong>@Model.CompaniesWithoutSubscription</strong></div>
-
-                <a asp-controller="Company" asp-action="Index" class="btn btn-sm btn-outline-primary mt-3">View Companies</a>
+                    <h3>@Model.TotalCompanies</h3>
+                </div>
             </div>
         </div>
 
+        <div class="col-md-6 col-lg-3">
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-icon">
+
+                    <i class="bi bi-building-check"></i>
+                </div>
+
+                <div>
+
+                    <p>Active Companies</p>
+                    <h3>@Model.ActiveCompanies</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-icon">
+
+                    <i class="bi bi-people"></i>
+
+                </div>
+
+                <div>
+                    <p>Total Managers</p>
+
+                    <h3>@Model.TotalManagers</h3>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-icon">
+
+                    <i class="bi bi-person-check"></i>
+
+                </div>
+
+                <div>
+                    <p>Active Managers</p>
+                    <h3>@Model.ActiveManagers</h3>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- REVENUE AND SUBSCRIPTIONS -->
+
+
+    <div class="row g-3 mt-1">
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-icon">
+
+                    <i class="bi bi-cash-stack"></i>
+
+                </div>
+
+                <div>
+
+                    <p>Total Revenue</p>
+
+                    <h3>$@Model.TotalRevenue.ToString("0.00")</h3>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-icon">
+
+                    <i class="bi bi-calendar-check"></i>
+
+                </div>
+
+                <div>
+                    <p>This Month</p>
+                    <h3>$@Model.MonthlyRevenue.ToString("0.00")</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-icon">
+
+                    <i class="bi bi-check-circle"></i>
+
+                </div>
+                <div>
+                    <p>Active Subscriptions</p>
+
+                    <h3>@Model.ActiveSubscriptions</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-icon">
+
+                    <i class="bi bi-exclamation-circle"></i>
+
+                </div>
+
+                <div>
+                    <p>Expired Subscriptions</p>
+
+                    <h3>@Model.ExpiredSubscriptions</h3>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MANAGEMENT SUMMARY -->
+
+    <div class="row g-3 mt-1">
+
+
+        <!-- COMPANIES -->
+
         <div class="col-md-6">
+
             <div class="dashboard-info-card">
+
+                <h5><i class="bi bi-building me-2"></i> Companies</h5>
+
+
+                <div class="dashboard-stat">
+
+                    <span>Active</span>
+
+                    <strong>@Model.ActiveCompanies</strong>
+
+                </div>
+                <div class="dashboard-stat">
+
+                    <span>Inactive</span>
+
+                    <strong>@Model.InactiveCompanies</strong>
+
+                </div>
+
+                <div class="dashboard-stat">
+
+                    <span>No Subscription</span>
+
+                    <strong>@Model.CompaniesWithoutSubscription</strong>
+
+                </div>
+
+                <a asp-controller="Company" asp-action="Index" class="btn btn-sm btn-outline-primary mt-3">
+                    View Companies
+                </a>
+            </div>
+
+        </div>
+
+        <!-- MANAGERS -->
+
+
+        <div class="col-md-6">
+
+            <div class="dashboard-info-card">
+
                 <h5><i class="bi bi-people me-2"></i> Managers</h5>
 
-                <div class="dashboard-stat"><span>Active</span><strong>@Model.ActiveManagers</strong></div>
 
-                <div class="dashboard-stat"><span>Inactive</span><strong>@Model.InactiveManagers</strong></div>
+                <div class="dashboard-stat">
+                    <span>Active</span>
 
-                <a asp-controller="Manager" asp-action="Index" class="btn btn-sm btn-outline-primary mt-3">View Managers</a>
+                    <strong>@Model.ActiveManagers</strong>
+                </div>
+                <div class="dashboard-stat">
+
+                    <span>Inactive</span>
+
+                    <strong>@Model.InactiveManagers</strong>
+                </div>
+
+                <a asp-controller="Manager" asp-action="Index" class="btn btn-sm btn-outline-primary mt-3">
+                    View Managers
+                </a>
+
+
             </div>
+
         </div>
 
+        <!-- SUBSCRIPTIONS -->
+
         <div class="col-md-6">
+
             <div class="dashboard-info-card">
+
                 <h5><i class="bi bi-credit-card me-2"></i> Subscriptions</h5>
 
-                <div class="dashboard-stat"><span>Active</span><strong>@Model.ActiveSubscriptions</strong></div>
 
-                <div class="dashboard-stat"><span>Expired</span><strong>@Model.ExpiredSubscriptions</strong></div>
+                <div class="dashboard-stat">
 
-                <div class="dashboard-stat"><span>No Subscription</span><strong>@Model.CompaniesWithoutSubscription</strong></div>
+                    <span>Active</span>
 
-                <a asp-controller="Payment" asp-action="Plans" class="btn btn-sm btn-outline-primary mt-3">Manage Plans</a>
+                    <strong>@Model.ActiveSubscriptions</strong>
+
+                </div>
+                <div class="dashboard-stat">
+
+                    <span>Expired</span>
+
+                    <strong>@Model.ExpiredSubscriptions</strong>
+
+                </div>
+                <div class="dashboard-stat">
+
+                    <span>No Subscription</span>
+
+                    <strong>@Model.CompaniesWithoutSubscription</strong>
+
+                </div>
+
+                <a asp-controller="Payment" asp-action="Plans" class="btn btn-sm btn-outline-primary mt-3">
+
+                    Manage Plans
+                </a>
             </div>
         </div>
+
+        <!-- PAYMENTS -->
 
         <div class="col-md-6">
+
             <div class="dashboard-info-card">
+
                 <h5><i class="bi bi-cash-stack me-2"></i> Payments</h5>
 
-                <div class="dashboard-stat"><span>Total Revenue</span><strong>$@Model.TotalRevenue.ToString("0.00")</strong></div>
 
-                <div class="dashboard-stat"><span>This Month</span><strong>$@Model.MonthlyRevenue.ToString("0.00")</strong></div>
+                <div class="dashboard-stat">
 
-                <div class="dashboard-stat"><span>Payments This Month</span><strong>@Model.PaymentsThisMonth</strong></div>
+                    <span>Total Revenue</span>
 
-                <a asp-controller="Payment" asp-action="Index" class="btn btn-sm btn-outline-primary mt-3">View Payments</a>
+                    <strong>$@Model.TotalRevenue.ToString("0.00")</strong>
+
+                </div>
+
+                <div class="dashboard-stat">
+
+                    <span>This Month</span>
+                    <strong>$@Model.MonthlyRevenue.ToString("0.00")</strong>
+                </div>
+
+
+                <div class="dashboard-stat">
+                    <span>Payments This Month</span>
+                    <strong>@Model.PaymentsThisMonth</strong>
+                </div>
+
+                <a asp-controller="Payment" asp-action="Index" class="btn btn-sm btn-outline-primary mt-3">
+                    View Payments
+                </a>
             </div>
+
         </div>
+
     </div>
 
+    <!-- RECENT PAYMENTS -->
+
     <div class="dashboard-info-card mt-4">
+
         <div class="dashboard-section-header">
+
             <h5><i class="bi bi-clock-history me-2"></i> Recent Payments</h5>
-            <a asp-controller="Payment" asp-action="Index" class="btn btn-sm btn-outline-primary">View All</a>
+
+            <a asp-controller="Payment" asp-action="Index" class="btn btn-sm btn-outline-primary">
+                View All
+            </a>
         </div>
 
         @if (Model.RecentPayments.Any())
         {
             <div class="table-responsive">
+
                 <table class="table company-table align-middle mb-0">
-                    <thead><tr><th>Company</th><th>Plan</th><th>Amount</th><th>Months</th><th>Payment Date</th><th>Coverage End</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Plan</th>
+                            <th>Amount</th>
+                            <th>Months</th>
+                            <th>Payment Date</th>
+                            <th>Coverage End</th>
+                        </tr>
+
+                    </thead>
+
                     <tbody>
+
                         @foreach (var payment in Model.RecentPayments)
                         {
                             <tr>
                                 <td>@payment.Company.Name</td>
-
                                 <td>@payment.SubscriptionPlan.Name</td>
-
                                 <td><strong>$@payment.AmountPaid.ToString("0.00")</strong></td>
-
                                 <td>@payment.MonthsPaid</td>
-
                                 <td class="text-nowrap">@payment.PaymentDate.ToString("MMM dd, yyyy")</td>
-
                                 <td class="text-nowrap">@payment.CoverageEndDate.ToString("MMM dd, yyyy")</td>
                             </tr>
                         }
@@ -125,14 +377,25 @@
         }
     </div>
 
+    <!-- SUBSCRIPTIONS EXPIRING SOON -->
+
     <div class="dashboard-info-card mt-4">
+
         <h5><i class="bi bi-calendar-x me-2"></i> Subscriptions Expiring Soon</h5>
 
         @if (Model.ExpiringSubscriptions.Any())
         {
             <div class="table-responsive mt-3">
                 <table class="table company-table align-middle mb-0">
-                    <thead><tr><th>Company</th><th>Plan</th><th>Coverage End</th><th>Days Remaining</th><th></th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Plan</th>
+                            <th>Coverage End</th>
+                            <th>Days Remaining</th>
+                            <th></th>
+                        </tr>
+                    </thead>
                     <tbody>
                         @foreach (var payment in Model.ExpiringSubscriptions)
                         {
@@ -144,14 +407,22 @@
                                 <td>@payment.SubscriptionPlan.Name</td>
 
                                 <td class="text-nowrap">@payment.CoverageEndDate.ToString("MMM dd, yyyy")</td>
-
                                 <td><span class="dashboard-warning">@daysRemaining days</span></td>
 
-                                <td class="text-end"><a asp-controller="Company" asp-action="Details" asp-route-id="@payment.CompanyId" class="btn btn-sm btn-outline-primary">View</a></td>
+                                <td class="text-end">
+
+
+                                    <a asp-controller="Company" asp-action="Details" asp-route-id="@payment.CompanyId" class="btn btn-sm btn-outline-primary">
+                                        View
+                                    </a>
+                                </td>
+
                             </tr>
                         }
                     </tbody>
+
                 </table>
+
             </div>
         }
         else
@@ -160,16 +431,36 @@
         }
     </div>
 
+    <!-- QUICK ACTIONS -->
     <div class="dashboard-info-card mt-4">
+
         <h5><i class="bi bi-lightning me-2"></i> Quick Actions</h5>
+
+
         <div class="dashboard-quick-actions">
-            <a asp-controller="Company" asp-action="Create" class="btn btn-primary"><i class="bi bi-building-add me-1"></i> Add Company</a>
 
-            <a asp-controller="Manager" asp-action="Index" class="btn btn-outline-primary"><i class="bi bi-people me-1"></i> Managers</a>
+            <a asp-controller="Company" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-building-add me-1"></i> Add Company
+            </a>
 
-            <a asp-controller="Payment" asp-action="Index" class="btn btn-outline-primary"><i class="bi bi-credit-card me-1"></i> Payments</a>
 
-            <a asp-controller="Payment" asp-action="Plans" class="btn btn-outline-primary"><i class="bi bi-tags me-1"></i> Manage Plans</a>
+            <a asp-controller="Manager" asp-action="Index" class="btn btn-outline-primary">
+                <i class="bi bi-people me-1"></i> Managers
+            </a>
+
+
+            <a asp-controller="Payment" asp-action="Index" class="btn btn-outline-primary">
+                <i class="bi bi-credit-card me-1"></i> Payments
+            </a>
+
+            <a asp-controller="Payment" asp-action="Plans" class="btn btn-outline-primary">
+                <i class="bi bi-tags me-1"></i> Manage Plans
+            </a>
+
+
         </div>
+
+
     </div>
+
 </div>

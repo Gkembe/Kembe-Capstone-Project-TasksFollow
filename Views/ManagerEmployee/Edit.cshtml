@@ -1,0 +1,103 @@
+﻿@model TasksFollow.Models.EditEmployeeViewModel
+
+@{
+    ViewData["Title"] = "Edit Employee";
+    Layout = "_ManagerLayout";
+}
+
+<div class="manager-index-page">
+
+    <div class="manager-page-header">
+        <div>
+            <h2>Edit Employee</h2>
+            <p>Update employee information.</p>
+        </div>
+        <a asp-action="Details" asp-route-id="@Model.EmployeeId" class="btn btn-outline-light"><i class="bi bi-arrow-left me-1"></i> Back</a>
+    </div>
+
+    <div class="manager-form-card">
+
+        <div class="manager-form-header">
+
+            <div class="manager-form-icon"><i class="bi bi-pencil-square"></i></div>
+
+
+            <div>
+
+                <h4>Edit Employee Information</h4>
+                <p>Update the employee's personal and employment details.</p>
+            </div>
+        </div>
+
+        <form asp-action="Edit" method="post">
+
+
+            <input asp-for="EmployeeId" type="hidden" />
+
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <!-- Personal Information -->
+
+
+            <h5 class="manager-form-section"><i class="bi bi-person me-2"></i>Personal Information</h5>
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-4">
+
+                    <label asp-for="FirstName" class="form-label"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="col-md-4">
+
+                    <label asp-for="MiddleName" class="form-label"></label>
+                    <input asp-for="MiddleName" class="form-control" />
+                    <span asp-validation-for="MiddleName" class="text-danger"></span>
+                </div>
+                <div class="col-md-4">
+
+
+                    <label asp-for="LastName" class="form-label"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Employment Information -->
+
+
+            <h5 class="manager-form-section"><i class="bi bi-briefcase me-2"></i>Employment Information</h5>
+
+            <div class="row g-3 mb-4">
+
+
+                <div class="col-md-6">
+
+                    <label asp-for="JobTitle" class="form-label"></label>
+                    <input asp-for="JobTitle" class="form-control" />
+                    <span asp-validation-for="JobTitle" class="text-danger"></span>
+                </div>
+
+
+                <div class="col-md-6">
+                    <label asp-for="Department" class="form-label"></label>
+                    <input asp-for="Department" class="form-control" />
+                    <span asp-validation-for="Department" class="text-danger"></span>
+                </div>
+
+
+            </div>
+
+            <div class="manager-form-actions">
+                <a asp-action="Details" asp-route-id="@Model.EmployeeId" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i> Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

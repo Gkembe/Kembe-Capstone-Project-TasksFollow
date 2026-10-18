@@ -1,0 +1,207 @@
+﻿@model IEnumerable<TasksFollow.Models.ProjectTask>
+
+@{
+    ViewData["Title"] = "Tasks";
+    Layout = "_ManagerLayout";
+    var projects = ViewBag.Projects as List<TasksFollow.Models.Project> ?? new List<TasksFollow.Models.Project>();
+}
+
+<div class="manager-index-page">
+
+    <!-- Header -->
+    <div class="manager-page-header">
+        <div>
+            <h2>Tasks</h2>
+            <p>Manage and track your company's tasks.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i> Create Task</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    <!-- Search and Filters -->
+    <div class="manager-filter-card mb-4">
+
+        <div class="manager-filter-header">
+
+            <h5><i class="bi bi-funnel me-2"></i>Search & Filters</h5>
+            <p>Find tasks by project, status, priority, or due date.</p>
+        </div>
+
+        <form asp-action="Index" method="get">
+
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Search Task</label>
+                    <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Task title or description..." />
+                </div>
+
+                <div class="col-md-3">
+
+                    <label class="form-label">Project</label>
+                    <select name="projectId" class="form-select">
+                        <option value="">All Projects</option>
+                        @foreach (var project in projects)
+                        {
+                            <option value="@project.ProjectId" selected="@(ViewBag.ProjectId == project.ProjectId)">@project.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Status</label>
+
+
+                    <select name="status" class="form-select">
+                        <option value="" selected="@(ViewBag.Status == "")">All Statuses</option>
+                        <option value="Not Started" selected="@(ViewBag.Status == "Not Started")">Not Started</option>
+                        <option value="In Progress" selected="@(ViewBag.Status == "In Progress")">In Progress</option>
+                        <option value="Completed" selected="@(ViewBag.Status == "Completed")">Completed</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Priority</label>
+
+                    <select name="priority" class="form-select">
+
+                        <option value="">All Priorities</option>
+
+                        <option value="Low" selected="@(ViewBag.Priority == "Low")">Low</option>
+
+                        <option value="Medium" selected="@(ViewBag.Priority == "Medium")">Medium</option>
+
+                        <option value="High" selected="@(ViewBag.Priority == "High")">High</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+
+                    <label class="form-label">Due Before</label>
+
+                    <input type="date" name="dueDate" value="@(ViewBag.DueDate?.ToString("yyyy-MM-dd"))" class="form-control" />
+                </div>
+
+                <div class="col-12 d-flex gap-2">
+
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-search me-1"></i> Search</button>
+
+                    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-clockwise me-1"></i> Reset</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Task Table -->
+    <div class="manager-table-card">
+
+        <div class="manager-table-header">
+            <div>
+                <h4><i class="bi bi-list-task me-2"></i> Task List</h4>
+
+                <p>View and manage tasks across your projects.</p>
+            </div>
+            <span class="manager-count">@Model.Count() Tasks</span>
+        </div>
+
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table manager-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Task</th>
+                            <th>Project</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Progress</th>
+                            <th>Due Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var task in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="manager-table-name">
+
+                                        <div class="manager-table-icon"><i class="bi bi-list-check"></i></div>
+
+                                        <a asp-action="Details" asp-route-id="@task.ProjectTaskId" class="manager-name-link">@task.Title</a>
+                                    </div>
+                                </td>
+
+                                <td>@task.Project?.Name</td>
+
+                                <td>
+                                    @if (task.Priority == "High")
+                                    {
+                                        <span class="manager-priority manager-priority-high"><i class="bi bi-flag-fill me-1"></i> High</span>
+                                    }
+                                    else if (task.Priority == "Medium")
+                                    {
+                                        <span class="manager-priority manager-priority-medium"><i class="bi bi-flag-fill me-1"></i> Medium</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="manager-priority manager-priority-low"><i class="bi bi-flag-fill me-1"></i> @task.Priority</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (task.Status == "Completed")
+                                    {
+                                        <span class="manager-status manager-status-active"><i class="bi bi-circle-fill" style="color:green; font-size:20px"></i> Completed</span>
+                                    }
+                                    else if (task.Status == "In Progress")
+                                    {
+                                        <span class="manager-status manager-status-progress"><i class="bi bi-circle-fill" style="color:yellow; font-size:15px"></i> In Progress</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="manager-status manager-status-pending"><i class="bi bi-circle-fill" style="color:blue"></i> @task.Status</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <div class="manager-task-progress">
+
+                                        <div class="progress">
+
+                                            <div class="progress-bar" role="progressbar" style="width:@(Math.Clamp(task.Percent, 0, 100))%" aria-valuenow="@task.Percent" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <span>@task.Percent%</span>
+                                    </div>
+                                </td>
+
+                                <td class="text-nowrap">@task.DueDate?.ToString("MMM dd, yyyy")</td>
+
+                                <td>
+                                    <div class="manager-table-actions">
+
+                                        <a asp-action="Details" asp-route-id="@task.ProjectTaskId" class="manager-action-btn" title="Details"><i class="bi bi-eye"></i></a>
+
+                                        <a asp-action="Edit" asp-route-id="@task.ProjectTaskId" class="manager-action-btn" title="Edit"><i class="bi bi-pencil"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="manager-empty-state">
+                <div class="manager-empty-icon"><i class="bi bi-list-task"></i></div>
+                <h5>No Tasks Found</h5>
+                <p>No tasks match your search or filters.</p>
+                <a asp-action="Index" class="btn btn-outline-primary mt-3"><i class="bi bi-arrow-clockwise me-1"></i> Clear Filters</a>
+            </div>
+        }
+    </div>
+</div>

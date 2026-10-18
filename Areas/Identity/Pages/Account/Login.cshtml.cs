@@ -123,6 +123,11 @@ public class LoginModel : PageModel
                 {
                     return RedirectToAction("Index", "AdminDashboard");
                 }
+
+                if (user != null && await _userManager.IsInRoleAsync(user, "Manager"))
+                {
+                    return RedirectToAction("Index", "ManagerDashboard");
+                }
                 _logger.LogInformation("User logged in.");
                 return LocalRedirect(returnUrl);
             }

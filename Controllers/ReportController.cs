@@ -28,27 +28,40 @@ namespace TasksFollow.Controllers
 
             // Filter by start date
             if (startDate.HasValue)
+            {
+
                 query = query.Where(p => p.PaymentDate >= startDate.Value);
+            }
+                
 
             // Filter by end date
             if (endDate.HasValue)
             {
                 DateTime nextDay = endDate.Value.AddDays(1);
+
                 query = query.Where(p => p.PaymentDate < nextDay);
             }
 
             // Filter by company
             if (companyId.HasValue)
+            {
+
                 query = query.Where(p => p.CompanyId == companyId.Value);
+
+            }
+                
 
             // Filter by subscription plan
             if (subscriptionPlanId.HasValue)
+            {
+
                 query = query.Where(p => p.SubscriptionPlanId == subscriptionPlanId.Value);
 
+            }
+                
+
             // Get payments
-            var payments = await query
-                .OrderByDescending(p => p.PaymentDate)
-                .ToListAsync();
+            var payments = await query.OrderByDescending(p => p.PaymentDate).ToListAsync();
 
             // Create report
             var model = new ReportViewModel
@@ -64,11 +77,10 @@ namespace TasksFollow.Controllers
             };
 
             // Dropdowns
-            ViewBag.Companies = new SelectList(
-                await _context.Companies.OrderBy(c => c.Name).ToListAsync(), "CompanyId", "Name", companyId);
 
-            ViewBag.Plans = new SelectList(
-                await _context.SubscriptionPlans.OrderBy(p => p.Name).ToListAsync(), "SubscriptionPlanId", "Name", subscriptionPlanId);
+            ViewBag.Companies = new SelectList( await _context.Companies.OrderBy(c => c.Name).ToListAsync(), "CompanyId", "Name", companyId);
+
+            ViewBag.Plans = new SelectList( await _context.SubscriptionPlans.OrderBy(p => p.Name).ToListAsync(), "SubscriptionPlanId", "Name", subscriptionPlanId);
 
             return View(model);
         }

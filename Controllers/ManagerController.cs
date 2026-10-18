@@ -69,9 +69,9 @@ namespace TasksFollow.Controllers
             return View(managerList);
         }
 
-        public async Task<IActionResult> Create(int Id)
+        public async Task<IActionResult> Create(int companyId)
         {
-            var company = await _context.Companies.FindAsync(Id);
+            var company = await _context.Companies.FindAsync(companyId);
 
             if (company == null)
             {
@@ -85,6 +85,7 @@ namespace TasksFollow.Controllers
             };
 
             ViewBag.CompanyName = company.Name;
+
             return View(model);
         }
 
@@ -103,6 +104,7 @@ namespace TasksFollow.Controllers
             if (!ModelState.IsValid)
             {
                 ViewBag.CompanyName = company.Name;
+
                 return View(model);
             }
 
@@ -120,6 +122,7 @@ namespace TasksFollow.Controllers
             var manager = new ApplicationUser
             {
                 FirstName = model.FirstName,
+
                 MiddleName = model.MiddleName,
                 LastName = model.LastName,
 
@@ -158,8 +161,7 @@ namespace TasksFollow.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null)
             {
@@ -184,9 +186,7 @@ namespace TasksFollow.Controllers
                 CompanyId = user.CompanyID
             };
 
-            var companies = await _context.Companies
-                .Where(c => c.IsActive)
-                .ToListAsync();
+            var companies = await _context.Companies.Where(c => c.IsActive).ToListAsync();
 
             foreach (var company in companies)
             {
@@ -206,15 +206,14 @@ namespace TasksFollow.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var companies = await _context.Companies
-                    .Where(c => c.IsActive)
-                    .ToListAsync();
+                var companies = await _context.Companies.Where(c => c.IsActive).ToListAsync();
 
                 foreach (var company in companies)
                 {
                     manager.Companies.Add(new SelectListItem
                     {
                         Value = company.CompanyId.ToString(),
+
                         Text = company.Name
                     });
                 }
@@ -293,11 +292,13 @@ namespace TasksFollow.Controllers
             if (user.Company != null)
             {
                 manager.CompanyName = user.Company.Name;
+
                 manager.CompanyIsActive = user.Company.IsActive;
             }
             else
             {
                 manager.CompanyName = "No Company";
+
                 manager.CompanyIsActive = false;
             }
 

@@ -1,0 +1,208 @@
+﻿@model IEnumerable<TasksFollow.Models.Employee>
+
+@{
+    ViewData["Title"] = "Employees";
+    Layout = "_ManagerLayout";
+    var departments = ViewBag.Departments as List<string> ?? new List<string>();
+}
+
+<div class="manager-index-page">
+
+    <!-- Header -->
+
+    <div class="manager-page-header">
+
+        <div>
+            <h2>Employees</h2>
+
+            <p>Manage employees in your company's workspace.</p>
+
+        </div>
+
+        <a asp-action="Create" class="btn btn-primary"><i class="bi bi-person-plus me-1"></i> Add Employee</a>
+    </div>
+
+   
+
+    <!-- Search and Filters -->
+
+    <div class="manager-filter-card mb-4">
+
+        <div class="manager-filter-header">
+
+            <h5><i class="bi bi-funnel me-2"></i>Search & Filters</h5>
+
+            <p>Find employees by name, email, job title, status, or department.</p>
+        </div>
+
+        <form asp-action="Index" method="get">
+
+
+            <div class="row g-3">
+
+                <div class="col-md-5">
+                    <label class="form-label">Search Employee</label>
+                    <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Name, email, job title..." />
+
+
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <label class="form-label">Status</label>
+
+                    <select name="status" class="form-select">
+
+
+                        <option value="" selected="@(ViewBag.Status == "")">All Statuses</option>
+
+                        <option value="Active" selected="@(ViewBag.Status == "Active")">Active</option>
+
+                        <option value="Inactive" selected="@(ViewBag.Status == "Inactive")">Inactive</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Department</label>
+
+                    <select name="department" class="form-select">
+
+                        <option value="">All Departments</option>
+
+                        @foreach (var dept in departments)
+                        {
+                            <option value="@dept" selected="@(ViewBag.Department == dept)">@dept</option>
+                        }
+
+                    </select>
+
+                </div>
+
+                <div class="col-12 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-search me-1"></i> Search</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-clockwise me-1"></i> Reset</a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <!-- Employee List -->
+
+    <div class="manager-table-card">
+
+        <div class="manager-table-header">
+
+            <div>
+
+                <h4><i class="bi bi-people me-2"></i> Employee List</h4>
+                <p>View and manage employees in your workspace.</p>
+            </div>
+
+
+            <span class="manager-count">@Model.Count() Employees</span>
+        </div>
+
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+
+
+                <table class="table manager-table align-middle mb-0">
+
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Email</th>
+                            <th>Job Title</th>
+                            <th>Department</th>
+                            <th>Added Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+
+
+                    </thead>
+
+
+                    <tbody>
+                        @foreach (var employee in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="manager-table-name">
+
+
+                                        <div class="manager-table-icon"><i class="bi bi-person"></i></div>
+
+
+                                        <a asp-action="Details" asp-route-id="@employee.EmployeeId" class="manager-name-link">
+                                            @employee.ApplicationUser.FirstName @employee.ApplicationUser.LastName
+                                        </a>
+                                    </div>
+                                </td>
+
+                                <td>@employee.ApplicationUser.Email</td>
+
+                                <td>@employee.JobTitle</td>
+
+                                <td>@(employee.Department ?? "—")</td>
+
+                                <td class="text-nowrap">@employee.AddedDate.ToString("MMM dd, yyyy")</td>
+
+                                <td>
+                                    @if (employee.IsActive)
+                                    {
+                                        <span class="manager-status manager-status-active">
+
+
+                                            <i class="bi bi-circle-fill" style="color:green; font-size:20px"></i> Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="manager-status manager-status-inactive">
+
+
+                                            <i class="bi bi-circle-fill" style="color:red; font-size:20px"></i> Inactive
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <div class="manager-table-actions">
+
+
+                                        <a asp-action="Details" asp-route-id="@employee.EmployeeId" class="manager-action-btn" title="Details"><i class="bi bi-eye"></i></a>
+
+                                        <a asp-action="Edit" asp-route-id="@employee.EmployeeId" class="manager-action-btn" title="Edit"><i class="bi bi-pencil"></i></a>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="manager-empty-state">
+
+
+                <div class="manager-empty-icon"><i class="bi bi-people"></i></div>
+
+
+                <h5>No Employees Found</h5>
+
+
+                <p>No employees match your search or filters.</p>
+
+
+                <a asp-action="Index" class="btn btn-outline-primary mt-3"><i class="bi bi-arrow-clockwise me-1"></i> Clear Filters</a>
+            </div>
+        }
+    </div>
+
+</div>

@@ -24,21 +24,27 @@ public class AdminDashboardController : Controller
 
         // Companies
         model.TotalCompanies = await _context.Companies.CountAsync();
+
         model.ActiveCompanies = await _context.Companies.Where(c => c.IsActive).CountAsync();
+
         model.InactiveCompanies = await _context.Companies.Where(c => !c.IsActive).CountAsync();
 
         // Managers
         var managers = await _userManager.GetUsersInRoleAsync("Manager");
 
         model.TotalManagers = managers.Count;
+
         model.ActiveManagers = managers.Where(m => m.IsActive).Count();
+
         model.InactiveManagers = managers.Where(m => !m.IsActive).Count();
 
         // Payments
         model.TotalRevenue = await _context.Payments.SumAsync(p => (decimal?)p.AmountPaid) ?? 0;
 
         // Payments for the current month
+
         DateTime firstDayOfMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+
         DateTime firstDayOfNextMonth = firstDayOfMonth.AddMonths(1);
 
         model.MonthlyRevenue = await _context.Payments
@@ -77,6 +83,7 @@ public class AdminDashboardController : Controller
         DateTime next30Days = DateTime.Today.AddDays(30);
 
         model.ExpiringSubscriptions = await _context.Payments
+
             .Include(p => p.Company)
             .Include(p => p.SubscriptionPlan)
             .Where(p => p.CoverageEndDate >= DateTime.Today &&

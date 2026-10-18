@@ -8,200 +8,106 @@
 <div class="company-create-page">
 
     <!-- PAGE HEADER -->
-    <div class="company-page-header">
-
+    <div class="company-page-header mb-4">
         <div>
             <h1>Create Manager</h1>
             <p>Create a new manager account for this company.</p>
         </div>
 
-        <a asp-controller="Company"
-           asp-action="Details"
-           asp-route-id="@Model.CompanyId"
-           class="btn btn-outline-secondary">
-
-            <i class="bi bi-arrow-left me-1"></i>
-            Back to Company
-
+        <a asp-controller="Company" asp-action="Details" asp-route-id="@Model.CompanyId" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Company
         </a>
-
     </div>
 
-
     <!-- FORM CARD -->
+
     <div class="company-form-card">
 
         <!-- CARD HEADER -->
-        <div class="company-form-header">
 
+        <div class="company-form-header mb-4">
             <div class="company-form-icon">
                 <i class="bi bi-person-plus"></i>
             </div>
 
             <div>
                 <h4>Manager Information</h4>
-
-                <p>
-                    Creating manager for:
-                    <strong>@ViewBag.CompanyName</strong>
-                </p>
+                <p>Creating manager for: <strong>@ViewBag.CompanyName</strong></p>
             </div>
-
         </div>
 
+        <!-- CREATE FORM -->
 
         <form asp-action="Create" method="post">
 
-            <div asp-validation-summary="ModelOnly"
-                 class="text-danger mb-3">
-            </div>
-
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
             <!-- COMPANY ID -->
-            <input type="hidden"
-                   asp-for="CompanyId" />
 
+            <input type="hidden" asp-for="CompanyId" />
 
-            <!-- FIRST NAME + MIDDLE NAME + LAST NAME -->
-            <div class="row">
+            <!-- FIRST AND MIDDLE NAME -->
 
-                <div class="col-12 col-md-6 mb-4">
-
-                    <label asp-for="FirstName"
-                           class="form-label">
-                    </label>
-
-                    <input asp-for="FirstName"
-                           class="form-control"
-                           placeholder="Enter first name" />
-
-                    <span asp-validation-for="FirstName"
-                          class="text-danger">
-                    </span>
-
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-md-6">
+                    <label asp-for="FirstName" class="form-label"></label>
+                    <input asp-for="FirstName" class="form-control" placeholder="Enter first name" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
                 </div>
 
-                <div class="col-12 col-md-6 mb-4">
-
-                    <label asp-for="MiddleName"
-                           class="form-label">
-                    </label>
-
-                    <input asp-for="MiddleName"
-                           class="form-control"
-                           placeholder="Enter Middle name" />
-
-                    <span asp-validation-for="MiddleName"
-                          class="text-danger">
-                    </span>
-
+                <div class="col-12 col-md-6">
+                    <label asp-for="MiddleName" class="form-label"></label>
+                    <input asp-for="MiddleName" class="form-control" placeholder="Enter middle name" />
+                    <span asp-validation-for="MiddleName" class="text-danger"></span>
                 </div>
-
-
-                <div class="col-12 col-md-6 mb-4">
-
-                    <label asp-for="LastName"
-                           class="form-label">
-                    </label>
-
-                    <input asp-for="LastName"
-                           class="form-control"
-                           placeholder="Enter last name" />
-
-                    <span asp-validation-for="LastName"
-                          class="text-danger">
-                    </span>
-
-                </div>
-
             </div>
 
+            <!-- LAST NAME -->
 
             <div class="mb-4">
-
-                <label asp-for="Email"
-                       class="form-label">
-                </label>
-
-                <input asp-for="Email"
-                       class="form-control"
-                       placeholder="Enter email address" />
-
-                <span asp-validation-for="Email"
-                      class="text-danger">
-                </span>
-
+                <label asp-for="LastName" class="form-label"></label>
+                <input asp-for="LastName" class="form-control" placeholder="Enter last name" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
 
+            <!-- EMAIL -->
 
-            <!-- PASSWORD + CONFIRM PASSWORD -->
-            <div class="row">
-
-                <div class="col-12 col-md-6 mb-4">
-
-                    <label asp-for="Password"
-                           class="form-label">
-                    </label>
-
-                    <input asp-for="Password"
-                           class="form-control"
-                           placeholder="Enter password" />
-
-                    <span asp-validation-for="Password"
-                          class="text-danger">
-                    </span>
-
-                </div>
-
-
-                <div class="col-12 col-md-6 mb-4">
-
-                    <label asp-for="ConfirmPassword"
-                           class="form-label">
-                    </label>
-
-                    <input asp-for="ConfirmPassword"
-                           class="form-control"
-                           placeholder="Confirm password" />
-
-                    <span asp-validation-for="ConfirmPassword"
-                          class="text-danger">
-                    </span>
-
-                </div>
-
+            <div class="mb-4">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" placeholder="Enter email address" />
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
+            <!-- PASSWORD AND CONFIRM PASSWORD -->
+
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-md-6">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Enter password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label asp-for="ConfirmPassword" class="form-label"></label>
+                    <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm password" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+            </div>
 
             <!-- ACTION BUTTONS -->
-            <div class="company-form-actions">
-
-                <a asp-controller="Company"
-                   asp-action="Details"
-                   asp-route-id="@Model.CompanyId"
-                   class="btn btn-light company-cancel-btn">
-
+            <div class="company-form-actions d-flex gap-3 mt-4">
+                <a asp-controller="Company" asp-action="Details" asp-route-id="@Model.CompanyId" class="btn btn-light company-cancel-btn">
                     Cancel
-
                 </a>
 
-
-                <button type="submit"
-                        class="btn btn-primary company-submit-btn">
-
-                    <i class="bi bi-person-plus me-1"></i>
-                    Create Manager
-
+                <button type="submit" class="btn btn-primary company-submit-btn">
+                    <i class="bi bi-person-plus me-1"></i> Create Manager
                 </button>
-
             </div>
 
         </form>
-
     </div>
-
 </div>
-
 
 @section Scripts {
     @{

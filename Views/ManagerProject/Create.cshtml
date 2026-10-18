@@ -1,0 +1,138 @@
+﻿@model TasksFollow.Models.CreateProjectViewModel
+
+@{
+    ViewData["Title"] = "Create Project";
+    Layout = "_ManagerLayout";
+}
+
+<div class="manager-index-page">
+
+    <div class="manager-page-header">
+        <div>
+            <h2>Create Project</h2>
+
+
+            <p>Create a new project for your company's workspace.</p>
+
+
+        </div>
+        <a asp-action="Index" class="btn btn-outline-light"><i class="bi bi-arrow-left me-1"></i> Back</a>
+    </div>
+
+    <div class="manager-form-card">
+
+        <div class="manager-form-header">
+
+            <div class="manager-form-icon"><i class="bi bi-folder-plus"></i></div>
+
+
+            <div>
+
+
+                <h4>Project Information</h4>
+
+                <p>Enter the project details, schedule, and current status.</p>
+            </div>
+        </div>
+
+        <form asp-action="Create" method="post">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <!-- General Information -->
+
+            <h5 class="manager-form-section"><i class="bi bi-folder me-2"></i>General Information</h5>
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-12">
+
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" placeholder="Enter project name" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+
+
+                <div class="col-md-12">
+
+                    <label asp-for="Description" class="form-label"></label>
+
+                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Describe the project"></textarea>
+
+
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <!-- Project Schedule -->
+
+
+            <h5 class="manager-form-section"><i class="bi bi-calendar-event me-2"></i>Project Schedule</h5>
+
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-6">
+
+                    <label asp-for="StartDate" class="form-label"></label>
+
+                    <input asp-for="StartDate" type="date" class="form-control" />
+
+                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                </div>
+
+
+
+                <div class="col-md-6">
+
+                    <label asp-for="DueDate" class="form-label"></label>
+
+
+                    <input asp-for="DueDate" type="date" class="form-control" />
+                    <span asp-validation-for="DueDate" class="text-danger"></span>
+                </div>
+
+
+            </div>
+
+            <!-- Project Status -->
+            <h5 class="manager-form-section"><i class="bi bi-activity me-2"></i>Project Status</h5>
+
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-6">
+
+                    <label asp-for="Status" class="form-label"></label>
+
+
+                    <select asp-for="Status" class="form-select">
+
+                        <option value="Not Started">Not Started</option>
+
+                        <option value="In Progress">In Progress</option>
+
+                        <option value="Completed">Completed</option>
+
+                    </select>
+
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="manager-form-actions">
+
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+
+
+                <button type="submit" class="btn btn-primary"><i class="bi bi-folder-plus me-1"></i> Create Project</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,197 @@
+﻿
+@model TasksFollow.Models.Project
+
+@{
+    ViewData["Title"] = "Project Members";
+
+
+    Layout = "_ManagerLayout";
+
+    var employees = ViewBag.Employees as List<TasksFollow.Models.Employee> ?? new List<TasksFollow.Models.Employee>();
+
+
+    var memberIds = Model.ProjectMembers.Select(m => m.EmployeeId).ToList();
+}
+
+<div class="manager-index-page">
+
+    <!-- Header -->
+    <div class="manager-page-header">
+
+        <div>
+            <h2>Project Members</h2>
+
+            <p>Manage employees assigned to @Model.Name.</p>
+
+        </div>
+
+
+        <a asp-action="Details" asp-route-id="@Model.ProjectId" class="btn btn-outline-light"><i class="bi bi-arrow-left me-1"></i> Back to Project</a>
+    </div>
+
+    
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <!-- Add Member -->
+
+    <div class="manager-form-card mb-4">
+
+        <div class="manager-form-header">
+
+            <div class="manager-form-icon"><i class="bi bi-person-plus"></i></div>
+
+            <div>
+
+                <h4>Add Project Member</h4>
+                <p>Select an employee to assign to this project.</p>
+            </div>
+        </div>
+
+        <form asp-action="AddMember" method="post">
+
+            <input type="hidden" name="projectId" value="@Model.ProjectId" />
+
+
+
+            <div class="row g-3 align-items-end">
+
+                <div class="col-md-9">
+
+                    <label class="form-label">Select Employee</label>
+
+                    <select name="employeeId" class="form-select" required>
+
+                        <option value="">Select Employee</option>
+
+                        @foreach (var employee in employees)
+                        {
+
+
+                            if (!memberIds.Contains(employee.EmployeeId))
+                            {
+
+
+                                <option value="@employee.EmployeeId">@employee.ApplicationUser.FirstName @employee.ApplicationUser.LastName - @employee.JobTitle</option>
+                            }
+                        }
+
+
+                    </select>
+
+
+                </div>
+
+                <div class="col-md-3">
+
+
+                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus-circle me-1"></i> Add Member</button>
+
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Members List -->
+
+
+    <div class="manager-table-card">
+
+        <div class="manager-table-header">
+
+            <div>
+
+                <h4><i class="bi bi-people me-2"></i> Project Members</h4>
+
+                <p>Employees currently assigned to this project.</p>
+
+            </div>
+
+            <span class="manager-count">@Model.ProjectMembers.Count Members</span>
+        </div>
+
+        @if (Model.ProjectMembers.Any())
+
+        {
+            <div class="table-responsive">
+
+                <table class="table manager-table align-middle mb-0">
+
+                    <thead>
+
+                        <tr>
+                            <th>Employee</th>
+                            <th>Email</th>
+                            <th>Job Title</th>
+                            <th>Department</th>
+                            <th>Action</th>
+                        </tr>
+
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                        @foreach (var member in Model.ProjectMembers)
+                        {
+                            <tr>
+
+                                <td>
+
+
+
+                                    <div class="manager-table-name">
+                                        <div class="manager-table-icon"><i class="bi bi-person"></i></div>
+
+
+                                        <span class="manager-name-link">@member.Employee.ApplicationUser.FirstName @member.Employee.ApplicationUser.LastName</span>
+                                    </div>
+
+                                </td>
+
+
+                                <td>@member.Employee.ApplicationUser.Email</td>
+
+                                <td>@member.Employee.JobTitle</td>
+
+                                <td>@member.Employee.Department</td>
+
+                                <td>
+                                    <form asp-action="RemoveMember" method="post" onsubmit="return confirm('Remove this employee from the project?');">
+
+                                        <input type="hidden" name="id" value="@member.ProjectMemberId" />
+
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-person-dash me-1"></i> Remove</button>
+
+
+
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="manager-empty-state">
+
+
+                <div class="manager-empty-icon"><i class="bi bi-people"></i></div>
+
+                <h5>No Project Members</h5>
+                <p>No employees have been assigned to this project yet.</p>
+            </div>
+        }
+    </div>
+
+</div>

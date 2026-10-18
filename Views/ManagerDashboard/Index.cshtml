@@ -1,0 +1,183 @@
+﻿@model TasksFollow.Models.ManagerDashboardViewModel
+
+@{
+    ViewData["Title"] = "Manager Dashboard";
+    Layout = "_ManagerLayout";
+}
+
+<div class="manager-dashboard">
+
+    <!-- PAGE HEADER -->
+    <div class="manager-dashboard-header mb-4">
+        <h2>Manager Dashboard</h2>
+        <p>Welcome to @Model.CompanyName workspace.</p>
+    </div>
+
+    <!-- EMPLOYEES SECTION -->
+    <h5 class="manager-section-heading mb-3">
+        <i class="bi bi-people me-2"></i> Employees
+    </h5>
+
+    <div class="row g-3 mb-4">
+
+        <!-- TOTAL EMPLOYEES -->
+        <div class="col-md-4">
+            <div class="manager-dashboard-card">
+                <div class="manager-dashboard-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div>
+                    <p>Total Employees</p>
+                    <h3>@Model.TotalEmployees</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACTIVE EMPLOYEES -->
+        <div class="col-md-4">
+            <div class="manager-dashboard-card">
+                <div class="manager-dashboard-icon">
+                    <i class="bi bi-person-check"></i>
+                </div>
+                <div>
+                    <p>Active Employees</p>
+                    <h3 class="text-success">@Model.ActiveEmployees</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- INACTIVE EMPLOYEES -->
+        <div class="col-md-4">
+            <div class="manager-dashboard-card">
+                <div class="manager-dashboard-icon">
+                    <i class="bi bi-person-x"></i>
+                </div>
+                <div>
+                    <p>Inactive Employees</p>
+                    <h3 class="text-danger">@Model.InactiveEmployees</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROJECTS SECTION -->
+    <h5 class="manager-section-heading mb-3">
+        <i class="bi bi-folder me-2"></i> Projects
+    </h5>
+
+    <div class="row g-3 mb-4">
+
+        <!-- TOTAL PROJECTS -->
+        <div class="col-md-4">
+            <div class="manager-dashboard-card">
+                <div class="manager-dashboard-icon">
+                    <i class="bi bi-folder"></i>
+                </div>
+                <div>
+                    <p>Total Projects</p>
+                    <h3>@Model.TotalProjects</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACTIVE PROJECTS -->
+        <div class="col-md-4">
+            <div class="manager-dashboard-card">
+                <div class="manager-dashboard-icon">
+                    <i class="bi bi-folder2-open"></i>
+                </div>
+                <div>
+                    <p>Active Projects</p>
+                    <h3 class="text-primary">@Model.ActiveProjects</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPLETED PROJECTS -->
+        <div class="col-md-4">
+            <div class="manager-dashboard-card">
+                <div class="manager-dashboard-icon">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div>
+                    <p>Completed Projects</p>
+                    <h3 class="text-success">@Model.CompletedProjects</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TASKS SECTION -->
+    <h5 class="manager-section-heading mb-3">
+        <i class="bi bi-list-task me-2"></i> Tasks
+    </h5>
+
+    <div class="row g-3 mb-4">
+
+        <!-- TOTAL TASKS -->
+        <div class="col-md-6 col-lg">
+            <div class="manager-dashboard-card">
+                <div class="manager-dashboard-icon">
+                    <i class="bi bi-list-task"></i>
+                </div>
+                <div>
+                    <p>Total Tasks</p>
+                    <h3>@Model.TotalTasks</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- PENDING TASKS -->
+        <div class="col-md-6 col-lg">
+            <div class="manager-dashboard-card">
+                <div class="manager-dashboard-icon">
+                    <i class="bi bi-clock"></i>
+                </div>
+                <div>
+                    <p>Pending</p>
+                    <h3>@Model.PendingTasks</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- IN PROGRESS TASKS -->
+        <div class="col-md-6 col-lg">
+            <div class="manager-dashboard-card">
+                <div class="manager-dashboard-icon">
+                    <i class="bi bi-arrow-repeat"></i>
+                </div>
+                <div>
+                    <p>In Progress</p>
+                    <h3 class="text-primary">@Model.InProgressTasks</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPLETED TASKS -->
+        <div class="col-md-6 col-lg">
+            <div class="manager-dashboard-card">
+                <div class="manager-dashboard-icon">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div>
+                    <p>Completed</p>
+                    <h3 class="text-success">@Model.CompletedTasks</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- OVERDUE TASKS -->
+        <div class="col-md-6 col-lg">
+            <div class="manager-dashboard-card">
+                <div class="manager-dashboard-icon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <div>
+                    <p>Overdue</p>
+                    <h3 class="text-danger">@Model.OverdueTasks</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

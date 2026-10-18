@@ -1,0 +1,132 @@
+﻿@model TasksFollow.Models.Employee
+
+@{
+    ViewData["Title"] = "Employee Details";
+    Layout = "_ManagerLayout";
+}
+
+<div class="manager-index-page">
+
+    <div class="manager-page-header">
+
+        <div>
+
+            <h2>Employee Details</h2>
+
+            <p>View employee account information.</p>
+
+           
+        </div>
+        <a asp-action="Index" class="btn btn-outline-light"><i class="bi bi-arrow-left me-1"></i> Back</a>
+    </div>
+
+    <div class="manager-details-card">
+
+
+        <div class="manager-details-header">
+            <div class="manager-form-icon"><i class="bi bi-person-badge"></i></div>
+            <div>
+                <h4>@Model.ApplicationUser.FirstName @Model.ApplicationUser.LastName</h4>
+                <p>@Model.JobTitle</p>
+            </div>
+        </div>
+
+        <div class="manager-details-grid">
+           
+
+            <div class="manager-detail-item">
+
+                <div class="manager-detail-icon"><i class="bi bi-person"></i></div>
+
+                <div><span class="manager-detail-label">First Name</span>
+                    
+                    <p class="manager-detail-value">@Model.ApplicationUser.FirstName</p>
+                    </div>
+            </div>
+
+            <div class="manager-detail-item">
+
+                <div class="manager-detail-icon"><i class="bi bi-person"></i></div>
+                <div><span class="manager-detail-label">Last Name</span>
+                    <p class="manager-detail-value">@Model.ApplicationUser.LastName</p>
+                    </div>
+            </div>
+
+            <div class="manager-detail-item">
+                <div class="manager-detail-icon"><i class="bi bi-person"></i></div>
+                <div><span class="manager-detail-label">Middle Name</span>
+                    <p class="manager-detail-value">@Model.ApplicationUser.MiddleName</p>
+                    
+                </div>
+            </div>
+
+            <div class="manager-detail-item">
+                <div class="manager-detail-icon"><i class="bi bi-envelope"></i></div>
+                <div><span class="manager-detail-label">Email</span>
+                    
+                    <p class="manager-detail-value">@Model.ApplicationUser.Email</p>
+                    
+                </div>
+            </div>
+
+            <div class="manager-detail-item">
+                <div class="manager-detail-icon"><i class="bi bi-briefcase"></i></div>
+                <div><span class="manager-detail-label">Job Title</span>
+                    <p class="manager-detail-value">@Model.JobTitle</p>
+                    </div>
+            </div>
+
+            <div class="manager-detail-item">
+                <div class="manager-detail-icon"><i class="bi bi-diagram-3"></i></div>
+
+                <div><span class="manager-detail-label">Department</span>
+                    <p class="manager-detail-value">@Model.Department</p>
+                    </div>
+            </div>
+
+            <div class="manager-detail-item">
+                <div class="manager-detail-icon"><i class="bi bi-calendar-check"></i></div>
+                <div><span class="manager-detail-label">Added Date</span>
+                    <p class="manager-detail-value">@Model.AddedDate.ToString("MMM dd, yyyy")</p>
+                        </div>
+            </div>
+
+            <div class="manager-detail-item">
+
+
+                <div class="manager-detail-icon"><i class="bi bi-shield-check"></i></div>
+
+                <div>
+                    <span class="manager-detail-label">Status</span>
+                    @if (Model.IsActive)
+                    {
+                        <span class="manager-status manager-status-active"><i class="bi bi-circle-fill"></i> Active</span>
+                    }
+                    else
+                    {
+                        <span class="manager-status manager-status-inactive"><i class="bi bi-circle-fill"></i> Inactive</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+
+        <div class="manager-details-footer">
+
+            <a asp-action="Edit" asp-route-id="@Model.EmployeeId" class="btn btn-primary"><i class="bi bi-pencil me-1"></i> Edit Employee</a>
+
+            @if (Model.IsActive)
+            {
+                <form asp-action="Deactivate" asp-route-id="@Model.EmployeeId" method="post">
+                    <button type="submit" class="btn btn-outline-danger"><i class="bi bi-person-x me-1"></i> Deactivate</button>
+                </form>
+            }
+            else
+            {
+                <form asp-action="Activate" asp-route-id="@Model.EmployeeId" method="post">
+                    <button type="submit" class="btn btn-outline-success"><i class="bi bi-person-check me-1"></i> Activate</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>

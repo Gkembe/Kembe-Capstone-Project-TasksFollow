@@ -1,0 +1,181 @@
+﻿@model TasksFollow.Models.Project
+
+@{
+    ViewData["Title"] = "Project Details";
+    Layout = "_ManagerLayout";
+}
+
+<div class="manager-index-page">
+
+    <div class="manager-page-header">
+        <div>
+            <h2>Project Details</h2>
+            <p>View project information and progress.</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-light"><i class="bi bi-arrow-left me-1"></i> Back</a>
+    </div>
+
+    <div class="manager-details-card mb-4">
+
+        <!-- Project Header -->
+        <div class="manager-details-header">
+            <div class="manager-form-icon"><i class="bi bi-folder"></i></div>
+            <div class="flex-grow-1">
+                <h4>@Model.Name</h4>
+                <p>Project Information</p>
+            </div>
+
+           
+            @if (Model.Status == "Completed")
+            {
+                <span class="manager-status manager-status-active">
+                    <i class="bi bi-circle-fill" style="color:green; font-size:20px"></i> Completed
+                </span>
+            }
+            else if (Model.Status == "In Progress")
+            {
+                <span class="manager-status manager-status-progress">
+                    <i class="bi bi-circle-fill" style="color:yellow; font-size:15px"></i> In Progress
+                </span>
+            }
+            else
+            {
+                <span class="manager-status manager-status-pending">
+                    <i class="bi bi-circle-fill" style="color:blue"></i> @Model.Status
+                </span>
+            }
+
+        </div>
+
+        <!-- Project Description -->
+
+
+        <div class="manager-project-description">
+            <h5><i class="bi bi-card-text me-2"></i>Project Description</h5>
+            <p>@Model.Description</p>
+        </div>
+
+        <!-- Project Information -->
+        <div class="manager-details-grid">
+
+
+            <div class="manager-detail-item">
+
+                <div class="manager-detail-icon"><i class="bi bi-calendar-event"></i></div>
+                <div>
+                    <span class="manager-detail-label">Start Date</span>
+
+                    <p class="manager-detail-value">@(Model.StartDate?.ToString("MMM dd, yyyy") ?? "Not Set")</p>
+                </div>
+            </div>
+
+            <div class="manager-detail-item">
+
+
+                <div class="manager-detail-icon"><i class="bi bi-calendar-check"></i></div>
+
+                <div>
+
+                    <span class="manager-detail-label">Due Date</span>
+
+
+                    <p class="manager-detail-value">@(Model.DueDate?.ToString("MMM dd, yyyy") ?? "Not Set")</p>
+                </div>
+
+
+            </div>
+
+            <div class="manager-detail-item">
+
+
+
+                <div class="manager-detail-icon"><i class="bi bi-person"></i></div>
+
+
+                <div>
+                    <span class="manager-detail-label">Created By</span>
+                    <p class="manager-detail-value">@Model.CreatedByUser.FirstName @Model.CreatedByUser.LastName</p>
+                </div>
+
+
+            </div>
+
+            <div class="manager-detail-item">
+
+
+                <div class="manager-detail-icon"><i class="bi bi-activity"></i></div>
+
+
+                <div>
+                    <span class="manager-detail-label">Status</span>
+                    <p class="manager-detail-value">@Model.Status</p>
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+        <div class="manager-details-footer">
+
+
+            <a asp-action="Members" asp-route-id="@Model.ProjectId" class="btn btn-outline-primary"><i class="bi bi-people"></i> Manage Members </a>
+
+            <a asp-controller="ManagerTask" asp-action="Create" asp-route-projectId="@Model.ProjectId" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Create Task</a>
+
+            <a asp-action="Edit" asp-route-id="@Model.ProjectId" class="btn btn-primary"><i class="bi bi-pencil me-1"></i> Edit Project</a>
+        </div>
+
+
+    </div>
+
+    <!-- Project Summary -->
+
+
+    <h5 class="manager-section-heading"><i class="bi bi-bar-chart me-2"></i>Project Summary</h5>
+
+    <div class="row g-3">
+
+
+        <div class="col-md-6">
+
+            <div class="manager-dashboard-card">
+
+                <div class="manager-dashboard-icon"><i class="bi bi-people"></i></div>
+
+
+                <div>
+                    <p>Project Members</p>
+                    <h3>@Model.ProjectMembers.Count</h3>
+                    <small class="text-muted">Employees assigned to this project.</small>
+                </div>
+
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6">
+
+            <div class="manager-dashboard-card">
+                <div class="manager-dashboard-icon"><i class="bi bi-list-task"></i></div>
+
+
+                <div>
+                    <p>Project Tasks</p>
+
+                    <h3>@Model.ProjectTask.Count</h3>
+                    <small class="text-muted">Tasks created for this project.</small>
+
+
+                </div>
+
+
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
