@@ -1,0 +1,143 @@
+﻿@model TasksFollow.Models.Project
+
+@{
+    ViewData["Title"] = "Project Details";
+    Layout = "_EmployeeLayout";
+
+    var assignments = ViewBag.MyAssignments as List<TasksFollow.Models.TaskAssignment> ?? new List<TasksFollow.Models.TaskAssignment>();
+}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2>@Model.Name</h2>
+
+            <p class="text-muted mb-0">Project Details</p>
+
+        </div>
+
+
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Projects
+        </a>
+    </div>
+
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <h5>Project Information</h5>
+            <hr />
+
+            <div class="row g-3">
+
+                <div class="col-md-12">
+
+                    <strong>Description</strong>
+
+                    <p>@(Model.Description ?? "No description provided.")</p>
+
+                </div>
+                <div class="col-md-4">
+
+                    <strong>Status</strong>
+
+                    <p>@Model.Status</p>
+
+                </div>
+                <div class="col-md-4">
+
+                    <strong>Start Date</strong>
+
+                    <p>@(Model.StartDate?.ToString("MMM dd, yyyy") ?? "Not Set")</p>
+
+                </div>
+                <div class="col-md-4">
+
+                    <strong>Due Date</strong>
+
+                    <p>@(Model.DueDate?.ToString("MMM dd, yyyy") ?? "Not Set")</p>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <h5 class="mb-3"><i class="bi bi-list-check me-2"></i>My Tasks in This Project</h5>
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Task</th>
+                            <th>Status</th>
+                            <th>Progress</th>
+                            <th>Due Date</th>
+                            <th>My Completion</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var assignment in assignments)
+                        {
+                            var task = assignment.ProjectTask;
+                            <tr>
+                                <td><strong>@task.Title</strong></td>
+
+
+                                <td>@task.Status</td>
+
+                                <td>
+                                    <div class="progress" style="height:8px; min-width:90px;">
+
+                                        <div class="progress-bar" style="width:@task.Percent%"></div>
+
+
+                                    </div>
+
+                                    <small>@task.Percent%</small>
+
+                                </td>
+                                <td>@(task.DueDate?.ToString("MMM dd, yyyy") ?? "—")</td>
+
+
+                                <td>
+                                    @if (assignment.IsCompleted)
+                                    {
+                                        <span class="badge bg-success">Completed</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">Open</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-controller="EmployeeTask" asp-action="Details" asp-route-id="@assignment.TaskAssignmentId" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> View Task
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (!assignments.Any())
+            {
+                <p class="text-muted text-center py-3 mb-0">No tasks assigned to you in this project.</p>
+            }
+        </div>
+    </div>
+</div>

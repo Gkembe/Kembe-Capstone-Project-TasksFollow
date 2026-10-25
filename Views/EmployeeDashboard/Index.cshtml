@@ -1,0 +1,107 @@
+﻿@model TasksFollow.Models.EmployeeDashboardViewModel
+
+@{
+    ViewData["Title"] = "Employee Dashboard";
+    Layout = "_EmployeeLayout";
+}
+
+<div class="employee-dashboard">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Employee Dashboard</h2>
+            <p class="text-muted mb-0">Welcome to @Model.CompanyName workspace.</p>
+        </div>
+        <a asp-controller="EmployeeTask" asp-action="Index" class="btn btn-primary">
+            <i class="bi bi-list-check me-1"></i> My Tasks
+        </a>
+    </div>
+
+    <!-- TASK STATISTICS -->
+    <h5 class="mb-3"><i class="bi bi-bar-chart me-2"></i>My Task Overview</h5>
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-6 col-xl-3">
+            <div class="employee-dashboard-card">
+                <div class="employee-dashboard-icon bg-primary-subtle text-primary">
+                    <i class="bi bi-list-task"></i>
+                </div>
+                <div>
+                    <p>Total Assigned Tasks</p>
+                    <h3>@Model.TotalAssignedTasks</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="employee-dashboard-card">
+                <div class="employee-dashboard-icon bg-warning-subtle text-warning">
+                    <i class="bi bi-arrow-repeat"></i>
+                </div>
+                <div>
+                    <p>In Progress</p>
+                    <h3>@Model.TotalInProgressTasks</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="employee-dashboard-card">
+                <div class="employee-dashboard-icon bg-success-subtle text-success">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div>
+                    <p>Completed Tasks</p>
+                    <h3>@Model.TotalCompletedTasks</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="employee-dashboard-card">
+                <div class="employee-dashboard-icon bg-danger-subtle text-danger">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <div>
+                    <p>Overdue Tasks</p>
+                    <h3>@Model.OverDueTasks</h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- QUICK ACCESS -->
+    <h5 class="mb-3"><i class="bi bi-lightning me-2"></i>Quick Access</h5>
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="employee-quick-card">
+                <i class="bi bi-list-check text-primary"></i>
+                <div>
+                    <h5>My Assigned Tasks</h5>
+                    <p>View your tasks, update progress, and manage deadlines.</p>
+                    <a asp-controller="EmployeeTask" asp-action="Index" class="btn btn-sm btn-primary">
+                        View My Tasks <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="employee-quick-card">
+                <i class="bi bi-folder text-success"></i>
+                <div>
+                    <h5>My Projects</h5>
+                    <p>View projects you are participating in and track project activities.</p>
+                    <a asp-controller="EmployeeProject" asp-action="Index" class="btn btn-sm btn-outline-primary">
+                        View My Projects <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

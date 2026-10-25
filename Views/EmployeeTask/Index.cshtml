@@ -1,0 +1,242 @@
+﻿@model IEnumerable<TasksFollow.Models.TaskAssignment>
+
+@{
+    ViewData["Title"] = "My Tasks";
+    Layout = "_EmployeeLayout";
+}
+
+<div class="container-fluid py-4">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>My Tasks</h2>
+            <p class="text-muted mb-0">View and track tasks assigned to you.</p>
+        </div>
+        <span class="badge bg-primary">@Model.Count() Tasks</span>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    <!-- FILTERS -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="mb-3"><i class="bi bi-funnel"></i> Search & Filters</h5>
+
+            <form asp-action="Index" method="get">
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">Search</label>
+
+                        <input type="text" name="search" value="@ViewBag.Search"
+
+                               class="form-control" placeholder="Task title or description..." />
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">Status</label>
+
+                        <select name="status" class="form-select">
+
+                            <option value="" selected="@(ViewBag.Status == "")">All Statuses</option>
+                            <option value="Not Started" selected="@(ViewBag.Status == "Not Started")">Not Started</option>
+                            <option value="In Progress" selected="@(ViewBag.Status == "In Progress")">In Progress</option>
+                            <option value="Completed" selected="@(ViewBag.Status == "Completed")">Completed</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+
+                        <label class="form-label">Priority</label>
+
+
+                        <select name="priority" class="form-select">
+
+                            <option value="">All Priorities</option>
+                            <option value="Low" selected="@(ViewBag.Priority == "Low")">Low</option>
+                            <option value="Medium" selected="@(ViewBag.Priority == "Medium")">Medium</option>
+                            <option value="High" selected="@(ViewBag.Priority == "High")">High</option>
+                            <option value="Critical" selected="@(ViewBag.Priority == "Critical")">Critical</option>
+
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <label class="form-label">Due Date</label>
+                        <input type="date" name="dueDate" value="@ViewBag.DueDate" class="form-control" />
+
+                    </div>
+
+                    <div class="col-12 d-flex gap-2">
+
+                        <button type="submit" class="btn btn-primary">
+
+                            <i class="bi bi-search"></i> Search
+                        </button>
+
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-clockwise"></i> Reset
+                        </a>
+
+
+                    </div>
+
+                </div>
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+    <!-- TASK LIST -->
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <h5 class="mb-3">Assigned Tasks</h5>
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+
+                        <tr>
+                            <th>Task</th>
+                            <th>Project</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Progress</th>
+                            <th>Due Date</th>
+                            <th>Assignment</th>
+                            <th>Actions</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+                        @foreach (var assignment in Model)
+                        {
+                            var task = assignment.ProjectTask;
+
+                            <tr>
+                                <td><strong>@task.Title</strong></td>
+
+                                <td>@task.Project?.Name</td>
+                                <td>
+                                    @if (assignment.IsCompleted)
+                                    {
+                                        <span class="badge bg-success">Completed</span>
+                                    }
+                                    else if (task.Status == "In Progress")
+                                    {
+                                        <span class="badge bg-primary">In Progress</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@task.Status</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (task.Priority == "High" || task.Priority == "Critical")
+                                    {
+                                        <span class="badge bg-danger">@task.Priority</span>
+                                    }
+                                    else if (task.Priority == "Medium")
+                                    {
+                                        <span class="badge bg-warning text-dark">Medium</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@(task.Priority ?? "None")</span>
+                                    }
+
+                                </td>
+
+                                <td>
+                                    <div class="progress" style="height:8px; min-width:90px;">
+
+
+                                        <div class="progress-bar" style="width:@task.Percent%"></div>
+
+
+                                    </div>
+
+
+                                    <small>@task.Percent%</small>
+                                </td>
+                                <td>
+                                    @if (task.DueDate.HasValue)
+                                    {
+                                        @task.DueDate.Value.ToString("MMM dd, yyyy")
+                                        @if (task.DueDate.Value.Date < DateTime.Today && !assignment.IsCompleted)
+                                        {
+                                            <span class="badge bg-danger ms-1">Overdue</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>—</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (assignment.IsCompleted)
+                                    {
+                                        <span class="badge bg-success">Done</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">Open</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@assignment.TaskAssignmentId"
+
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> Details
+                                    </a>
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+            @if (!Model.Any())
+            {
+                <div class="text-center py-4">
+
+                    <i class="bi bi-list-check fs-1 text-muted"></i>
+
+                    <h5 class="mt-2">No Tasks Found</h5>
+
+                    <p class="text-muted">No assigned tasks match your selected filters.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
