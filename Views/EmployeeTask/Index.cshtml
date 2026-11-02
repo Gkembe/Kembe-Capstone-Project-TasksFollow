@@ -47,8 +47,11 @@
                         <select name="status" class="form-select">
 
                             <option value="" selected="@(ViewBag.Status == "")">All Statuses</option>
+
                             <option value="Not Started" selected="@(ViewBag.Status == "Not Started")">Not Started</option>
+
                             <option value="In Progress" selected="@(ViewBag.Status == "In Progress")">In Progress</option>
+
                             <option value="Completed" selected="@(ViewBag.Status == "Completed")">Completed</option>
 
                         </select>
@@ -64,9 +67,13 @@
                         <select name="priority" class="form-select">
 
                             <option value="">All Priorities</option>
+
                             <option value="Low" selected="@(ViewBag.Priority == "Low")">Low</option>
+
                             <option value="Medium" selected="@(ViewBag.Priority == "Medium")">Medium</option>
+
                             <option value="High" selected="@(ViewBag.Priority == "High")">High</option>
+
                             <option value="Critical" selected="@(ViewBag.Priority == "Critical")">Critical</option>
 
 
@@ -77,6 +84,7 @@
                     <div class="col-md-2">
 
                         <label class="form-label">Due Date</label>
+
                         <input type="date" name="dueDate" value="@ViewBag.DueDate" class="form-control" />
 
                     </div>
@@ -88,9 +96,7 @@
                             <i class="bi bi-search"></i> Search
                         </button>
 
-                        <a asp-action="Index" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-clockwise"></i> Reset
-                        </a>
+                        <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-clockwise"></i> Reset</a>
 
 
                     </div>
@@ -188,6 +194,7 @@
                                     @if (task.DueDate.HasValue)
                                     {
                                         @task.DueDate.Value.ToString("MMM dd, yyyy")
+
                                         @if (task.DueDate.Value.Date < DateTime.Today && !assignment.IsCompleted)
                                         {
                                             <span class="badge bg-danger ms-1">Overdue</span>
@@ -208,12 +215,9 @@
                                         <span class="badge bg-warning text-dark">Open</span>
                                     }
                                 </td>
-                                <td>
-                                    <a asp-action="Details" asp-route-id="@assignment.TaskAssignmentId"
 
-                                       class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-eye"></i> Details
-                                    </a>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@assignment.TaskAssignmentId" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i> Details</a>
                                 </td>
 
                             </tr>

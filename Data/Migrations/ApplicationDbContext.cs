@@ -25,6 +25,10 @@ namespace TasksFollow.Data
         public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
         public DbSet<Payment> Payments { get; set; }
 
+        public DbSet<MessageRead> MessageReads { get; set; }
+
+        public DbSet<Notification> Notifications { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -166,6 +170,44 @@ namespace TasksFollow.Data
                 .WithMany(s => s.Payments)
                 .HasForeignKey(p => p.SubscriptionPlanId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+
+
+            // Prevent duplicate read records for the same user and message
+            builder.Entity<MessageRead>()
+                .HasIndex(m => new { m.MessageId, m.UserId })
+                .IsUnique();
+
+            // Configure message relationship
+            builder.Entity<MessageRead>()
+                .HasOne(m => m.Message)
+                .WithMany()
+                .HasForeignKey(m => m.MessageId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure user relationship
+            builder.Entity<MessageRead>()
+                .HasOne(m => m.User)
+                .WithMany()
+                .HasForeignKey(m => m.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            // Notification belongs to one application user
+            builder.Entity<Notification>()
+                .HasOne(n => n.User)
+                .WithMany()
+                .HasForeignKey(n => n.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Notification can reference a task
+            builder.Entity<Notification>()
+                .HasOne(n => n.ProjectTask)
+                .WithMany()
+                .HasForeignKey(n => n.ProjectTaskId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+
         }
     }
 }

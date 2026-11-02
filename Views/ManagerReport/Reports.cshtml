@@ -1,0 +1,155 @@
+﻿@model TasksFollow.Models.ManagerReportViewModel
+
+@{
+    ViewData["Title"] = "Manager Reports";
+    Layout = "_ManagerLayout";
+}
+
+<!-- Load the custom Manager Reports CSS -->
+<link rel="stylesheet" href="~/css/manager-reports.css" asp-append-version="true" />
+
+<div class="manager-reports">
+
+    <!-- Page Header -->
+    <div class="manager-reports-header">
+        <div>
+            <h2 style="color:white">Manager Reports</h2>
+            <p>Monitor company projects and task performance.</p>
+        </div>
+        <div class="reports-header-icon"><i class="bi bi-bar-chart-line"></i></div>
+    </div>
+
+    <!-- Summary Statistics -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4 col-lg-2">
+            <div class="reports-stat-card">
+                <div class="reports-stat-icon projects"><i class="bi bi-folder2-open"></i></div>
+                <small>Projects</small>
+                <h3>@Model.TotalProjects</h3>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="reports-stat-card">
+                <div class="reports-stat-icon tasks"><i class="bi bi-list-task"></i></div>
+                <small>Total Tasks</small>
+                <h3>@Model.TotalTasks</h3>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="reports-stat-card">
+                <div class="reports-stat-icon completed"><i class="bi bi-check-circle"></i></div>
+                <small>Completed</small>
+                <h3 class="text-success">@Model.CompletedTasks</h3>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="reports-stat-card">
+                <div class="reports-stat-icon progress-icon"><i class="bi bi-arrow-repeat"></i></div>
+                <small>In Progress</small>
+                <h3 class="text-primary">@Model.InProgressTasks</h3>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="reports-stat-card">
+                <div class="reports-stat-icon overdue"><i class="bi bi-exclamation-triangle"></i></div>
+                <small>Overdue</small>
+                <h3 class="text-danger">@Model.OverdueTasks</h3>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="reports-stat-card">
+                <div class="reports-stat-icon employees"><i class="bi bi-people"></i></div>
+                <small>Employees</small>
+                <h3>@Model.TotalEmployees</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overall Completion -->
+    <div class="reports-panel reports-completion-panel">
+        <div class="reports-completion-heading">
+            <div>
+                <h5>Overall Task Completion</h5>
+                <p>Percentage of completed tasks across all company projects.</p>
+            </div>
+            <strong class="reports-completion-value">@Model.CompletionRate%</strong>
+        </div>
+
+        <div class="reports-progress-track">
+            <div class="reports-progress-fill completed"
+                 role="progressbar"
+                 style="width:@(Model.CompletionRate.ToString(System.Globalization.CultureInfo.InvariantCulture))%;"
+                 aria-valuenow="@Model.CompletionRate" aria-valuemin="0" aria-valuemax="100">
+            </div>
+        </div>
+        <div class="reports-progress-labels">
+            <span>0%</span>
+            <span>100%</span>
+        </div>
+    </div>
+
+    <!-- Project Performance Table -->
+    <div class="reports-panel reports-table-panel">
+        <div class="reports-table-heading">
+            <div>
+                <h5>Project Performance</h5>
+                <p>Track task completion for each project.</p>
+            </div>
+            <span class="reports-project-count">
+                <i class="bi bi-folder2-open me-1"></i> @Model.Projects.Count() Projects
+            </span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table reports-table align-middle">
+                <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th>Total Tasks</th>
+                        <th>Completed</th>
+                        <th>Completion Rate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var project in Model.Projects)
+                    {
+                        <tr>
+                            <td>
+                                <div class="reports-project-name">
+                                    <i class="bi bi-folder2"></i>
+                                    <strong>@project.ProjectName</strong>
+                                </div>
+                            </td>
+                            <td><span class="reports-number">@project.TotalTasks</span></td>
+                            <td><span class="reports-completed-count">@project.CompletedTasks</span></td>
+                            <td>
+                                <div class="reports-table-progress">
+                                    <div class="reports-progress-track">
+                                        <div class="reports-progress-fill" role="progressbar" 
+                                        style="width:@(project.CompletionRate.ToString(System.Globalization.CultureInfo.InvariantCulture))%;  
+                                        aria-valuenow="@project.CompletionRate 
+                                        aria-valuemin="0" aria-valuemax="100">
+                                         </div>
+                                    </div>
+                                    <small>@project.CompletionRate%</small>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+
+                    @if (!Model.Projects.Any())
+                    {
+                        <tr>
+                            <td colspan="4">
+                                <div class="reports-empty">
+                                    <i class="bi bi-folder-x"></i>
+                                    <p>No projects available.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

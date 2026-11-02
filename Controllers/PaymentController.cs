@@ -215,10 +215,7 @@ namespace TasksFollow.Controllers
 
             // Get the company's latest subscription payment
 
-            var lastPayment = await _context.Payments
-                .Where(p => p.CompanyId == company.CompanyId)
-                .OrderByDescending(p => p.CoverageEndDate)
-                .FirstOrDefaultAsync();
+            var lastPayment = await _context.Payments.Where(p => p.CompanyId == company.CompanyId).OrderByDescending(p => p.CoverageEndDate).FirstOrDefaultAsync();
 
             // Start coverage today by default
             DateTime coverageStartDate = DateTime.Today;
@@ -257,11 +254,7 @@ namespace TasksFollow.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var payments = await _context.Payments
-                .Include(p => p.Company)
-                .Include(p => p.SubscriptionPlan)
-                .OrderByDescending(p => p.PaymentDate)
-                .ToListAsync();
+            var payments = await _context.Payments.Include(p => p.Company).Include(p => p.SubscriptionPlan).OrderByDescending(p => p.PaymentDate).ToListAsync();
 
             return View(payments);
         }
@@ -276,11 +269,7 @@ namespace TasksFollow.Controllers
                 return NotFound();
             }
 
-            var payments = await _context.Payments
-                .Include(p => p.SubscriptionPlan)
-                .Where(p => p.CompanyId == companyId)
-                .OrderByDescending(p => p.PaymentDate)
-                .ToListAsync();
+            var payments = await _context.Payments.Include(p => p.SubscriptionPlan).Where(p => p.CompanyId == companyId).OrderByDescending(p => p.PaymentDate).ToListAsync();
 
             ViewBag.CompanyId = company.CompanyId;
 
@@ -297,10 +286,7 @@ namespace TasksFollow.Controllers
                 return NotFound();
             }
 
-            var payment = await _context.Payments
-                .Include(p => p.Company)
-                .Include(p => p.SubscriptionPlan)
-                .FirstOrDefaultAsync(p => p.PaymentId == id);
+            var payment = await _context.Payments.Include(p => p.Company).Include(p => p.SubscriptionPlan).FirstOrDefaultAsync(p => p.PaymentId == id);
 
             if (payment == null)
             {

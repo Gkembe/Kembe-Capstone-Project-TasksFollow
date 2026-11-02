@@ -1,0 +1,584 @@
+﻿
+/* ===== GROUP CHAT PAGE ===== */
+/* Main container shared by Manager and Employee conversation pages */
+.group-chat-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 25px;
+}
+
+/* ===== PAGE HEADER ===== */
+/* Displays the group name, description and navigation buttons */
+.group-chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+    .group-chat-header h2 {
+        color: #172b4d;
+        font-size: 26px;
+        font-weight: 700;
+        margin: 0 0 5px;
+    }
+
+    .group-chat-header p {
+        color: #64748b;
+        font-size: 14px;
+        margin: 0;
+    }
+
+/* ===== NAVIGATION BUTTONS ===== */
+/* Manager button opens member management; Back returns to group messages */
+.group-chat-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+    .group-chat-actions a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .group-chat-actions .manage-btn {
+        background: #eff6ff;
+        color: #2563eb;
+        border: 1px solid #bfdbfe;
+    }
+
+    .group-chat-actions .back-btn {
+        background: #fff;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+    }
+
+    .group-chat-actions a:hover {
+        filter: brightness(0.95);
+    }
+
+/* ===== CONVERSATION CARD ===== */
+/* Main white card containing the conversation and message form */
+.group-chat-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(15,23,42,0.05);
+}
+
+/* ===== CONVERSATION HEADER ===== */
+/* Displays the conversation icon and heading */
+.group-chat-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 22px;
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.group-chat-header-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #eff6ff;
+    color: #2563eb;
+    border-radius: 11px;
+    font-size: 20px;
+}
+
+.group-chat-card-header h5 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.group-chat-card-header span {
+    display: block;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 3px;
+}
+
+/* ===== MESSAGE HISTORY ===== */
+/* Scrollable conversation area that keeps messages inside the card */
+.group-chat-messages {
+    height: 480px;
+    min-height: 350px;
+    overflow-y: auto;
+    padding: 25px;
+    background: #f8fafc;
+    scroll-behavior: smooth;
+}
+
+    .group-chat-messages::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .group-chat-messages::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+    }
+
+/* ===== MESSAGE ALIGNMENT ===== */
+/* Current user's messages are displayed on the right; other users on the left */
+.chat-message-row {
+    display: flex;
+    margin-bottom: 18px;
+}
+
+    .chat-message-row.mine {
+        justify-content: flex-end;
+    }
+
+    .chat-message-row.other {
+        justify-content: flex-start;
+    }
+
+/* ===== MESSAGE BUBBLES ===== */
+/* Apply different colors depending on who sent the message */
+.chat-message-bubble {
+    max-width: 75%;
+    min-width: 180px;
+    padding: 13px 16px;
+    border-radius: 14px;
+    overflow-wrap: anywhere;
+}
+
+.chat-message-row.mine .chat-message-bubble {
+    background: #2563eb;
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+.chat-message-row.other .chat-message-bubble {
+    background: #fff;
+    color: #334155;
+    border: 1px solid #e2e8f0;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+}
+
+/* ===== MESSAGE SENDER AND DATE ===== */
+/* Displays who sent the message and when it was sent */
+.chat-message-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 15px;
+    margin-bottom: 8px;
+}
+
+    .chat-message-info strong {
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .chat-message-info small {
+        font-size: 10px;
+        opacity: 0.75;
+    }
+
+/* ===== MESSAGE CONTENT ===== */
+/* White-space preserves line breaks typed by the sender */
+.chat-message-content {
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    margin: 0;
+}
+
+/* ===== EDITED MESSAGE INDICATOR ===== */
+/* Shows the edited label if the message was modified */
+.chat-message-edited {
+    display: block;
+    margin-top: 8px;
+    font-size: 11px;
+    opacity: 0.75;
+}
+
+/* ===== EDIT AND DELETE BUTTONS ===== */
+/* These buttons are displayed only on messages owned by the current user */
+.chat-message-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+    .chat-message-actions form {
+        margin: 0;
+    }
+
+    .chat-message-actions a, .chat-message-actions button {
+        display: inline-flex;
+        align-items: center;
+        background: transparent;
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.65);
+        border-radius: 6px;
+        padding: 5px 10px;
+        font-size: 11px;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+        .chat-message-actions a:hover, .chat-message-actions button:hover {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+
+/* ===== EMPTY CONVERSATION ===== */
+/* Displayed when no messages have been sent to the group */
+.chat-empty {
+    text-align: center;
+    padding: 90px 20px;
+    color: #94a3b8;
+}
+
+    .chat-empty i {
+        display: block;
+        font-size: 48px;
+        margin-bottom: 12px;
+    }
+
+    .chat-empty p {
+        font-size: 14px;
+    }
+
+/* ===== SEND MESSAGE FORM ===== */
+/* Footer containing the text input and Send button */
+.group-chat-footer {
+    padding: 18px 22px;
+    background: #fff;
+    border-top: 1px solid #e2e8f0;
+}
+
+.group-chat-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+    /* ===== MESSAGE INPUT ===== */
+    /* Users can type up to 3000 characters */
+    .group-chat-form textarea {
+        flex: 1;
+        min-width: 0;
+        resize: vertical;
+        min-height: 55px;
+        max-height: 150px;
+        padding: 13px 15px;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        font-family: inherit;
+        font-size: 14px;
+        outline: none;
+        background: #f8fafc;
+    }
+
+        .group-chat-form textarea:focus {
+            border-color: #2563eb;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+/* ===== SEND BUTTON ===== */
+/* Submits the new message to the SendMessage action */
+.group-chat-send-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    padding: 15px 22px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+    .group-chat-send-btn:hover {
+        background: #1d4ed8;
+    }
+
+/* ===== NOTIFICATIONS ===== */
+/* Success and error alerts returned by the controller */
+.group-chat-page .alert {
+    border-radius: 9px;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* ===== MOBILE RESPONSIVE DESIGN ===== */
+/* Make the conversation usable on phones and smaller tablets */
+@media (max-width: 768px) {
+    .group-chat-page {
+        padding: 15px 10px;
+    }
+
+    .group-chat-header {
+        align-items: flex-start;
+    }
+
+        .group-chat-header h2 {
+            font-size: 21px;
+        }
+
+    .group-chat-actions {
+        width: 100%;
+    }
+
+        .group-chat-actions a {
+            flex: 1;
+            text-align: center;
+            font-size: 12px;
+        }
+
+    .group-chat-card-header {
+        padding: 14px;
+    }
+
+    .group-chat-messages {
+        height: 55vh;
+        min-height: 300px;
+        padding: 15px 10px;
+    }
+
+    .chat-message-bubble {
+        max-width: 88%;
+        min-width: 0;
+        padding: 11px 13px;
+    }
+
+    .chat-message-info small {
+        font-size: 9px;
+    }
+
+    .chat-message-content {
+        font-size: 13px;
+    }
+
+    .group-chat-footer {
+        padding: 12px;
+    }
+
+    .group-chat-form {
+        gap: 8px;
+    }
+
+        .group-chat-form textarea {
+            min-height: 48px;
+            font-size: 13px;
+        }
+
+    .group-chat-send-btn {
+        padding: 14px;
+    }
+
+        .group-chat-send-btn span {
+            display: none;
+        }
+}
+
+
+
+
+/* =========================================================
+   TASKSFOLLOW - MESSAGES INDEX PAGE
+   Displays conversation groups for Managers and Employees
+   ========================================================= */
+
+
+/* Messages Page */
+.chat-index-page {
+    padding: 25px;
+}
+
+.chat-index-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+    .chat-index-header h2 {
+        font-size: 25px;
+        font-weight: 700;
+        margin: 0 0 5px;
+    }
+
+    .chat-index-header p {
+        color: #777;
+        margin: 0;
+    }
+
+.chat-create-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 16px;
+    background: #2563eb;
+    color: white;
+    border-radius: 7px;
+    text-decoration: none;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+    .chat-create-btn:hover {
+        background: #1d4ed8;
+        color: white;
+    }
+
+/* Simple Group List */
+.chat-simple-list {
+    width: 100%;
+}
+
+.chat-simple-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    text-decoration: none;
+    color: #1f2937;
+    transition: background .2s;
+}
+
+    .chat-simple-item:hover {
+        background: #f8fafc;
+        color: #1f2937;
+    }
+
+.chat-simple-icon {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eff6ff;
+    color: #2563eb;
+    border-radius: 50%;
+    font-size: 20px;
+}
+
+.chat-simple-info {
+    flex: 1;
+    min-width: 0;
+}
+
+    .chat-simple-info h5 {
+        font-size: 15px;
+        font-weight: 600;
+        margin: 0 0 4px;
+    }
+
+    .chat-simple-info p {
+        font-size: 13px;
+        color: #64748b;
+        margin: 0 0 3px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .chat-simple-info small {
+        font-size: 12px;
+        color: #94a3b8;
+    }
+
+.chat-simple-unread {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 7px;
+    background: #dc2626;
+    color: white;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.chat-simple-arrow {
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+/* Empty State */
+.chat-simple-empty {
+    padding: 65px 20px;
+    text-align: center;
+    color: #64748b;
+}
+
+    .chat-simple-empty > i {
+        font-size: 40px;
+        color: #94a3b8;
+    }
+
+    .chat-simple-empty h5 {
+        margin-top: 12px;
+        color: #334155;
+    }
+
+    .chat-simple-empty p {
+        font-size: 14px;
+    }
+
+    .chat-simple-empty .chat-create-btn {
+        margin-top: 10px;
+    }
+
+/* Mobile */
+@media (max-width: 576px) {
+    .chat-index-page {
+        padding: 15px 5px;
+    }
+
+    .chat-index-header {
+        align-items: flex-start;
+    }
+
+        .chat-index-header h2 {
+            font-size: 21px;
+        }
+
+    .chat-create-btn {
+        padding: 9px 11px;
+        font-size: 12px;
+    }
+
+    .chat-simple-item {
+        gap: 10px;
+        padding: 13px 5px;
+    }
+
+    .chat-simple-icon {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        font-size: 17px;
+    }
+}

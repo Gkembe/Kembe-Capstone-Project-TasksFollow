@@ -56,7 +56,8 @@
 
 
                     <select name="status" class="form-select">
-                        <option value="" selected="@(ViewBag.Status == "")">All Statuses</option>
+                        <option value="All" selected="@(ViewBag.Status == "All")">All Statuses</option>
+                        <option value="Pending" selected="@(ViewBag.Status == "Pending")">Pending</option>
                         <option value="Not Started" selected="@(ViewBag.Status == "Not Started")">Not Started</option>
                         <option value="In Progress" selected="@(ViewBag.Status == "In Progress")">In Progress</option>
                         <option value="Completed" selected="@(ViewBag.Status == "Completed")">Completed</option>

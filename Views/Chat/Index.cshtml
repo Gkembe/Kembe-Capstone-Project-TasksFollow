@@ -1,0 +1,77 @@
+﻿@model IEnumerable<TasksFollow.Models.ChatIndexViewModel>
+
+@{
+    ViewData["Title"] = "Messages";
+
+    // Use the correct layout for managers and employees
+    Layout = User.IsInRole("Manager") ? "_ManagerLayout" : "_EmployeeLayout";
+}
+
+<link rel="stylesheet" href="~/css/groupchat.css" asp-append-version="true" />
+
+<div class="chat-index-page">
+
+    <!-- Page Header -->
+    <div class="chat-index-header">
+        <div>
+            <h2>Messages</h2>
+            <p>Communicate with your team members.</p>
+        </div>
+
+        <!-- Only managers can create groups -->
+        @if (User.IsInRole("Manager"))
+        {
+            <a asp-action="Create" class="chat-create-btn"> <i class="bi bi-plus-circle me-1"></i> Create Group</a>
+        }
+    </div>
+
+    <!-- Display available group conversations -->
+    <div class="chat-simple-list">
+
+        @foreach (var item in Model)
+        {
+            var group = item.Group;
+            int activeMembers = group.GroupMembers.Count(m => m.IsActive);
+
+            <!-- Each row opens the group conversation -->
+            <a asp-action="Details" asp-route-id="@group.GroupChatId" class="chat-simple-item">
+
+                <!-- Group Icon -->
+                <div class="chat-simple-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+
+                <!-- Group Name and Description -->
+                <div class="chat-simple-info">
+
+                    <h5>@group.Name</h5>
+                    <p>@(group.Description ?? "Team conversation")</p>
+                    <small><i class="bi bi-people me-1"></i>@activeMembers members</small>
+                </div>
+
+                <!-- Show unread messages only when available -->
+                @if (item.UnreadCount > 0)
+                {
+                    <span class="chat-simple-unread">@item.UnreadCount</span>
+                }
+
+                <i class="bi bi-chevron-right chat-simple-arrow"></i>
+            </a>
+        }
+
+        <!-- Empty State -->
+        @if (!Model.Any())
+        {
+            <div class="chat-simple-empty">
+                <i class="bi bi-chat-dots"></i>
+                <h5>No Conversations Yet</h5>
+                <p>You are not currently a member of any conversation groups.</p>
+
+                @if (User.IsInRole("Manager"))
+                {
+                    <a asp-action="Create" class="chat-create-btn">Create First Group</a>
+                }
+            </div>
+        }
+    </div>
+</div>

@@ -1,11 +1,33 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
 @using TasksFollow.Models
 @inject UserManager<ApplicationUser> UserManager
+@inject TasksFollow.Data.ApplicationDbContext _context
 
 @{
+    // Get the logged-in employee and their information
     var user = await UserManager.GetUserAsync(User);
+
     var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+
     var fullName = user != null ? user.FirstName + " " + user.LastName : "Employee";
+
+    int unreadCount = 0;
+
+    int unreadNotifications = 0;
+
+    if (user != null && user.CompanyID != null && user.IsActive)
+    {
+        // Count unread messages only from groups the employee belongs to
+        unreadCount = await _context.Messages.CountAsync(m => !m.IsDeleted && m.UserId != user.Id && m.GroupChat.IsActive && m.GroupChat.Company.IsActive &&
+            m.GroupChat.CompanyId == user.CompanyID.Value && !_context.MessageReads.Any(r => r.MessageId == m.MessageId && r.UserId == user.Id) && 
+            m.GroupChat.GroupMembers.Any(g => g.Employee.ApplicationUserId == user.Id && g.Employee.CompanyId == user.CompanyID.Value && g.Employee.IsActive && g.IsActive));
+
+        // Count unread task notifications
+        unreadNotifications = await _context.Notifications.CountAsync(n => n.UserId == user.Id && !n.IsRead);
+    }
 }
 
 <!DOCTYPE html>
@@ -14,9 +36,40 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - TasksFollow</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/employee.css" asp-append-version="true" />
+
+    <style>
+            .employee-notification-link {
+                position: relative;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                padding: 5px;
+            }
+
+            .employee-notification-badge {
+                position: absolute;
+                top: -3px;
+                right: -8px;
+                background: #dc2626;
+                color: white;
+                border-radius: 20px;
+                min-width: 18px;
+                height: 18px;
+                padding: 0 4px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 10px;
+                font-weight: 700;
+                line-height: 1;
+            }
+    </style>
+
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
@@ -35,8 +88,11 @@
                 <a asp-controller="EmployeeDashboard" asp-action="Index" class="@(controller == "EmployeeDashboard" ? "active" : "")">
                     <i class="bi bi-grid"></i> Dashboard
                 </a>
-                <a asp-controller="EmployeeTask" asp-action="Index" class="@(controller == "EmployeeTask" ? "active" : "")">
+                <a asp-controller="EmployeeTask" asp-action="Index" class="@(controller == "EmployeeTask" && (action == "Index" || action == "Details") ? "active" : "")">
                     <i class="bi bi-list-check"></i> My Tasks
+                </a>
+                <a asp-controller="EmployeeTask" asp-action="AllTasks" class="@(controller == "EmployeeTask" && (action == "AllTasks" || action == "AllTaskDetails") ? "active" : "")">
+                    <i class="bi bi-list-task"></i> All Tasks
                 </a>
                 <a asp-controller="EmployeeProject" asp-action="Index" class="@(controller == "EmployeeProject" ? "active" : "")">
                     <i class="bi bi-folder"></i> My Projects
@@ -44,11 +100,13 @@
 
                 <div class="employee-menu-title">COMMUNICATION</div>
 
-                <a asp-controller="EmployeeMessage" asp-action="Index" class="@(controller == "EmployeeMessage" ? "active" : "")">
-                    <i class="bi bi-chat-dots"></i> Messages
-                </a>
-                <a asp-controller="EmployeeGroupChat" asp-action="Index" class="@(controller == "EmployeeGroupChat" ? "active" : "")">
-                    <i class="bi bi-people"></i> Group Chats
+                <!-- Messages: Show the number of unread messages -->
+                <a asp-controller="Chat" asp-action="Index" class="@(controller == "Chat" ? "active" : "")">
+                    <i class="bi bi-chat-dots"></i> Group Chats
+                    @if (unreadCount > 0)
+                    {
+                        <span class="badge bg-danger rounded-pill ms-auto">@(unreadCount > 99 ? "99+" : unreadCount.ToString())</span>
+                    }
                 </a>
 
                 <div class="employee-menu-title">ACCOUNT</div>
@@ -78,6 +136,17 @@
 
                 <div class="employee-topbar-right">
                     <span class="employee-welcome">Welcome, @user?.FirstName</span>
+
+                    <!-- Notification bell with unread count -->
+                    <a asp-controller="EmployeeNotification" asp-action="Index" class="employee-welcome employee-notification-link" aria-label="Notifications">
+
+                        <i class="bi bi-bell" style="font-size:25px"></i>
+
+                        @if (unreadNotifications > 0)
+                        {
+                            <span class="employee-notification-badge">@(unreadNotifications > 99 ? "99+" : unreadNotifications.ToString())</span>
+                        }
+                    </a>
 
                     <div class="dropdown">
                         <button class="employee-account-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">

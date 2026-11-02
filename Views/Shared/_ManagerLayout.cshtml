@@ -1,4 +1,30 @@
-﻿
+﻿@using Microsoft.EntityFrameworkCore
+@using System.Security.Claims
+@inject TasksFollow.Data.ApplicationDbContext _context
+
+@{
+    // Get the ID of the currently logged-in manager
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    // Store the number of unread group messages and task notifications
+    int unreadCount = 0;
+    int unreadNotifications = 0;
+
+    if (!string.IsNullOrEmpty(userId))
+    {
+        // Count unread messages from active groups in the manager's company
+        // Deleted messages, inactive groups, and messages sent by the manager are excluded
+        // A message is unread when no MessageRead record exists for this user
+        unreadCount = await _context.Messages.CountAsync(m => !m.IsDeleted && m.UserId != userId && m.GroupChat.IsActive && m.GroupChat.Company.IsActive &&
+            _context.Users.Any(u => u.Id == userId && u.IsActive && u.CompanyID == m.GroupChat.CompanyId) && !_context.MessageReads.Any(r => r.MessageId == m.MessageId && r.UserId == userId) &&
+            (User.IsInRole("Manager") || m.GroupChat.GroupMembers.Any(g => g.Employee.ApplicationUserId == userId && g.Employee.IsActive && g.IsActive)));
+
+        // Count unread task notifications belonging to this manager
+        // Notifications are created when employees complete, reopen, or update tasks
+        unreadNotifications = await _context.Notifications.CountAsync(n => n.UserId == userId && !n.IsRead);
+    }
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,108 +32,150 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - TasksFollow</title>
 
+    <!-- Bootstrap provides responsive layout and components -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" />
+
+    <!-- Bootstrap Icons provides icons for navigation and buttons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+
+    <!-- Custom manager dashboard styles -->
     <link rel="stylesheet" href="~/css/manager.css" asp-append-version="true" />
 </head>
 <body>
 
-    <!-- Mobile Navbar -->
+    <!-- Mobile Navbar: Visible only on smaller screens -->
     <nav class="navbar manager-mobile-navbar d-lg-none">
-
         <div class="container-fluid">
 
-            <button class="btn manager-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#managerSidebar"><i class="bi bi-list"></i></button>
+            <!-- Open the sidebar on mobile devices -->
+            <button class="btn manager-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#managerSidebar">
+                <i class="bi bi-list"></i>
+            </button>
 
-
+            <!-- Application name links to the manager dashboard -->
             <a asp-controller="ManagerDashboard" asp-action="Index" class="navbar-brand text-white fw-bold">TasksFollow</a>
 
             <i class="bi bi-person-circle text-white fs-4"></i>
         </div>
     </nav>
 
-    <!-- Sidebar -->
+    <!-- Sidebar: Fixed navigation on desktop and offcanvas navigation on mobile -->
     <aside class="offcanvas-lg offcanvas-start manager-sidebar" tabindex="-1" id="managerSidebar" aria-labelledby="managerSidebarLabel">
 
+        <!-- Sidebar Header -->
         <div class="offcanvas-header manager-sidebar-header">
+            <a asp-controller="ManagerDashboard" asp-action="Index" class="manager-logo" id="managerSidebarLabel">
+                <i class="bi bi-check2-square"></i>
+                <span>TasksFollow</span>
+            </a>
 
-            <a asp-controller="ManagerDashboard" asp-action="Index" class="manager-logo" id="managerSidebarLabel"><i class="bi bi-check2-square"></i><span>TasksFollow</span></a>
-
+            <!-- Close sidebar button on mobile devices -->
             <button type="button" class="btn-close btn-close-white d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#managerSidebar" aria-label="Close"></button>
         </div>
 
         <div class="offcanvas-body manager-sidebar-body">
 
-            <!-- Profile -->
+            <!-- Manager Profile Information -->
             <div class="manager-profile">
-
                 <div class="manager-avatar"><i class="bi bi-person-badge"></i></div>
                 <div>
                     <h6 class="mb-0">Manager</h6>
-
                     <small>Company Workspace</small>
                 </div>
             </div>
 
-            <!-- Navigation -->
+            <!-- Main Sidebar Navigation -->
             <nav class="manager-nav">
 
+                <!-- Dashboard Section -->
                 <p class="manager-section-title">MAIN</p>
 
-                <a asp-controller="ManagerDashboard" asp-action="Index" class="manager-link"><i class="bi bi-grid"></i><span>Dashboard</span></a>
+                <a asp-controller="ManagerDashboard" asp-action="Index" class="manager-link">
+                    <i class="bi bi-grid"></i><span>Dashboard</span>
+                </a>
 
+                <!-- Management Section: Manage employees, projects, and tasks -->
                 <p class="manager-section-title">MANAGEMENT</p>
 
-                <a asp-controller="ManagerEmployee" asp-action="Index" class="manager-link"><i class="bi bi-people"></i><span>Employees</span></a>
+                <a asp-controller="ManagerEmployee" asp-action="Index" class="manager-link">
+                    <i class="bi bi-people"></i><span>Employees</span>
+                </a>
 
-                <a asp-controller="ManagerProject" asp-action="Index" class="manager-link"><i class="bi bi-folder"></i><span>Projects</span></a>
+                <a asp-controller="ManagerProject" asp-action="Index" class="manager-link">
+                    <i class="bi bi-folder"></i><span>Projects</span>
+                </a>
 
-                <a asp-controller="ManagerTask" asp-action="Index" class="manager-link"><i class="bi bi-list-task"></i><span>Tasks</span></a>
+                <a asp-controller="ManagerTask" asp-action="Index" class="manager-link">
+                    <i class="bi bi-list-task"></i><span>Tasks</span>
+                </a>
 
-
+                <!-- Communication Section: Group messages and notifications -->
                 <p class="manager-section-title">COMMUNICATION</p>
 
-                <a asp-controller="Message" asp-action="Index" class="manager-link"><i class="bi bi-chat-dots"></i><span>Messages</span></a>
+                <!-- Group Chats: Display unread messages from active company groups -->
+                <a asp-controller="Chat" asp-action="Index" class="manager-link">
+                    <i class="bi bi-chat-dots"></i><span>Group Chats</span>
 
-                <a asp-controller="GroupChat" asp-action="Index" class="manager-link"><i class="bi bi-people-fill"></i><span>Group Chats</span></a>
+                    @if (unreadCount > 0)
+                    {
+                        <!-- Limit the displayed number to 99+ -->
+                        <span class="badge bg-danger rounded-pill ms-auto">@(unreadCount > 99 ? "99+" : unreadCount.ToString())</span>
+                    }
+                </a>
 
+                <!-- Notifications: Display unread task activity notifications -->
+                <a asp-controller="ManagerNotification" asp-action="Index" class="manager-link">
+                    <i class="bi bi-bell"></i><span>Notifications</span>
+
+                    @if (unreadNotifications > 0)
+                    {
+                        <!-- Hide the badge when there are no unread notifications -->
+                        <span class="badge bg-danger rounded-pill ms-auto">@(unreadNotifications > 99 ? "99+" : unreadNotifications.ToString())</span>
+                    }
+                </a>
+
+                <!-- Analytics Section: Company project and task reports -->
                 <p class="manager-section-title">ANALYTICS</p>
 
-                <a asp-controller="ManagerReport" asp-action="Index" class="manager-link"><i class="bi bi-bar-chart"></i><span>Reports</span></a>
+                <a asp-controller="ManagerReport" asp-action="Reports" class="manager-link">
+                    <i class="bi bi-bar-chart"></i><span>Reports</span>
+                </a>
 
+                <!-- System Section: Manager settings -->
                 <p class="manager-section-title">SYSTEM</p>
 
-                <a asp-controller="ManagerSettings" asp-action="Index" class="manager-link"><i class="bi bi-gear"></i><span>Settings</span></a>
+                <a asp-controller="ManagerSettings" asp-action="Index" class="manager-link">
+                    <i class="bi bi-gear"></i><span>Settings</span>
+                </a>
             </nav>
 
-         
-            <!-- Logout -->
-            <!-- Logout -->
-                <div class="manager-sidebar-footer">
-                    @if (User.Identity != null && User.Identity.IsAuthenticated)
-                    {
-                        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post">
-
-                            <button type="submit" class="manager-logout">
-
-                                <i class="bi bi-box-arrow-left"></i>
-
-                                <span>Logout</span>
-                            </button>
-                        </form>
-                    }
-                </div>
+            <!-- Sidebar Footer: Logout button -->
+            <div class="manager-sidebar-footer">
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <!-- Logout uses POST to securely sign out the current user -->
+                    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post">
+                        <button type="submit" class="manager-logout">
+                            <i class="bi bi-box-arrow-left"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                }
+            </div>
         </div>
     </aside>
 
-    <!-- Main Content -->
+    <!-- Main Content: Displays the current manager page -->
     <main class="manager-main">
         <div class="manager-content">
             @RenderBody()
         </div>
     </main>
 
+    <!-- Bootstrap JavaScript enables dropdowns and mobile offcanvas navigation -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Allow individual views to add their own JavaScript -->
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

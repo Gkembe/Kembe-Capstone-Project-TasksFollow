@@ -1,0 +1,471 @@
+﻿
+/* =========================================================
+   TASKSFOLLOW - MANAGER REPORTS
+   Company projects, task statistics and performance reports
+   ========================================================= */
+
+/* ===== PAGE CONTAINER ===== */
+/* Main Reports page */
+.manager-reports {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 25px;
+}
+
+/* ===== PAGE HEADER ===== */
+/* Displays page title, description and report icon */
+.manager-reports-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 28px;
+}
+
+    .manager-reports-header h2 {
+        color: #172b4d;
+        font-size: 27px;
+        font-weight: 700;
+        margin: 0 0 6px;
+    }
+
+    .manager-reports-header p {
+        color: #64748b;
+        font-size: 14px;
+        margin: 0;
+    }
+
+.reports-header-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: #eff6ff;
+    color: #2563eb;
+    border-radius: 12px;
+    font-size: 23px;
+}
+
+/* ===== SUMMARY STATISTICS ===== */
+/* Six cards displaying the overall company statistics */
+.reports-stat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 100%;
+    min-height: 155px;
+    padding: 19px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 13px;
+    box-shadow: 0 3px 12px rgba(15,23,42,0.04);
+    transition: 0.2s;
+}
+
+    .reports-stat-card:hover {
+        border-color: #bfdbfe;
+        box-shadow: 0 5px 16px rgba(15,23,42,0.08);
+        transform: translateY(-2px);
+    }
+
+    .reports-stat-card small {
+        display: block;
+        margin: 12px 0 5px;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .reports-stat-card h3 {
+        margin: 0;
+        color: #1e293b;
+        font-size: 27px;
+        font-weight: 750;
+    }
+
+/* ===== STATISTIC ICONS ===== */
+/* Different colors for projects, tasks, completed, overdue and employees */
+.reports-stat-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 39px;
+    height: 39px;
+    border-radius: 10px;
+    font-size: 18px;
+}
+
+    .reports-stat-icon.projects {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .reports-stat-icon.tasks {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .reports-stat-icon.completed {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .reports-stat-icon.progress-icon {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .reports-stat-icon.overdue {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .reports-stat-icon.employees {
+        background: #f3e8ff;
+        color: #7e22ce;
+    }
+
+/* ===== REPORT PANELS ===== */
+/* Shared white card for overall completion and project performance */
+.reports-panel {
+    margin-bottom: 24px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(15,23,42,0.04);
+    overflow: hidden;
+}
+
+/* ===== OVERALL COMPLETION ===== */
+/* Displays the overall task completion rate */
+.reports-completion-panel {
+    padding: 24px;
+}
+
+.reports-completion-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+    .reports-completion-heading h5 {
+        color: #1e293b;
+        font-size: 17px;
+        font-weight: 700;
+        margin: 0 0 5px;
+    }
+
+    .reports-completion-heading p {
+        color: #64748b;
+        font-size: 13px;
+        margin: 0;
+    }
+
+.reports-completion-value {
+    color: #16a34a;
+    font-size: 26px;
+    font-weight: 750;
+}
+
+/* ===== PROGRESS BARS ===== */
+/* Rounded progress bars for overall and individual project completion */
+.reports-progress-track {
+    width: 100%;
+    height: 12px;
+    background: #e2e8f0;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.reports-progress-fill {
+    height: 100%;
+    background: #2563eb;
+    border-radius: 20px;
+    transition: width 0.3s;
+}
+
+    .reports-progress-fill.completed {
+        background: #16a34a;
+    }
+
+.reports-progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+/* ===== TABLE HEADER ===== */
+/* Displays the Project Performance title and project count */
+.reports-table-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 22px 24px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+    .reports-table-heading h5 {
+        color: #1e293b;
+        font-size: 17px;
+        font-weight: 700;
+        margin: 0 0 5px;
+    }
+
+    .reports-table-heading p {
+        color: #64748b;
+        font-size: 13px;
+        margin: 0;
+    }
+
+.reports-project-count {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 12px;
+    background: #eff6ff;
+    color: #2563eb;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* ===== PROJECT PERFORMANCE TABLE ===== */
+/* Shows project name, total tasks, completed tasks and completion rate */
+.reports-table {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+}
+
+    .reports-table thead th {
+        background: #f8fafc;
+        color: #475569;
+        padding: 15px 20px;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .reports-table tbody td {
+        padding: 17px 20px;
+        border-bottom: 1px solid #f1f5f9;
+        color: #334155;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    .reports-table tbody tr:hover td {
+        background: #f8fafc;
+    }
+
+    .reports-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+/* ===== PROJECT NAME ===== */
+/* Folder icon and name of each project */
+.reports-project-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 160px;
+}
+
+    .reports-project-name i {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        background: #eff6ff;
+        color: #2563eb;
+        border-radius: 9px;
+        font-size: 16px;
+    }
+
+    .reports-project-name strong {
+        font-size: 13px;
+        font-weight: 650;
+        overflow-wrap: anywhere;
+    }
+
+/* ===== TASK COUNTS ===== */
+/* Task numbers and completed task indicators */
+.reports-number {
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.reports-completed-count {
+    display: inline-block;
+    min-width: 32px;
+    padding: 5px 9px;
+    background: #dcfce7;
+    color: #15803d;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* ===== TABLE PROGRESS ===== */
+/* Smaller progress bars for individual projects */
+.reports-table-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 180px;
+    max-width: 250px;
+}
+
+    .reports-table-progress .reports-progress-track {
+        flex: 1;
+        height: 8px;
+    }
+
+    .reports-table-progress small {
+        width: 46px;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 700;
+        text-align: right;
+    }
+
+/* ===== EMPTY TABLE ===== */
+/* Displayed when the company has no projects */
+.reports-empty {
+    padding: 35px 15px;
+    text-align: center;
+    color: #94a3b8;
+}
+
+    .reports-empty i {
+        display: block;
+        margin-bottom: 12px;
+        font-size: 38px;
+    }
+
+    .reports-empty p {
+        margin: 0;
+        font-size: 14px;
+    }
+
+/* ===== TABLE SCROLLBAR ===== */
+/* Horizontal scrolling for the performance table on small screens */
+.reports-table-panel .table-responsive {
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+    .reports-table-panel .table-responsive::-webkit-scrollbar {
+        height: 5px;
+    }
+
+    .reports-table-panel .table-responsive::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+    }
+
+/* ===== TABLET RESPONSIVE ===== */
+/* Adjust spacing and statistic cards for medium screens */
+@media (max-width: 991.98px) {
+    .manager-reports {
+        padding: 20px 15px;
+    }
+
+    .reports-stat-card {
+        min-height: 145px;
+        padding: 17px;
+    }
+
+        .reports-stat-card h3 {
+            font-size: 25px;
+        }
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+/* Make header, statistic cards and project table mobile friendly */
+@media (max-width: 767.98px) {
+    .manager-reports {
+        padding: 15px 10px;
+    }
+
+    .manager-reports-header h2 {
+        font-size: 22px;
+    }
+
+    .manager-reports-header p {
+        font-size: 13px;
+    }
+
+    .reports-header-icon {
+        width: 43px;
+        height: 43px;
+        font-size: 20px;
+    }
+
+    .reports-stat-card {
+        min-height: 130px;
+        padding: 15px;
+    }
+
+        .reports-stat-card h3 {
+            font-size: 24px;
+        }
+
+    .reports-completion-panel {
+        padding: 18px;
+    }
+
+    .reports-completion-heading h5 {
+        font-size: 15px;
+    }
+
+    .reports-completion-value {
+        font-size: 23px;
+    }
+
+    .reports-table-heading {
+        padding: 17px;
+    }
+
+    .reports-table thead th, .reports-table tbody td {
+        padding: 13px 14px;
+    }
+
+    .reports-table {
+        min-width: 650px;
+    }
+}
+
+/* ===== SMALL PHONES ===== */
+/* Reduce padding on narrow devices */
+@media (max-width: 480px) {
+    .reports-stat-card {
+        min-height: 120px;
+    }
+
+    .reports-stat-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+    }
+
+    .reports-stat-card small {
+        font-size: 11px;
+    }
+
+    .reports-completion-heading {
+        align-items: flex-start;
+    }
+}

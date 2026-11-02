@@ -1,0 +1,256 @@
+﻿@model IEnumerable<TasksFollow.Models.Comment>
+
+@{
+    ViewData["Title"] = "Task Comments";
+    Layout = "_EmployeeLayout";
+
+    // Get task information and logged-in employee
+    var task = ViewBag.Task as TasksFollow.Models.ProjectTask;
+    var currentUserId = ViewBag.CurrentUserId as string;
+
+    // Get main comments and hide deleted comments without active replies
+    var mainComments = Model.Where(c => c.ParentCommentId == null && (!c.IsDeleted || Model.Any(r => r.ParentCommentId == c.CommentId && !r.IsDeleted))).ToList();
+}
+
+<div class="container-fluid py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap mb-4">
+        <div>
+            <h2>Task Comments</h2>
+            <p class="text-muted mb-0">View discussions and communicate with your team.</p>
+        </div>
+
+        <!-- Back to Task -->
+        <a asp-action="AllTaskDetails" asp-route-id="@task?.ProjectTaskId" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Task
+        </a>
+    </div>
+
+
+    <!-- Success and Error Messages -->
+    @if (TempData["ErrorComment"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorComment"]</div>
+    }
+    
+    @if (TempData["ErrorReply"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorReply"]</div>
+    }
+   
+
+
+    <!-- Task Information -->
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <h5 class="mb-1"><i class="bi bi-list-check me-2"></i>@task?.Title</h5>
+
+            <p class="text-muted mb-0">Created on @task?.CreatedDate.ToString("MMM dd, yyyy")</p>
+        </div>
+    </div>
+
+
+    <!-- Task Discussion -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body p-4">
+
+            <!-- Discussion Header -->
+            <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+
+                <div>
+                    <h5 class="mb-1"><i class="bi bi-chat-dots me-2"></i>Task Discussion</h5>
+
+                    <p class="text-muted mb-0">Comments and updates from team members.</p>
+                </div>
+                <span class="badge bg-primary">@Model.Count(c => !c.IsDeleted) Comments</span>
+            </div>
+
+            <hr />
+
+            <!-- Display Main Comments -->
+            @if (mainComments.Any())
+            {
+                @foreach (var comment in mainComments)
+                {
+                    // Get active replies for the current comment
+                    var replies = Model.Where(c => c.ParentCommentId == comment.CommentId && !c.IsDeleted).ToList();
+
+                    <div class="border-bottom pb-3 mb-4">
+
+                        <!-- Deleted Parent Comment -->
+                        @if (comment.IsDeleted)
+                        {
+                            <p class="text-muted fst-italic mb-2">
+
+                                <i class="bi bi-chat-left-dots me-1"></i> Original comment deleted
+                            </p>
+                        }
+                        else
+                        {
+                            <!-- Comment Author and Date -->
+                            <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+
+                                <div class="d-flex align-items-center gap-2">
+
+                                    <i class="bi bi-person-circle fs-3 text-primary"></i>
+
+                                    <strong>@comment.User.FirstName @comment.User.LastName</strong>
+                                </div>
+                                <small class="text-muted text-end">@comment.CreatedDate.ToString("MMM dd, yyyy hh:mm tt")</small>
+                            </div>
+
+                            <!-- Comment Content -->
+                            <p class="mb-2" style="white-space:pre-wrap; overflow-wrap:anywhere">@comment.Content</p>
+                        }
+
+                        <!-- Comment Actions -->
+                        <div class="d-flex justify-content-end align-items-center gap-3 mb-2">
+
+                            <!-- Reply Button -->
+                            @if (!comment.IsDeleted)
+                            {
+                                <a class="text-primary text-decoration-none" data-bs-toggle="collapse" href="#reply-@comment.CommentId" role="button" aria-expanded="false" aria-controls="reply-@comment.CommentId">
+
+                                    <small style="font-size:12px"><i class="bi bi-reply me-1"></i> Reply</small>
+                                </a>
+                            }
+
+                            <!-- View Replies Toggle -->
+                            @if (replies.Any())
+                            {
+                                <a class="text-primary text-decoration-none" data-bs-toggle="collapse" href="#replies-@comment.CommentId" role="button" aria-expanded="false" aria-controls="replies-@comment.CommentId">
+
+                                    <small style="font-size:12px"><i class="bi bi-chat-dots me-1"></i> View Replies (@replies.Count)</small>
+                                </a>
+                            }
+
+                            <!-- Delete Own Comment -->
+                            @if (!comment.IsDeleted && comment.UserId == currentUserId)
+                            {
+                                <form asp-action="DeleteComment" method="post" class="m-0">
+
+                                    <input type="hidden" name="id" value="@comment.CommentId" />
+
+                                    <button type="submit" class="btn btn-link text-danger text-decoration-none p-0">
+
+                                        <small style="font-size:12px"><i class="bi bi-trash me-1"></i> Delete</small>
+                                    </button>
+                                </form>
+                            }
+                        </div>
+
+                        <!-- Reply Form: Hidden by Default -->
+                        @if (!comment.IsDeleted)
+                        {
+                            <div class="collapse mt-3 mb-3" id="reply-@comment.CommentId">
+
+                                <form asp-action="ReplyComment" method="post">
+
+                                    <input type="hidden" name="commentId" value="@comment.CommentId" />
+
+                                    <textarea name="content" class="form-control mb-2" rows="3" maxlength="2000" required placeholder="Write your reply..."></textarea>
+
+                                    <div class="d-flex justify-content-end">
+
+                                        <button type="submit" class="btn btn-primary btn-sm">
+
+                                            <i class="bi bi-send me-1"></i> Post Reply
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        }
+
+                        <!-- Replies: Hidden by Default -->
+                        @if (replies.Any())
+                        {
+                            <div class="collapse" id="replies-@comment.CommentId">
+
+                                @foreach (var reply in replies)
+                                {
+                                    <div class="ms-4 ps-3 border-start border-3 border-primary mt-3">
+
+                                        <!-- Reply Author and Date -->
+
+                                        <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+
+                                            <div class="d-flex align-items-center gap-2">
+
+                                                <i class="bi bi-person-circle text-primary"></i>
+
+                                                <strong>@reply.User.FirstName @reply.User.LastName</strong>
+                                            </div>
+
+                                            <small class="text-muted text-end">@reply.CreatedDate.ToString("MMM dd, yyyy hh:mm tt")</small>
+                                        </div>
+
+                                        <!-- Reply Content -->
+                                        <p class="mb-2" style="white-space:pre-wrap; overflow-wrap:anywhere">@reply.Content</p>
+
+                                        <!-- Delete Own Reply -->
+                                        @if (reply.UserId == currentUserId)
+                                        {
+                                            <div class="d-flex justify-content-end">
+                                                <form asp-action="DeleteComment" method="post" class="m-0">
+
+                                                    <input type="hidden" name="id" value="@reply.CommentId" />
+
+                                                    <button type="submit" class="btn btn-link text-danger text-decoration-none p-0">
+
+                                                        <small style="font-size:12px"><i class="bi bi-trash me-1"></i> Delete</small>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+
+                            </div>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <!-- No Comments Message -->
+                <div class="text-center py-4">
+                    <i class="bi bi-chat-dots fs-1 text-muted"></i>
+                    <h5 class="mt-2">No Comments Yet</h5>
+                    <p class="text-muted">Be the first to comment on this task.</p>
+                </div>
+            }
+
+        </div>
+    </div>
+
+
+    <!-- Add New Comment -->
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+
+            <h5><i class="bi bi-chat-dots me-2"></i>Add Comment</h5>
+            <p class="text-muted">Share an update or ask a question about this task.</p>
+            <hr />
+
+            <!-- Add Comment Form -->
+            <form asp-action="AddComment" method="post">
+                <input type="hidden" name="taskId" value="@task?.ProjectTaskId" />
+
+                <div class="mb-3">
+                    <label for="content" class="form-label">Your Comment</label>
+                    <textarea id="content" name="content" class="form-control" rows="4" maxlength="2000" required placeholder="Write your comment here..."></textarea>
+                    <small class="text-muted">Maximum 2000 characters.</small>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-send me-1"></i> Post Comment
+                </button>
+            </form>
+
+        </div>
+    </div>
+
+</div>

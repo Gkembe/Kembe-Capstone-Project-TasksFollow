@@ -21,10 +21,7 @@ namespace TasksFollow.Controllers
         public async Task<IActionResult> Index(DateTime? startDate, DateTime? endDate, int? companyId, int? subscriptionPlanId)
         {
             // Start payment query
-            var query = _context.Payments
-                .Include(p => p.Company)
-                .Include(p => p.SubscriptionPlan)
-                .AsQueryable();
+            var query = _context.Payments.Include(p => p.Company).Include(p => p.SubscriptionPlan).AsQueryable();
 
             // Filter by start date
             if (startDate.HasValue)

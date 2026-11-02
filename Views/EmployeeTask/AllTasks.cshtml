@@ -1,0 +1,132 @@
+﻿@model IEnumerable<TasksFollow.Models.ProjectTask>
+
+@{
+    ViewData["Title"] = "All Tasks";
+    Layout = "_EmployeeLayout";
+}
+
+<div class="employee-index-page">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>All Tasks</h2>
+            <p class="text-muted">View all tasks and collaborate with your colleagues.</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-primary">
+            <i class="bi bi-list-check me-1"></i> My Tasks
+        </a>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="card p-3 mb-4">
+
+        <form asp-action="AllTasks" method="get">
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+                    <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Search tasks..." />
+                </div>
+
+                <div class="col-md-3">
+
+                    <select name="status" class="form-select">
+
+                        <option value="All">All Statuses</option>
+
+                        @foreach (var item in new[] { "Pending", "In Progress", "Completed", "Over Due" })
+                        {
+                            if (ViewBag.Status == item)
+                            {
+                                <option value="@item" selected>@item</option>
+                            }
+                            else
+                            {
+                                <option value="@item">@item</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <select name="priority" class="form-select">
+                        <option value="All">All Priorities</option>
+                        @foreach (var item in new[] { "Low", "Medium", "High" })
+                        {
+                            if (ViewBag.Priority == item)
+                            {
+                                <option value="@item" selected>@item</option>
+                            }
+                            else
+                            {
+                                <option value="@item">@item</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-2 d-flex gap-2">
+
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i></button>
+
+                    <a asp-action="AllTasks" class="btn btn-outline-secondary"><i class="bi bi-arrow-clockwise"></i></a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <!-- All Tasks Table -->
+    <div class="card p-3">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Project</th>
+                        <th>Status</th>
+                        <th>Priority</th>
+                        <th>Due Date</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var task in Model)
+                        {
+                            <tr>
+                                <td><strong>@task.Title</strong></td>
+
+                                <td>@task.Project.Name</td>
+
+                                <td><span class="badge bg-primary">@task.Status</span></td>
+                                <td>@task.Priority</td>
+
+                                <td>@task.DueDate?.ToString("MMM dd, yyyy")</td>
+
+                                <td class="text-end">
+                                    <a asp-action="AllTaskDetails" asp-route-id="@task.ProjectTaskId" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye me-1"></i> View
+                                    </a>
+                                    <a asp-action="Comments" asp-route-id="@task.ProjectTaskId" class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-chat-dots me-1"></i> Comments
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">No tasks found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>

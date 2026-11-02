@@ -3,261 +3,186 @@
 @{
 	ViewData["Title"] = "Task Details";
 	Layout = "_EmployeeLayout";
+
 	var task = Model.ProjectTask;
 }
 
 <div class="container-fluid py-4">
 
+	<!-- Page Header -->
 	<div class="d-flex justify-content-between align-items-center mb-4">
-
 		<div>
 			<h2>Task Details</h2>
-
-			<p class="text-muted mb-0">View your assigned task information.</p>
-
+			<p class="text-muted mb-0">View and manage your assigned task.</p>
 		</div>
-		<a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to Tasks</a>
 
-
+		<a asp-action="Index" class="btn btn-outline-secondary">
+			<i class="bi bi-arrow-left me-1"></i> Back to Tasks
+		</a>
 	</div>
 
-	<div class="card shadow-sm">
 
+	
+	<!-- Task Information -->
+	<div class="card shadow-sm mb-4">
 		<div class="card-body p-4">
 
-			<h4>@task.Title</h4>
-			<p class="text-muted">@task.Project?.Name</p>
-
+			<!-- Task Title and Project -->
+			<div class="d-flex justify-content-between align-items-start mb-3">
+				<div>
+					<h4 class="mb-1">@task.Title</h4>
+					<p class="text-muted mb-0">@task.Project?.Name</p>
+				</div>
+				<span class="badge bg-primary">@task.Status</span>
+			</div>
 
 			<hr />
 
+			<!-- Task Details -->
 			<div class="row g-4">
 
-
 				<div class="col-md-6">
-
 					<strong>Description</strong>
-
-					<p>@(task.Description ?? "No description provided.")</p>
-
+					<p class="mb-0" style="white-space:pre-wrap; overflow-wrap:anywhere">@(task.Description ?? "No description provided.")</p>
 				</div>
 
 				<div class="col-md-6">
-
-
 					<strong>Status</strong>
-
-					<p>@task.Status</p>
-
+					<p class="mb-0">@task.Status</p>
 				</div>
 
 				<div class="col-md-6">
-
 					<strong>Priority</strong>
-
-					<p>@(task.Priority ?? "Not Set")</p>
-
+					<p class="mb-0">@(task.Priority ?? "Not Set")</p>
 				</div>
 
 				<div class="col-md-6">
-
 					<strong>Progress</strong>
-
 					<div class="progress mt-2" style="height:10px;">
-
-						<div class="progress-bar" style="width:@task.Percent%"></div>
-
+						<div class="progress-bar" role="progressbar" style="width:@task.Percent%" aria-valuenow="@task.Percent" aria-valuemin="0" aria-valuemax="100"></div>
 					</div>
-
-					<small>@task.Percent% Completed</small>
-
+					<small class="text-muted">@task.Percent% Completed</small>
 				</div>
 
 				<div class="col-md-6">
-
 					<strong>Start Date</strong>
-
-					<p>@(task.StartDate?.ToString("MMM dd, yyyy") ?? "Not Set")</p>
-
+					<p class="mb-0">@(task.StartDate?.ToString("MMM dd, yyyy") ?? "Not Set")</p>
 				</div>
 
 				<div class="col-md-6">
-
 					<strong>Due Date</strong>
-
-					<p>@(task.DueDate?.ToString("MMM dd, yyyy") ?? "Not Set")</p>
-
+					<p class="mb-0">@(task.DueDate?.ToString("MMM dd, yyyy") ?? "Not Set")</p>
 				</div>
 
 				<div class="col-md-6">
-
 					<strong>Assigned Date</strong>
-
-					<p>@Model.AssignedDate.ToString("MMM dd, yyyy")</p>
-
+					<p class="mb-0">@Model.AssignedDate.ToString("MMM dd, yyyy")</p>
 				</div>
+			
 
 				<div class="col-md-6">
-
 					<strong>Assignment Status</strong>
-
 					@if (Model.IsCompleted)
 					{
-						<p>Completed</p>
+						<p class="text-success mb-0"><i class="bi bi-check-circle me-1"></i> Completed</p>
 					}
 					else
 					{
-
-						<p>Open</p>
+						<p class="text-warning mb-0"><i class="bi bi-clock me-1"></i> Open</p>
 					}
-
-                    
 				</div>
 
-                
-				<!-- SUCCESS MESSAGE -->
+			</div>
+		</div>
+	</div>
 
-				@if (TempData["SuccessMessage"] != null)
-				{
-					<div class="alert alert-success mt-3">
 
-						<i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+	<!-- Task Completion -->
+	<div class="card shadow-sm mb-4">
+		<div class="card-body p-4">
 
-					</div>
-				}
+			<h5><i class="bi bi-check-circle me-2"></i>My Task Completion</h5>
+			<hr />
 
-				<!-- TASK COMPLETION -->
-
-				<div class="card shadow-sm mt-4">
-
-					<div class="card-body">
-
-						<h5><i class="bi bi-check-circle me-2"></i>My Task Completion</h5>
-
-						<hr />
-
-						@if (Model.IsCompleted)
-						{
-							<div class="alert alert-success">
-
-								<i class="bi bi-check-circle-fill"></i>
-
-								You completed this assignment on
-
-								@Model.CompletDate?.ToString("MMM dd, yyyy").
-							</div>
-
-							<form asp-action="Reopen" asp-route-id="@Model.TaskAssignmentId" method="post">
-
-								@Html.AntiForgeryToken()
-
-								<button type="submit" class="btn btn-outline-warning">
-									<i class="bi bi-arrow-counterclockwise"></i> Reopen Task
-								</button>
-
-							</form>
-						}
-						else
-						{
-							<p class="text-muted">Have you finished your assigned work?</p>
-
-							<form asp-action="Complete" asp-route-id="@Model.TaskAssignmentId" method="post">
-
-								@Html.AntiForgeryToken()
-
-								<button type="submit" class="btn btn-success">
-
-									<i class="bi bi-check-circle"></i> Mark as Completed
-
-								</button>
-							</form>
-						}
-					</div>
+			<!-- Completed Assignment -->
+			@if (Model.IsCompleted)
+			{
+				<div class="alert alert-success">
+					<i class="bi bi-check-circle-fill me-1"></i>
+					You completed this assignment on @Model.CompletDate?.ToString("MMM dd, yyyy").
 				</div>
 
+				<!-- Reopen Assignment -->
+				<form asp-action="Reopen" asp-route-id="@Model.TaskAssignmentId" method="post">
 
-				
-				<!-- UPDATE TASK PROGRESS -->
+					@Html.AntiForgeryToken()
+					<button type="submit" class="btn btn-outline-warning">
+						<i class="bi bi-arrow-counterclockwise me-1"></i> Reopen Task
+					</button>
+				</form>
+			}
+			else
+			{
+				<!-- Complete Assignment -->
+				<p class="text-muted">Have you finished your assigned work?</p>
 
-				<div class="card shadow-sm mt-4">
+				<form asp-action="Complete" asp-route-id="@Model.TaskAssignmentId" method="post">
 
-					<div class="card-body">
+					@Html.AntiForgeryToken()
+					<button type="submit" class="btn btn-success">
+						<i class="bi bi-check-circle me-1"></i> Mark as Completed
+					</button>
+				</form>
+			}
 
-						<h5><i class="bi bi-bar-chart me-2"></i>Update Task Progress</h5>
-						<hr />
+		</div>
+	</div>
 
-						<form asp-action="UpdateProgress" asp-route-id="@Model.TaskAssignmentId" method="post">
 
-							@Html.AntiForgeryToken()
+	<!-- Update Task Progress -->
+	<div class="card shadow-sm mb-4">
+		<div class="card-body p-4">
 
-							<div class="mb-3">
+			<h5><i class="bi bi-bar-chart me-2"></i>Update Task Progress</h5>
+			<hr />
 
-								<label class="form-label">Progress Percentage</label>
+			<!-- Progress Update Form -->
+			<form asp-controller="EmployeeTask" asp-action="UpdateProgress" asp-route-id="@Model.TaskAssignmentId" method="post">
+				@Html.AntiForgeryToken()
 
-								<div class="input-group">
+				<div class="mb-3">
+					<label for="percent" class="form-label">Progress Percentage</label>
+					<div class="input-group">
 
-									<input type="number" name="percent" value="@Model.ProjectTask.Percent" min="0" max="100" class="form-control" required />
-
-									<span class="input-group-text">%</span>
-
-								</div>
-							</div>
-
-							
-
-							<button type="submit" class="btn btn-primary">
-								<i class="bi bi-save"></i> Save Progress
-							</button>
-						</form>
+						<input type="number" id="percent" name="percent" value="@task.Percent" min="0" max="100" class="form-control" required />
+						<span class="input-group-text">%</span>
 					</div>
 				</div>
 
-				<!-- COMPLETE OR REOPEN TASK -->
+				<button type="submit" class="btn btn-primary">
+					<i class="bi bi-save me-1"></i> Save Progress
+				</button>
+			</form>
 
-				<div class="card shadow-sm mt-4">
+		</div>
+	</div>
 
-					<div class="card-body">
 
-						<h5><i class="bi bi-check-circle me-2"></i>Task Completion</h5>
-						<hr />
+	<!-- Task Discussion -->
+	<div class="card shadow-sm">
+		<div class="card-body p-4">
 
-						@if (Model.IsCompleted)
-						{
-							<div class="alert alert-success">This assignment is completed.</div>
-
-							<form asp-action="Reopen" asp-route-id="@Model.TaskAssignmentId" method="post">
-
-								@Html.AntiForgeryToken()
-
-								<button type="submit" class="btn btn-outline-warning">
-
-									<i class="bi bi-arrow-counterclockwise"></i> Reopen Task
-								</button>
-							</form>
-						}
-						else
-						{
-							<form asp-action="Complete" asp-route-id="@Model.TaskAssignmentId" method="post">
-
-								@Html.AntiForgeryToken()
-
-								<button type="submit" class="btn btn-success">
-
-									<i class="bi bi-check-circle"></i> Mark as Completed
-
-								</button>
-							</form>
-						}
-					</div>
-
+			<div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+				<div>
+					<h5><i class="bi bi-chat-dots me-2"></i>Task Discussion</h5>
+					<p class="text-muted mb-0">View comments, ask questions, and communicate with your team.</p>
 				</div>
 
-
-
+				<!-- View Comments -->
+				<a asp-action="Comments" asp-route-id="@task.ProjectTaskId" class="btn btn-outline-primary"><i class="bi bi-chat-dots me-1"></i> View Comments</a>
 			</div>
 
 		</div>
-
 	</div>
 
 </div>

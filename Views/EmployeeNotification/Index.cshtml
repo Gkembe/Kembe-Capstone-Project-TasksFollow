@@ -1,0 +1,154 @@
+﻿@model IEnumerable<TasksFollow.Models.Notification>
+
+@{
+    ViewData["Title"] = "Notifications";
+    Layout = "_EmployeeLayout";
+
+    // Count notifications that have not been read
+    int unreadCount = Model.Count(n => !n.IsRead);
+}
+
+<!-- Load custom CSS for the Employee Notifications page -->
+<link rel="stylesheet" href="~/css/notifications.css" asp-append-version="true" />
+
+<div class="employee-notifications">
+
+    <!-- Page Header: Display title, description and Mark All as Read button -->
+    <div class="notifications-header">
+        <div>
+            <h2 style="color:white"><i class="bi bi-bell me-2"></i>Notifications</h2>
+            <p>Stay updated on your task assignments.</p>
+        </div>
+
+        <!-- Mark all notifications as read if unread notifications exist -->
+        @if (unreadCount > 0)
+        {
+            <form asp-action="MarkAllAsRead" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="notifications-primary-btn">
+                    <i class="bi bi-check2-all me-1"></i> Mark All as Read
+                </button>
+            </form>
+        }
+    </div>
+
+    <!-- Notifications: Display success or error messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            <i class="bi bi-check-circle me-1"></i> @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-circle me-1"></i> @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- Notifications Card: Contains all employee notifications -->
+    <div class="notifications-card">
+
+        <!-- Card Header: Display title and unread notification count -->
+        <div class="notifications-card-header">
+            <div>
+                <h5>All Notifications</h5>
+                <span>Manage your task updates and alerts</span>
+            </div>
+
+            <span class="notifications-count-badge">@unreadCount Unread</span>
+        </div>
+
+        <!-- Notification List -->
+        <div class="notifications-list">
+
+            @if (!Model.Any())
+            {
+                <!-- Empty State: Display when the employee has no notifications -->
+                <div class="notifications-empty">
+                    <div class="notifications-empty-icon">
+                        <i class="bi bi-bell-slash"></i>
+                    </div>
+                    <h5>No Notifications</h5>
+                    <p>You don't have any notifications yet.</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var notification in Model)
+                {
+                    <!-- Notification Item: Highlight notifications that have not been read -->
+                    <div class="notification-item @(notification.IsRead ? "" : "notification-unread")">
+
+                        <div class="notification-content">
+
+                            <!-- Notification Icon: Different icons for assignment and removal -->
+                            <div class="notification-icon @(notification.Title == "Task Assignment Removed" ? "removed" : "assigned")">
+                                @if (notification.Title == "Task Assignment Removed")
+                                {
+                                    <i class="bi bi-person-dash"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-clipboard-check"></i>
+                                }
+                            </div>
+
+                            <!-- Notification Details: Title, message and creation date -->
+                            <div class="notification-details">
+
+                                <div class="notification-title-row">
+                                    <h6>@notification.Title</h6>
+
+                                    <!-- Unread Indicator: Display New badge for unread notifications -->
+                                    @if (!notification.IsRead)
+                                    {
+                                        <span class="notification-new-badge">New</span>
+                                    }
+                                </div>
+
+                                <!-- Notification Message -->
+                                <p>@notification.Message</p>
+
+                                <!-- Notification Date -->
+                                <small class="notification-date">
+                                    <i class="bi bi-clock me-1"></i>
+                                    @notification.CreatedDate.ToString("MMM dd, yyyy hh:mm tt")
+                                </small>
+
+                                <!-- Notification Actions -->
+                                <div class="notification-actions">
+
+                                    <!-- View Task: Open the assigned task -->
+                                    @if (notification.Title == "New Task Assigned" && notification.ProjectTaskId != null)
+                                    {
+                                        <form asp-action="OpenTask" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@notification.NotificationId" />
+
+                                           
+                                           
+                                        </form>
+                                    }
+
+                                    <!-- Mark as Read: Available only for unread notifications -->
+                                    @if (!notification.IsRead)
+                                    {
+                                        <form asp-action="MarkAsRead" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@notification.NotificationId" />
+                                            <button type="submit" class="notification-read-btn">
+                                                <i class="bi bi-check2 me-1"></i> Mark as Read
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
