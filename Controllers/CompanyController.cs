@@ -16,9 +16,32 @@ public class CompanyController : Controller
     }
 
     // GET: COMPANYS
-    public async Task<IActionResult> Index()    
+    public async Task<IActionResult> Index(string search, string status = "Active")
     {
-        return View(await _context.Companies.ToListAsync());
+        // Get companies from the database
+        var companies = _context.Companies.AsQueryable();
+
+        // Search by company name
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            companies = companies.Where(c => c.Name.Contains(search));
+        }
+
+        // Filter companies by status (Active by default)
+        if (status == "Active")
+        {
+            companies = companies.Where(c => c.IsActive);
+        }
+        else if (status == "Inactive")
+        {
+            companies = companies.Where(c => !c.IsActive);
+        }
+
+        // Keep the selected search and filter values
+        ViewBag.Search = search;
+        ViewBag.Status = status;
+
+        return View(await companies.OrderBy(c => c.Name).ToListAsync());
     }
 
     // GET: Companies/Details/5

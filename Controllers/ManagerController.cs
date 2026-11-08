@@ -26,22 +26,44 @@ namespace TasksFollow.Controllers
 
         // GET: Manager/Index
         // Show all users in the Manager role and their company information.
+
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string search, string status = "Active")
         {
-            // Retrieve managers through ASP.NET Core Identity.
+            // Retrieve managers through ASP.NET Core Identity
             var managers = await _userManager.GetUsersInRoleAsync("Manager");
 
-            // Collect manager IDs to load their additional database details.
+            // Collect manager IDs to load their additional database details
             var managerIds = managers.Select(m => m.Id).ToList();
 
-            // Load manager accounts with their related companies.
+            // Load manager accounts with their related companies
             var users = await _context.Users.Where(u => managerIds.Contains(u.Id)).Include(u => u.Company).ToListAsync();
+
+            // Search managers by first name, last name, email, or company name
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                users = users.Where(u =>
+                    u.FirstName.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                    u.LastName.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                    (u.Email != null && u.Email.Contains(search, StringComparison.OrdinalIgnoreCase)) ||
+                    (u.Company != null && u.Company.Name.Contains(search, StringComparison.OrdinalIgnoreCase))
+                ).ToList();
+            }
+
+            // Filter managers by account status (Active by default)
+            if (status == "Active")
+            {
+                users = users.Where(u => u.IsActive).ToList();
+            }
+            else if (status == "Inactive")
+            {
+                users = users.Where(u => !u.IsActive).ToList();
+            }
 
             var managerList = new List<ManagerIndexViewModel>();
 
-            // Convert each user into a ViewModel for the managers list.
-            foreach (var user in users)
+            // Convert each user into a ViewModel for the managers list
+            foreach (var user in users.OrderBy(u => u.FirstName))
             {
                 var manager = new ManagerIndexViewModel
                 {
@@ -54,7 +76,7 @@ namespace TasksFollow.Controllers
                     CompanyId = user.CompanyID
                 };
 
-                // Display the company name, or a fallback if none is linked.
+                // Display the company name, or a fallback if none is linked
                 if (user.Company != null)
                 {
                     manager.CompanyName = user.Company.Name;
@@ -67,8 +89,13 @@ namespace TasksFollow.Controllers
                 managerList.Add(manager);
             }
 
+            // Keep the selected search and filter values
+            ViewBag.Search = search;
+            ViewBag.Status = status;
+
             return View(managerList);
         }
+
 
 
 

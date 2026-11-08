@@ -15,13 +15,7 @@
             <p>Update the company information.</p>
         </div>
 
-        <a asp-action="Index"
-           class="btn btn-outline-secondary">
-
-            <i class="bi bi-arrow-left me-1"></i>
-            Back to Companies
-
-        </a>
+        <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back to Companies</a>
 
     </div>
 
@@ -44,32 +38,21 @@
         </div>
 
 
-        <form asp-action="Edit" method="post">
+        <form asp-action="Edit" method="post" id="createCompanyForm">
 
-            <div asp-validation-summary="ModelOnly"
-                 class="text-danger mb-3">
-            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
 
             <!-- COMPANY ID -->
-            <input type="hidden"
-                   asp-for="CompanyId" />
+            <input type="hidden" asp-for="CompanyId" />
 
 
             <!-- COMPANY NAME -->
             <div class="mb-4">
 
-                <label asp-for="Name"
-                       class="form-label">
-                </label>
-
-                <input asp-for="Name"
-                       class="form-control"
-                       placeholder="Enter company name" />
-
-                <span asp-validation-for="Name"
-                      class="text-danger">
-                </span>
+                <label asp-for="Name" class="form-label">Company Name    <span id="nameStart"></span> </label>
+                <input asp-for="Name" class="form-control" placeholder="Enter company name" id="companyName" />
+                <span asp-validation-for="Name" class="text-danger"></span>
 
             </div>
 
@@ -77,19 +60,9 @@
             <!-- DESCRIPTION -->
             <div class="mb-4">
 
-                <label asp-for="Description"
-                       class="form-label">
-                </label>
-
-                <textarea asp-for="Description"
-                          class="form-control"
-                          rows="4"
-                          placeholder="Enter company description">
-                </textarea>
-
-                <span asp-validation-for="Description"
-                      class="text-danger">
-                </span>
+                <label asp-for="Description" class="form-label">Description     <span id="descStart"></span></label>
+                <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter company description" id="description"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
 
             </div>
 
@@ -99,34 +72,18 @@
 
                 <div class="col-12 col-md-6 mb-4">
 
-                    <label asp-for="Phone"
-                           class="form-label">
-                    </label>
-
-                    <input asp-for="Phone"
-                           class="form-control"
-                           placeholder="Enter phone number" />
-
-                    <span asp-validation-for="Phone"
-                          class="text-danger">
-                    </span>
+                    <label asp-for="Phone" class="form-label">Company Phone Number     <span id="phoneStart"></span></label>
+                    <input asp-for="Phone" class="form-control" placeholder="Enter phone number" id="phone"/>
+                    <span asp-validation-for="Phone" class="text-danger"></span>
 
                 </div>
 
 
                 <div class="col-12 col-md-6 mb-4">
 
-                    <label asp-for="Email"
-                           class="form-label">
-                    </label>
-
-                    <input asp-for="Email"
-                           class="form-control"
-                           placeholder="Enter email address" />
-
-                    <span asp-validation-for="Email"
-                          class="text-danger">
-                    </span>
+                    <label asp-for="Email" class="form-label">Company Email     <span id="emailStart"></span></label>
+                    <input asp-for="Email" class="form-control" placeholder="Enter email address" id="email" />
+                    <span asp-validation-for="Email" class="text-danger"> </span>
 
                 </div>
 
@@ -136,17 +93,10 @@
             <!-- ADDRESS -->
             <div class="mb-4">
 
-                <label asp-for="Address"
-                       class="form-label">
-                </label>
+                <label asp-for="Address" class="form-label">Address    <span id="addressStart"></span></label>
 
-                <input asp-for="Address"
-                       class="form-control"
-                       placeholder="Enter company address" />
-
-                <span asp-validation-for="Address"
-                      class="text-danger">
-                </span>
+                <input asp-for="Address" class="form-control" placeholder="Enter company address" id="address"/>
+                <span asp-validation-for="Address" class="text-danger"> </span>
 
             </div>
 
@@ -154,17 +104,10 @@
             <!-- CREATED DATE -->
             <div class="mb-4">
 
-                <label asp-for="CreatedDate"
-                       class="form-label">
-                </label>
+                <label asp-for="CreatedDate" class="form-label"></label>
 
-                <input asp-for="CreatedDate"
-                       class="form-control"
-                       readonly />
-
-                <span asp-validation-for="CreatedDate"
-                      class="text-danger">
-                </span>
+                <input asp-for="CreatedDate" class="form-control" readonly />
+                <span asp-validation-for="CreatedDate" class="text-danger"></span>
 
             </div>
 
@@ -174,52 +117,31 @@
 
                 <div>
 
-                    <label asp-for="IsActive"
-                           class="form-label mb-1">
-                        Company Status
-                    </label>
+                    <label asp-for="IsActive" class="form-label mb-1">Company Status</label>
 
-                    <p class="company-status-help">
-                        Enable or disable this company.
-                    </p>
+                    <p class="company-status-help">Enable or disable this company.</p>
 
                 </div>
 
 
                 <div class="form-check form-switch">
 
-                    <input asp-for="IsActive"
-                           class="form-check-input"
-                           role="switch" />
+                    <input asp-for="IsActive" class="form-check-input" role="switch" />
 
                 </div>
 
             </div>
 
-            <span asp-validation-for="IsActive"
-                  class="text-danger">
-            </span>
+            <span asp-validation-for="IsActive"class="text-danger"></span>
 
 
             <!-- ACTION BUTTONS -->
             <div class="company-form-actions">
 
-                <a asp-action="Details"
-                   asp-route-id="@Model.CompanyId"
-                   class="btn btn-light company-cancel-btn">
-
-                    Cancel
-
-                </a>
+                <a asp-action="Details" asp-route-id="@Model.CompanyId" class="btn btn-light company-cancel-btn">Cancel</a>
 
 
-                <button type="submit"
-                        class="btn btn-primary company-submit-btn">
-
-                    <i class="bi bi-check-lg me-1"></i>
-                    Save Changes
-
-                </button>
+                <button type="submit" class="btn btn-primary company-submit-btn"><i class="bi bi-check-lg me-1"></i>Save Changes</button>
 
             </div>
 
@@ -233,6 +155,7 @@
 @section Scripts {
 
     @{
+        <script src="~/js/createCompany.js" asp-append-version="true"></script>
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 

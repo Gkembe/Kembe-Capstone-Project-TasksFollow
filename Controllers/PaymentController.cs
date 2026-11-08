@@ -252,16 +252,54 @@ namespace TasksFollow.Controllers
             return RedirectToAction("Details", "Company", new { id = company.CompanyId });
         }
 
-        public async Task<IActionResult> Index()
-        {
-            var payments = await _context.Payments.Include(p => p.Company).Include(p => p.SubscriptionPlan).OrderByDescending(p => p.PaymentDate).ToListAsync();
 
-            return View(payments);
+
+        [HttpGet]
+        public async Task<IActionResult> Index(string search, string status = "All", int? year = null)
+        {
+            // Get payments with their related companies and subscription plans
+            var payments = _context.Payments.Include(p => p.Company)
+                .Include(p => p.SubscriptionPlan).AsQueryable();
+
+            // Search payments by company name or subscription plan
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                payments = payments.Where(p => p.Company.Name.Contains(search) ||
+                    p.SubscriptionPlan.Name.Contains(search));
+            }
+
+            // Filter payments by coverage status
+            if (status == "Active")
+            {
+                payments = payments.Where(p => p.CoverageEndDate >= DateTime.Today);
+            }
+            else if (status == "Expired")
+            {
+                payments = payments.Where(p => p.CoverageEndDate < DateTime.Today);
+            }
+
+            // Filter payments by payment year
+            if (year != null)
+            {
+                payments = payments.Where(p => p.PaymentDate.Year == year.Value);
+            }
+
+            // Keep selected filter values for the view
+            ViewBag.Search = search;
+            ViewBag.Status = status;
+            ViewBag.Year = year;
+
+            // Display newest payments first
+            return View(await payments.OrderByDescending(p => p.PaymentDate).ToListAsync());
         }
 
-        // GET: Payment/CompanyHistory/5
-        public async Task<IActionResult> CompanyHistory(int companyId)
+
+
+
+
+        public async Task<IActionResult> CompanyHistory(int companyId, string search, int? year)
         {
+            // Get the selected company
             var company = await _context.Companies.FindAsync(companyId);
 
             if (company == null)
@@ -269,14 +307,33 @@ namespace TasksFollow.Controllers
                 return NotFound();
             }
 
-            var payments = await _context.Payments.Include(p => p.SubscriptionPlan).Where(p => p.CompanyId == companyId).OrderByDescending(p => p.PaymentDate).ToListAsync();
+            // Get payments belonging to the selected company
+            var payments = _context.Payments.Include(p => p.SubscriptionPlan)
+                .Where(p => p.CompanyId == companyId).AsQueryable();
 
+            // Search payments by subscription plan name
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                payments = payments.Where(p => p.SubscriptionPlan.Name.Contains(search));
+            }
+
+            // Filter payments by payment year
+            if (year != null)
+            {
+                payments = payments.Where(p => p.PaymentDate.Year == year.Value);
+            }
+
+            // Pass company information and filter values to the view
             ViewBag.CompanyId = company.CompanyId;
-
             ViewBag.CompanyName = company.Name;
+            ViewBag.Search = search;
+            ViewBag.Year = year;
 
-            return View(payments);
+            // Display the most recent payments first
+            return View(await payments.OrderByDescending(p => p.PaymentDate).ToListAsync());
         }
+
+
 
         // GET: Payment/Delete/5
         public async Task<IActionResult> Delete(int? id)

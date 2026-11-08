@@ -6,6 +6,7 @@
 }
 
 <div class="company-index-page">
+    <!-- Page header -->
     <div class="company-index-header">
         <div>
             <h1>Companies</h1>
@@ -14,15 +15,37 @@
         <a asp-action="Create" class="btn btn-primary company-add-btn"><i class="bi bi-plus-lg me-1"></i> Add Company</a>
     </div>
 
+    <!-- Company list -->
     <div class="company-table-card">
         <div class="company-table-header">
             <div>
-                <h4>All Companies</h4>
+                <h4>Companies</h4>
                 <p>View and manage your registered companies.</p>
             </div>
             <div class="company-count">@Model.Count() Companies</div>
         </div>
 
+        <!-- Search companies by name and filter by status -->
+        <form asp-action="Index" method="get" class="row g-3 px-3 pb-3">
+            <div class="col-md-6">
+                <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Search company by name..." id="searchIn" />
+            </div>
+
+            <div class="col-md-4">
+                <select name="status" class="form-select">
+                    <option value="Active" selected="@(ViewBag.Status == "Active")">Active</option>
+                    <option value="Inactive" selected="@(ViewBag.Status == "Inactive")">Inactive</option>
+                    <option value="All" selected="@(ViewBag.Status == "All")">All Companies</option>
+                </select>
+            </div>
+
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Search</button>
+                <a asp-action="Index" class="btn btn-outline-secondary" title="Reset"><i class="bi bi-arrow-clockwise"></i></a>
+            </div>
+        </form>
+
+        <!-- Company table -->
         <div class="table-responsive">
             <table class="table company-table align-middle mb-0">
                 <thead>
@@ -42,7 +65,7 @@
                     {
                         @foreach (var item in Model)
                         {
-                            <tr>
+                            <tr class="allRow">
                                 <td>
                                     <div class="company-table-name">
                                         <div class="company-table-icon"><i class="bi bi-building"></i></div>
@@ -105,17 +128,22 @@
 
                                 <td>
                                     <div class="company-table-actions">
+                                        <!-- Edit company information -->
                                         <a asp-action="Edit" asp-route-id="@item.CompanyId" class="company-action-btn company-action-edit" title="Edit Company"><i class="bi bi-pencil"></i></a>
 
                                         @if (item.IsActive)
                                         {
+                                            <!-- Deactivate an active company -->
                                             <form asp-action="Deactivate" asp-route-id="@item.CompanyId" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
                                                 <button type="submit" class="btn btn-sm btn-danger" title="Deactivate"><i class="bi bi-slash-circle"></i></button>
                                             </form>
                                         }
                                         else
                                         {
+                                            <!-- Reactivate an inactive company -->
                                             <form asp-action="Activate" asp-route-id="@item.CompanyId" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
                                                 <button type="submit" class="btn btn-sm btn-success" title="Activate"><i class="bi bi-check-circle"></i></button>
                                             </form>
                                         }
@@ -130,9 +158,9 @@
                             <td colspan="7">
                                 <div class="company-empty-state">
                                     <div class="company-empty-icon"><i class="bi bi-buildings"></i></div>
-                                    <h5>No companies yet</h5>
-                                    <p>Create your first company to get started.</p>
-                                    <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Add Company</a>
+                                    <h5>No companies found</h5>
+                                    <p>No companies match your search or selected status.</p>
+                                    <a asp-action="Index" class="btn btn-outline-primary"><i class="bi bi-arrow-clockwise me-1"></i> Reset Filters</a>
                                 </div>
                             </td>
                         </tr>
@@ -142,3 +170,6 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    <script src="~/js/search.js" asp-append-version="true"></script>
+}

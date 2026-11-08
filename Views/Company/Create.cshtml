@@ -14,9 +14,7 @@
             <p>Add a new company to TasksFollow.</p>
         </div>
 
-        <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i> Back to Companies
-        </a>
+        <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i> Back to Companies</a>
     </div>
 
     <!-- FORM CARD -->
@@ -34,55 +32,51 @@
             </div>
         </div>
 
-        <form asp-action="Create" method="post">
+        <form asp-action="Create" method="post" id="createCompanyForm">
 
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
             <!-- COMPANY NAME -->
             <div class="mb-4">
-                <label asp-for="Name" class="form-label"></label>
-                <input asp-for="Name" class="form-control" placeholder="Enter company name" />
+                <label asp-for="Name" class="form-label">Company Name    <span id="nameStart"></span></label>
+                <input asp-for="Name" class="form-control" placeholder="Enter company name" id="companyName" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
             <!-- DESCRIPTION -->
             <div class="mb-4">
-                <label asp-for="Description" class="form-label"></label>
-                <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter company description"></textarea>
+                <label asp-for="Description" class="form-label" >Description     <span id="descStart"></span></label>
+                <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter company description" id="description"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
 
             <!-- PHONE AND EMAIL -->
             <div class="row g-3 mb-4">
                 <div class="col-12 col-md-6">
-                    <label asp-for="Phone" class="form-label"></label>
-                    <input asp-for="Phone" class="form-control" placeholder="Enter phone number" />
+                    <label asp-for="Phone" class="form-label">Company Phone Number     <span id="phoneStart"></span></label>
+                    <input asp-for="Phone" class="form-control" placeholder="Enter phone number" id="phone" />
                     <span asp-validation-for="Phone" class="text-danger"></span>
                 </div>
 
                 <div class="col-12 col-md-6">
-                    <label asp-for="Email" class="form-label"></label>
-                    <input asp-for="Email" class="form-control" placeholder="Enter email address" />
+                    <label asp-for="Email" class="form-label">Company Email     <span id="emailStart"></span></label>
+                    <input asp-for="Email" class="form-control" placeholder="Enter email address" id="email"/>
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
             </div>
 
             <!-- ADDRESS -->
             <div class="mb-4">
-                <label asp-for="Address" class="form-label"></label>
-                <input asp-for="Address" class="form-control" placeholder="Enter company address" />
+                <label asp-for="Address" class="form-label">Address    <span id="addressStart"></span></label>
+                <input asp-for="Address" class="form-control" placeholder="Enter company address" id="address" />
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
 
             <!-- BUTTONS -->
             <div class="company-form-actions d-flex gap-3 mt-4">
-                <a asp-action="Index" class="btn btn-light company-cancel-btn">
-                    Cancel
-                </a>
+                <a asp-action="Index" class="btn btn-light company-cancel-btn">Cancel</a>
 
-                <button type="submit" class="btn btn-primary company-submit-btn">
-                    <i class="bi bi-plus-lg me-1"></i> Create Company
-                </button>
+                <button type="submit" class="btn btn-primary company-submit-btn"><i class="bi bi-plus-lg me-1"></i> Create Company</button>
             </div>
 
         </form>
@@ -91,6 +85,9 @@
 
 @section Scripts {
     @{
+        <script src="~/js/createCompany.js" asp-append-version="true"></script>
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
+
+       
     }
 }

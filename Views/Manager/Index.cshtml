@@ -7,33 +7,48 @@
 
 <div class="company-index-page">
 
-
+    <!-- Page header -->
     <div class="company-index-header">
         <div>
             <h1>Managers</h1>
-
             <p>View and manage company managers in TasksFollow.</p>
         </div>
     </div>
 
+    <!-- Managers list -->
     <div class="company-table-card">
 
         <div class="company-table-header">
             <div>
-                <h4>All Managers</h4>
-
+                <h4>Managers</h4>
                 <p>View managers and the companies they belong to.</p>
             </div>
-
             <div class="company-count">@Model.Count() Managers</div>
-
-
         </div>
 
+        <!-- Search managers and filter by account status -->
+        <form asp-action="Index" method="get" class="row g-3 px-3 pb-3" >
+            <div class="col-md-6">
+                <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Search by name, email, or company..." id="searchIn" />
+            </div>
+
+            <div class="col-md-4">
+                <select name="status" class="form-select">
+                    <option value="Active" selected="@(ViewBag.Status == "Active")">Active</option>
+                    <option value="Inactive" selected="@(ViewBag.Status == "Inactive")">Inactive</option>
+                    <option value="All" selected="@(ViewBag.Status == "All")">All Managers</option>
+                </select>
+            </div>
+
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Search</button>
+                <a asp-action="Index" class="btn btn-outline-secondary" title="Reset"><i class="bi bi-arrow-clockwise"></i></a>
+            </div>
+        </form>
+
+        <!-- Managers table -->
         <div class="table-responsive">
-
             <table class="table company-table align-middle mb-0">
-
                 <thead>
                     <tr>
                         <th>Manager</th>
@@ -48,11 +63,12 @@
                     {
                         @foreach (var item in Model)
                         {
-                            <tr>
+                            <tr class="allRow">
                                 <td>
                                     <div class="company-table-name">
                                         <div class="company-table-icon"><i class="bi bi-person-badge"></i></div>
                                         <div>
+                                            <!-- Open manager details -->
                                             <a asp-action="Details" asp-route-id="@item.Id" class="company-name-link">@item.FirstName @item.MiddleName @item.LastName</a>
                                         </div>
                                     </div>
@@ -72,7 +88,10 @@
                                 <td>
                                     @if (item.CompanyId != null)
                                     {
-                                        <a asp-controller="Company" asp-action="Details" asp-route-id="@item.CompanyId" class="company-name-link"><i class="bi bi-building me-1"></i> @item.CompanyName</a>
+                                        <!-- Open the company associated with this manager -->
+                                        <a asp-controller="Company" asp-action="Details" asp-route-id="@item.CompanyId" class="company-name-link">
+                                            <i class="bi bi-building me-1"></i> @item.CompanyName
+                                        </a>
                                     }
                                     else
                                     {
@@ -82,17 +101,22 @@
 
                                 <td>
                                     <div class="company-table-actions">
+                                        <!-- Edit manager information -->
                                         <a asp-action="Edit" asp-route-id="@item.Id" class="company-action-btn company-action-edit" title="Edit Manager"><i class="bi bi-pencil"></i></a>
 
                                         @if (item.IsActive)
                                         {
+                                            <!-- Deactivate an active manager -->
                                             <form asp-action="Deactivate" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Deactivate Manager"><i class="bi bi-slash-circle"></i></button>
                                             </form>
                                         }
                                         else
                                         {
+                                            <!-- Reactivate an inactive manager -->
                                             <form asp-action="Activate" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
                                                 <button type="submit" class="btn btn-sm btn-outline-success" title="Activate Manager"><i class="bi bi-check-circle"></i></button>
                                             </form>
                                         }
@@ -107,8 +131,9 @@
                             <td colspan="4">
                                 <div class="company-empty-state">
                                     <div class="company-empty-icon"><i class="bi bi-person-badge"></i></div>
-                                    <h5>No managers yet</h5>
-                                    <p>Managers are created from a company's details page.</p>
+                                    <h5>No managers found</h5>
+                                    <p>No managers match your search or selected status.</p>
+                                    <a asp-action="Index" class="btn btn-outline-primary"><i class="bi bi-arrow-clockwise me-1"></i> Reset Filters</a>
                                 </div>
                             </td>
                         </tr>
@@ -118,3 +143,6 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    <script src="~/js/search.js" asp-append-version="true"></script>
+}
