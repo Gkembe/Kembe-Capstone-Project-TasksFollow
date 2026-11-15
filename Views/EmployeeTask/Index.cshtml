@@ -34,9 +34,7 @@
 
                         <label class="form-label">Search</label>
 
-                        <input type="text" name="search" value="@ViewBag.Search"
-
-                               class="form-control" placeholder="Task title or description..." />
+                        <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Task title or description..." id="searchIn"/>
 
                     </div>
 
@@ -143,7 +141,7 @@
                         {
                             var task = assignment.ProjectTask;
 
-                            <tr>
+                            <tr class="allRow">
                                 <td><strong>@task.Title</strong></td>
 
                                 <td>@task.Project?.Name</td>
@@ -244,3 +242,6 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    <script src="~/js/search.js" asp-append-version="true"></script>
+}

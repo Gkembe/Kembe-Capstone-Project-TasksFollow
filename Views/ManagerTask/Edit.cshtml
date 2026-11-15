@@ -26,7 +26,7 @@
             </div>
         </div>
 
-        <form asp-action="Edit" method="post">
+        <form asp-action="Edit" method="post" id="editTaskForm">
 
             <input asp-for="ProjectTaskId" type="hidden" />
 
@@ -42,20 +42,16 @@
 
                 <div class="col-md-12">
 
-                    <label asp-for="Title" class="form-label"></label>
-
-                    <input asp-for="Title" class="form-control" placeholder="Enter task title" />
-
+                    <label asp-for="Title" class="form-label"></label><span id="titleStart"></span>
+                    <input asp-for="Title" id="taskTitle" class="form-control" placeholder="Enter task title" />
                     <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
 
 
                 <div class="col-md-12">
 
-                    <label asp-for="Description" class="form-label"></label>
-
-                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Describe the task"></textarea>
-
+                    <label asp-for="Description" class="form-label"></label><span id="descStart"></span>
+                    <textarea asp-for="Description" id="description" class="form-control" rows="4" placeholder="Describe the task"></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
 
                 </div>
@@ -68,8 +64,9 @@
 
                 <div class="col-md-4">
 
-                    <label asp-for="Status" class="form-label"></label>
-                    <select asp-for="Status" class="form-select">
+                    <label asp-for="Status" class="form-label"></label><span id="statusStart"></span>
+
+                    <select asp-for="Status" id="status" class="form-select">
                         <option value="Not Started">Not Started</option>
                         <option value="In Progress">In Progress</option>
                         <option value="Completed">Completed</option>
@@ -83,8 +80,9 @@
                 <div class="col-md-4">
 
 
-                    <label asp-for="Priority" class="form-label"></label>
-                    <select asp-for="Priority" class="form-select">
+                    <label asp-for="Priority" class="form-label"></label><span id="priorityStart"></span>
+
+                    <select asp-for="Priority" id="priority" class="form-select">
                         <option value="Low">Low</option>
                         <option value="Medium">Medium</option>
                         <option value="High">High</option>
@@ -98,8 +96,8 @@
 
                 <div class="col-md-4">
 
-                    <label asp-for="Percent" class="form-label"></label>
-                    <input asp-for="Percent" type="number" min="0" max="100" class="form-control" />
+                    <label asp-for="Percent" class="form-label"></label><span id="percentStart"></span>
+                    <input asp-for="Percent" id="percent" type="number" min="0" max="100" step="1" class="form-control" />
                     <span asp-validation-for="Percent" class="text-danger"></span>
                 </div>
             </div>
@@ -114,16 +112,16 @@
 
                 <div class="col-md-6">
 
-                    <label asp-for="StartDate" class="form-label"></label>
-                    <input asp-for="StartDate" type="date" class="form-control" />
+                    <label asp-for="StartDate" class="form-label"></label><span id="startDateStart"></span>
+                    <input asp-for="StartDate" id="startDate" type="date" class="form-control" />
                     <span asp-validation-for="StartDate" class="text-danger"></span>
 
                 </div>
 
                 <div class="col-md-6">
 
-                    <label asp-for="DueDate" class="form-label"></label>
-                    <input asp-for="DueDate" type="date" class="form-control" />
+                    <label asp-for="DueDate" class="form-label"></label><span id="dueDateStart"></span>
+                    <input asp-for="DueDate" id="dueDate" type="date" class="form-control" />
                     <span asp-validation-for="DueDate" class="text-danger"></span>
                 </div>
             </div>
@@ -142,4 +140,5 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/createTask.js" asp-append-version="true"></script>
 }

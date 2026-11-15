@@ -32,7 +32,7 @@
             </div>
         </div>
 
-        <form asp-action="Create" method="post">
+        <form asp-action="Create" method="post" id="createEmployeeForm">
 
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
@@ -42,23 +42,23 @@
             <div class="row g-3 mb-4">
 
                 <div class="col-md-4">
-                    <label asp-for="FirstName" class="form-label"></label>
-
-                    <input asp-for="FirstName" class="form-control" />
-
+                    
+                    <label asp-for="FirstName" class="form-label"></label><span id="firstNameStart"></span>
+                    <input asp-for="FirstName" id="firstName" class="form-control" />
                     <span asp-validation-for="FirstName" class="text-danger"></span>
                 </div>
+
                 <div class="col-md-4">
 
-                    <label asp-for="MiddleName" class="form-label"></label>
-
-                    <input asp-for="MiddleName" class="form-control" />
-
+                    <label asp-for="MiddleName" class="form-label"></label><span id="middleNameStart"></span>
+                    <input asp-for="MiddleName" id="middleName" class="form-control" />
                     <span asp-validation-for="MiddleName" class="text-danger"></span>
                 </div>
+
                 <div class="col-md-4">
-                    <label asp-for="LastName" class="form-label"></label>
-                    <input asp-for="LastName" class="form-control" />
+                    
+                    <label asp-for="LastName" class="form-label"></label><span id="lastNameStart"></span>
+                    <input asp-for="LastName" id="lastName" class="form-control" />
                     <span asp-validation-for="LastName" class="text-danger"></span>
                 </div>
             </div>
@@ -69,15 +69,16 @@
             <div class="row g-3 mb-4">
 
                 <div class="col-md-6">
-                    <label asp-for="JobTitle" class="form-label"></label>
-                    <input asp-for="JobTitle" class="form-control" />
+                    
+                    <label asp-for="JobTitle" class="form-label"></label><span id="jobTitleStart"></span>
+                    <input asp-for="JobTitle" id="jobTitle" class="form-control" />
                     <span asp-validation-for="JobTitle" class="text-danger"></span>
                 </div>
 
                 <div class="col-md-6">
 
-                    <label asp-for="Department" class="form-label"></label>
-                    <input asp-for="Department" class="form-control" />
+                    <label asp-for="Department" class="form-label"></label><span id="departmentStart"></span>
+                    <input asp-for="Department" id="department" class="form-control" />
                     <span asp-validation-for="Department" class="text-danger"></span>
                 </div>
             </div>
@@ -89,22 +90,26 @@
             <div class="row g-3 mb-4">
 
                 <div class="col-md-12">
-                    <label asp-for="Email" class="form-label"></label>
-                    <input asp-for="Email" class="form-control" />
+                    
+                    <label asp-for="Email" class="form-label"></label><span id="emailStart"></span>
+                    <input asp-for="Email" id="email" class="form-control" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
 
                 <div class="col-md-6">
-                    <label asp-for="Password" class="form-label"></label>
-                    <input asp-for="Password" class="form-control" />
+                    
+                    <label asp-for="Password" class="form-label"></label><span id="passwordStart"></span>
+                    <input asp-for="Password" id="password" type="password" class="form-control" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
 
 
                 <div class="col-md-6">
-                    <label asp-for="ConfirmPassword" class="form-label"></label>
-                    <input asp-for="ConfirmPassword" class="form-control" />
+                   
+
+                    <label asp-for="ConfirmPassword" class="form-label"></label><span id="confirmPasswordStart"></span>
+                    <input asp-for="ConfirmPassword" id="confirmPassword" type="password" class="form-control" />
                     <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 </div>
 
@@ -120,4 +125,5 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/createEmployee.js" asp-append-version="true"></script>
 }

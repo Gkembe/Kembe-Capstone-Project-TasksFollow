@@ -20,33 +20,30 @@
     <!-- Create Group Form -->
     <div class="card shadow-sm">
         <div class="card-body p-4">
-            <form asp-action="Create" method="post">
+            <form asp-action="Create" method="post" id="createGroupForm">
                 @Html.AntiForgeryToken()
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                 <!-- Group Name -->
                 <div class="mb-3">
-                    <label asp-for="Name" class="form-label">Group Name</label>
-                    <input asp-for="Name" class="form-control" placeholder="Enter group name" />
+                    <label asp-for="Name" class="form-label">Group Name <span id="nameStart"></span></label>
+                    <input asp-for="Name" id="groupName" class="form-control" placeholder="Enter group name" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
                 <!-- Description -->
                 <div class="mb-3">
-                    <label asp-for="Description" class="form-label">Description</label>
-
-                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Describe the purpose of this group"></textarea>
-
+                    <label asp-for="Description" class="form-label">Description <span id="descStart"></span></label>
+                    <textarea asp-for="Description" id="description" class="form-control" rows="3" placeholder="Describe the purpose of this group"></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
 
                 <!-- Select Employees -->
                 <div class="mb-4">
-                    <label class="form-label fw-semibold">Select Employees</label>
-
+                    <label class="form-label fw-semibold">Select Employees <span id="employeeStart"></span></label>
                     <p class="text-muted small">Choose the employees who will participate in this conversation.</p>
 
-                    <div class="border rounded p-3" style="max-height:300px; overflow-y:auto;">
+                    <div id="employeeContainer" class="border rounded p-3" style="max-height:300px; overflow-y:auto;">
 
                         @if (Model.Employees.Any())
                         {
@@ -69,10 +66,8 @@
                 <!-- Actions -->
                 <div class="d-flex gap-2">
 
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i> Create Group</button>
 
-                        <i class="bi bi-plus-circle me-1"></i> Create Group
-                    </button>
                     <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
                 </div>
             </form>
@@ -82,4 +77,8 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+}
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/createGroup.js" asp-append-version="true"></script>
 }

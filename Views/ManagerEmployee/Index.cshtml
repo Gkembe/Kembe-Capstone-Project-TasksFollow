@@ -42,7 +42,7 @@
 
                 <div class="col-md-5">
                     <label class="form-label">Search Employee</label>
-                    <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Name, email, job title..." />
+                    <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Name, email, job title..." id="searchIn"/>
 
 
 
@@ -129,7 +129,7 @@
                     <tbody>
                         @foreach (var employee in Model)
                         {
-                            <tr>
+                            <tr class="allRow">
                                 <td>
                                     <div class="manager-table-name">
 
@@ -206,3 +206,6 @@
     </div>
 
 </div>
+@section Scripts {
+    <script src="~/js/search.js" asp-append-version="true"></script>
+}

@@ -1,8 +1,186 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Hero Section -->
+<section class="home-hero">
+    <div class="container text-center">
+        <div class="home-tag">Smart Project & Task Management</div>
+        <h1>Manage Projects. Track Tasks.<br /><span>Achieve More.</span></h1>
+        <p>TasksFollow helps companies organize projects, assign tasks to employees, track progress, and improve team communication  all in one workspace.</p>
+
+        <div class="home-buttons">
+            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary"><i class="bi bi-box-arrow-in-right me-2"></i>Get Started</a>
+            <a href="#features" class="btn btn-outline-light"><i class="bi bi-arrow-down-circle me-2"></i>Explore Features</a>
+        </div>
+
+        <!-- Main application highlights -->
+        <div class="home-highlights">
+            <div><i class="bi bi-folder-check"></i><span>Project Management</span></div>
+            <div><i class="bi bi-list-check"></i><span>Task Tracking</span></div>
+            <div><i class="bi bi-people"></i><span>Team Collaboration</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- About TasksFollow -->
+<section class="home-section" id="about">
+    <div class="container">
+        <div class="home-about">
+            <div>
+                <span class="home-label">ABOUT TASKSFOLLOW</span>
+                <h2>A Better Way to Manage Your Company's Work</h2>
+                <p>TasksFollow is a Software as a Service (SaaS) web application designed to help businesses manage their daily operations more efficiently.</p>
+                <p>Each company has its own workspace where managers can create projects, assign tasks, monitor employee progress, and communicate with team members.</p>
+                <p>Designed with businesses in the Democratic Republic of Congo in mind, TasksFollow aims to reduce paperwork and make project management easier, faster, and more organized.</p>
+            </div>
+
+            <div class="home-about-card">
+                
+                <h4>Everything in One Place</h4>
+                <div class="home-about-item"><i class="bi bi-check-circle-fill"></i> Organize company projects</div>
+                <div class="home-about-item"><i class="bi bi-check-circle-fill"></i> Assign employee tasks</div>
+                <div class="home-about-item"><i class="bi bi-check-circle-fill"></i> Monitor work progress</div>
+                <div class="home-about-item"><i class="bi bi-check-circle-fill"></i> Communicate with teams</div>
+                <div class="home-about-item"><i class="bi bi-check-circle-fill"></i> Review performance reports</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Application Features -->
+<section class="home-section home-section-light" id="features">
+    <div class="container">
+        <div class="home-section-heading">
+            <span class="home-label">OUR FEATURES</span>
+            <h2>Everything Your Team Needs</h2>
+            <p>Powerful but simple tools to help companies stay organized and productive.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="home-feature-card">
+                    <div class="home-feature-icon"><i class="bi bi-folder2-open"></i></div>
+                    <h5>Project Management</h5>
+                    <p>Create and organize projects, manage deadlines, and monitor project progress.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="home-feature-card">
+                    <div class="home-feature-icon"><i class="bi bi-list-task"></i></div>
+                    <h5>Task Assignment</h5>
+                    <p>Assign tasks to employees, set priorities, and track task completion.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="home-feature-card">
+                    <div class="home-feature-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                    <h5>Progress Tracking</h5>
+                    <p>Monitor task status and completion percentages to understand work progress.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="home-feature-card">
+                    <div class="home-feature-icon"><i class="bi bi-chat-dots"></i></div>
+                    <h5>Team Communication</h5>
+                    <p>Keep employees and managers connected through group chats and task comments.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="home-feature-card">
+                    <div class="home-feature-icon"><i class="bi bi-bell"></i></div>
+                    <h5>Notifications</h5>
+                    <p>Stay informed about task assignments, progress updates, and completed work.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="home-feature-card">
+                    <div class="home-feature-icon"><i class="bi bi-bar-chart"></i></div>
+                    <h5>Reports & Analytics</h5>
+                    <p>Review project performance, employee activities, and task completion statistics.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How TasksFollow Works -->
+<section class="home-section" id="how-it-works">
+    <div class="container">
+        <div class="home-section-heading">
+            <span class="home-label">HOW IT WORKS</span>
+            <h2>Simple Steps to Better Productivity</h2>
+            <p>Manage your company's work through one organized platform.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="home-step">
+                    <div class="home-step-number">01</div>
+                    <h5>Create Your Workspace</h5>
+                    <p>Each registered company gets its own workspace to manage employees and projects.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="home-step">
+                    <div class="home-step-number">02</div>
+                    <h5>Assign Tasks</h5>
+                    <p>Managers create projects and assign responsibilities to their team members.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="home-step">
+                    <div class="home-step-number">03</div>
+                    <h5>Track Results</h5>
+                    <p>Employees update their progress while managers monitor work and review reports.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why TasksFollow -->
+<section class="home-section home-section-light">
+    <div class="container">
+        <div class="home-about">
+            <div>
+                <span class="home-label">WHY TASKSFOLLOW?</span>
+                <h2>Less Paperwork. More Productivity.</h2>
+                <p>Many businesses still rely on paper documents and manual processes to organize work. TasksFollow provides a digital alternative that helps teams manage responsibilities and maintain better records.</p>
+                <p>Our goal is to support the digital transformation of businesses in DR Congo and make modern project management accessible to companies of different sizes.</p>
+            </div>
+
+            <div class="home-benefits">
+                <div><i class="bi bi-file-earmark-x"></i><span>Reduce paperwork</span></div>
+                <div><i class="bi bi-clock-history"></i><span>Save time managing tasks</span></div>
+                <div><i class="bi bi-eye"></i><span>Improve work visibility</span></div>
+                <div><i class="bi bi-people"></i><span>Strengthen team collaboration</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="home-cta">
+    <div class="container text-center">
+        <h2>Ready to Organize Your Company's Work?</h2>
+        <p>Bring your projects, tasks, and team communication together with TasksFollow.</p>
+        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-light"><i class="bi bi-arrow-right-circle me-2"></i>Get Started Today</a>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="home-footer">
+    <div class="container text-center">
+        <h5><i class="bi bi-check2-square me-2"></i>TasksFollow</h5>
+        <p>Helping companies manage projects, tasks, and teamwork.</p>
+        <small>&copy; @DateTime.Now.Year TasksFollow. All rights reserved.</small>
+    </div>
+</footer>

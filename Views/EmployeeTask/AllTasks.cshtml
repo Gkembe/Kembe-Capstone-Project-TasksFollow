@@ -26,7 +26,7 @@
             <div class="row g-3">
 
                 <div class="col-md-4">
-                    <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Search tasks..." />
+                    <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Search tasks..." id="searchIn" />
                 </div>
 
                 <div class="col-md-3">
@@ -50,7 +50,9 @@
                 </div>
 
                 <div class="col-md-3">
+
                     <select name="priority" class="form-select">
+
                         <option value="All">All Priorities</option>
                         @foreach (var item in new[] { "Low", "Medium", "High" })
                         {
@@ -79,9 +81,13 @@
 
     <!-- All Tasks Table -->
     <div class="card p-3">
+
         <div class="table-responsive">
+
             <table class="table table-hover align-middle">
+
                 <thead>
+
                     <tr>
                         <th>Task</th>
                         <th>Project</th>
@@ -97,20 +103,24 @@
                     {
                         @foreach (var task in Model)
                         {
-                            <tr>
+                            <tr class="allRow">
                                 <td><strong>@task.Title</strong></td>
 
                                 <td>@task.Project.Name</td>
 
                                 <td><span class="badge bg-primary">@task.Status</span></td>
+
                                 <td>@task.Priority</td>
 
                                 <td>@task.DueDate?.ToString("MMM dd, yyyy")</td>
 
                                 <td class="text-end">
+
+
                                     <a asp-action="AllTaskDetails" asp-route-id="@task.ProjectTaskId" class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-eye me-1"></i> View
                                     </a>
+
                                     <a asp-action="Comments" asp-route-id="@task.ProjectTaskId" class="btn btn-sm btn-outline-secondary">
                                         <i class="bi bi-chat-dots me-1"></i> Comments
                                     </a>
@@ -125,8 +135,14 @@
                         </tr>
                     }
                 </tbody>
+
             </table>
+
         </div>
+
     </div>
 
 </div>
+@section Scripts {
+    <script src="~/js/search.js" asp-append-version="true"></script>
+}

@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Create Subscription Plan";
+
     Layout = "_AdminLayout";
 }
 
@@ -27,24 +28,24 @@
             </div>
         </div>
 
-        <form asp-action="CreatePlan" method="post">
+        <form asp-action="CreatePlan" method="post" id="createPlanForm">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
             <div class="mb-4">
-                <label asp-for="Name" class="form-label"></label>
-                <input asp-for="Name" class="form-control" placeholder="Enter plan name" />
+                <label asp-for="Name" class="form-label"></label><span id="nameStart"></span>
+                <input asp-for="Name" id="planName" class="form-control" placeholder="Enter plan name" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
             <div class="mb-4">
-                <label asp-for="Description" class="form-label"></label>
-                <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter plan description"></textarea>
+                <label asp-for="Description" class="form-label"></label><span id="descStart"></span>
+                <textarea asp-for="Description" id="description" class="form-control" rows="4" placeholder="Enter plan description"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
 
             <div class="mb-4">
-                <label asp-for="MonthlyPrice" class="form-label"></label>
-                <input asp-for="MonthlyPrice" class="form-control" placeholder="Enter monthly price" />
+                <label asp-for="MonthlyPrice" class="form-label"></label><span id="priceStart"></span>
+                <input asp-for="MonthlyPrice" id="monthlyPrice" type="number" step="0.01" class="form-control" placeholder="Enter monthly price" />
                 <span asp-validation-for="MonthlyPrice" class="text-danger"></span>
             </div>
 
@@ -71,7 +72,6 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/createPlan.js" asp-append-version="true"></script>
 }

@@ -124,7 +124,9 @@
                         {
                             <div class="collapse mt-3 mb-3" id="reply-@comment.CommentId">
                                 <form asp-action="ReplyComment" method="post">
+
                                     <input type="hidden" name="commentId" value="@comment.CommentId" />
+                                    
                                     <textarea name="content" class="form-control mb-2" rows="3" maxlength="2000" required placeholder="Write your reply..."></textarea>
                                     <div class="d-flex justify-content-end">
                                         <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-send me-1"></i> Post Reply</button>

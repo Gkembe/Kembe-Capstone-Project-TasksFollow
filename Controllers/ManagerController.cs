@@ -430,6 +430,70 @@ namespace TasksFollow.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        // GET: Manager/ResetPassword/id
+        [HttpGet]
+        public async Task<IActionResult> ResetPassword(string id)
+        {
+            // Find the manager account
+            var manager = await _userManager.FindByIdAsync(id);
+
+            if (manager == null || !await _userManager.IsInRoleAsync(manager, "Manager"))
+            {
+                return NotFound();
+            }
+
+            var model = new AdminResetPasswordViewModel
+            {
+                ManagerId = manager.Id,
+                ManagerName = manager.FirstName + " " + manager.LastName
+            };
+
+            return View(model);
+        }
+
+        // POST: Manager/ResetPassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(AdminResetPasswordViewModel model)
+        {
+            // Verify that the selected account belongs to a manager
+            var manager = await _userManager.FindByIdAsync(model.ManagerId);
+
+            if (manager == null || !await _userManager.IsInRoleAsync(manager, "Manager"))
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                model.ManagerName = manager.FirstName + " " + manager.LastName;
+                return View(model);
+            }
+
+            // Generate a password reset token using ASP.NET Core Identity
+            var token = await _userManager.GeneratePasswordResetTokenAsync(manager);
+
+            // Reset the manager's password without requiring the old password
+            var result = await _userManager.ResetPasswordAsync(manager, token, model.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+
+                model.ManagerName = manager.FirstName + " " + manager.LastName;
+                return View(model);
+            }
+
+            TempData["SuccessMessage"] = "Manager password has been reset successfully.";
+
+            return RedirectToAction("Details", new { id = manager.Id });
+        }
+
+
     }
 
 }

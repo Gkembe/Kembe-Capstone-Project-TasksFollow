@@ -24,8 +24,10 @@
             </div>
         </div>
 
-        <form asp-action="Create" method="post">
+        <form asp-action="Create" method="post" id="createPaymentForm" novalidate>
+
             <input type="hidden" asp-for="CompanyId" />
+
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
             <div class="mb-4">
@@ -34,16 +36,19 @@
             </div>
 
             <div class="mb-4">
-                <label asp-for="SubscriptionPlanId" class="form-label"></label>
-                <select asp-for="SubscriptionPlanId" asp-items="ViewBag.Plans" class="form-select">
+
+                
+                <label asp-for="SubscriptionPlanId" class="form-label"></label><span id="planStart"></span>
+                
+                    <select asp-for="SubscriptionPlanId" asp-items="ViewBag.Plans" id="subscriptionPlanId" class="form-select">
                     <option value="">-- Select Plan --</option>
                 </select>
                 <span asp-validation-for="SubscriptionPlanId" class="text-danger"></span>
             </div>
 
             <div class="mb-4">
-                <label asp-for="AmountPaid" class="form-label"></label>
-                <input asp-for="AmountPaid" type="number" step="0.01" class="form-control" placeholder="Enter amount paid" />
+                <label asp-for="AmountPaid" class="form-label"></label><span id="amountStart"></span>
+                <input asp-for="AmountPaid" id="amountPaid" type="number" step="0.01" class="form-control" placeholder="Enter amount paid" />
                 <span asp-validation-for="AmountPaid" class="text-danger"></span>
             </div>
 
@@ -56,7 +61,6 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/createPayment.js" asp-append-version="true"></script>
 }

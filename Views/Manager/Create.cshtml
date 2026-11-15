@@ -38,7 +38,7 @@
 
         <!-- CREATE FORM -->
 
-        <form asp-action="Create" method="post">
+        <form asp-action="Create" method="post" id="createManagerForm">
 
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
@@ -50,14 +50,14 @@
 
             <div class="row g-3 mb-4">
                 <div class="col-12 col-md-6">
-                    <label asp-for="FirstName" class="form-label"></label>
-                    <input asp-for="FirstName" class="form-control" placeholder="Enter first name" />
+                    <label asp-for="FirstName" class="form-label"></label><span id="firstNameStart"></span>
+                    <input asp-for="FirstName" id="firstName" class="form-control" placeholder="Enter first name" />
                     <span asp-validation-for="FirstName" class="text-danger"></span>
                 </div>
 
                 <div class="col-12 col-md-6">
-                    <label asp-for="MiddleName" class="form-label"></label>
-                    <input asp-for="MiddleName" class="form-control" placeholder="Enter middle name" />
+                    <label asp-for="MiddleName" class="form-label"></label><span id="middleNameStart"></span>
+                    <input asp-for="MiddleName" id="middleName" class="form-control" placeholder="Enter middle name" />
                     <span asp-validation-for="MiddleName" class="text-danger"></span>
                 </div>
             </div>
@@ -65,16 +65,17 @@
             <!-- LAST NAME -->
 
             <div class="mb-4">
-                <label asp-for="LastName" class="form-label"></label>
-                <input asp-for="LastName" class="form-control" placeholder="Enter last name" />
+                <label asp-for="LastName" class="form-label"></label><span id="lastNameStart"></span>
+                <input asp-for="LastName" id="lastName" class="form-control" placeholder="Enter last name" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
+
             </div>
 
             <!-- EMAIL -->
 
             <div class="mb-4">
-                <label asp-for="Email" class="form-label"></label>
-                <input asp-for="Email" class="form-control" placeholder="Enter email address" />
+                <label asp-for="Email" class="form-label"></label><span id="emailStart"></span>
+                <input asp-for="Email" id="email" class="form-control" placeholder="Enter email address" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
@@ -82,14 +83,17 @@
 
             <div class="row g-3 mb-4">
                 <div class="col-12 col-md-6">
-                    <label asp-for="Password" class="form-label"></label>
-                    <input asp-for="Password" type="password" class="form-control" placeholder="Enter password" />
+                    
+                    <label asp-for="Password" class="form-label"></label><span id="passwordStart"></span>
+                    <input asp-for="Password" id="password" type="password" class="form-control" placeholder="Enter password" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
 
                 <div class="col-12 col-md-6">
-                    <label asp-for="ConfirmPassword" class="form-label"></label>
-                    <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm password" />
+                    
+
+                    <label asp-for="ConfirmPassword" class="form-label"></label><span id="confirmPasswordStart"></span>
+                    <input asp-for="ConfirmPassword" id="confirmPassword" type="password" class="form-control" placeholder="Confirm password" />
                     <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 </div>
             </div>
@@ -110,7 +114,6 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/createManager.js" asp-append-version="true"></script>
 }

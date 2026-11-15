@@ -14,7 +14,7 @@
             <p class="text-muted mb-0">Welcome to @Model.CompanyName workspace.</p>
         </div>
         <a asp-controller="EmployeeTask" asp-action="Index" class="btn btn-primary">
-            <i class="bi bi-list-check me-1"></i> My Tasks
+             My Tasks
         </a>
     </div>
 
@@ -25,9 +25,7 @@
 
         <div class="col-md-6 col-xl-3">
             <div class="employee-dashboard-card">
-                <div class="employee-dashboard-icon bg-primary-subtle text-primary">
-                    <i class="bi bi-list-task"></i>
-                </div>
+               
                 <div>
                     <p>Total Assigned Tasks</p>
                     <h3>@Model.TotalAssignedTasks</h3>
@@ -37,9 +35,7 @@
 
         <div class="col-md-6 col-xl-3">
             <div class="employee-dashboard-card">
-                <div class="employee-dashboard-icon bg-warning-subtle text-warning">
-                    <i class="bi bi-arrow-repeat"></i>
-                </div>
+                
                 <div>
                     <p>In Progress</p>
                     <h3>@Model.TotalInProgressTasks</h3>
@@ -49,9 +45,7 @@
 
         <div class="col-md-6 col-xl-3">
             <div class="employee-dashboard-card">
-                <div class="employee-dashboard-icon bg-success-subtle text-success">
-                    <i class="bi bi-check-circle"></i>
-                </div>
+               
                 <div>
                     <p>Completed Tasks</p>
                     <h3>@Model.TotalCompletedTasks</h3>
@@ -61,9 +55,7 @@
 
         <div class="col-md-6 col-xl-3">
             <div class="employee-dashboard-card">
-                <div class="employee-dashboard-icon bg-danger-subtle text-danger">
-                    <i class="bi bi-exclamation-triangle"></i>
-                </div>
+                
                 <div>
                     <p>Overdue Tasks</p>
                     <h3>@Model.OverDueTasks</h3>

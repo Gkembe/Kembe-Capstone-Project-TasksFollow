@@ -16,9 +16,7 @@
 			<p class="text-muted mb-0">View and manage your assigned task.</p>
 		</div>
 
-		<a asp-action="Index" class="btn btn-outline-secondary">
-			<i class="bi bi-arrow-left me-1"></i> Back to Tasks
-		</a>
+		<a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i> Back to Tasks</a>
 	</div>
 
 
@@ -57,8 +55,11 @@
 				</div>
 
 				<div class="col-md-6">
+
 					<strong>Progress</strong>
+
 					<div class="progress mt-2" style="height:10px;">
+
 						<div class="progress-bar" role="progressbar" style="width:@task.Percent%" aria-valuenow="@task.Percent" aria-valuemin="0" aria-valuemax="100"></div>
 					</div>
 					<small class="text-muted">@task.Percent% Completed</small>
@@ -82,6 +83,7 @@
 
 				<div class="col-md-6">
 					<strong>Assignment Status</strong>
+
 					@if (Model.IsCompleted)
 					{
 						<p class="text-success mb-0"><i class="bi bi-check-circle me-1"></i> Completed</p>
@@ -116,9 +118,7 @@
 				<form asp-action="Reopen" asp-route-id="@Model.TaskAssignmentId" method="post">
 
 					@Html.AntiForgeryToken()
-					<button type="submit" class="btn btn-outline-warning">
-						<i class="bi bi-arrow-counterclockwise me-1"></i> Reopen Task
-					</button>
+					<button type="submit" class="btn btn-outline-warning"><i class="bi bi-arrow-counterclockwise me-1"></i> Reopen Task</button>
 				</form>
 			}
 			else
@@ -129,9 +129,7 @@
 				<form asp-action="Complete" asp-route-id="@Model.TaskAssignmentId" method="post">
 
 					@Html.AntiForgeryToken()
-					<button type="submit" class="btn btn-success">
-						<i class="bi bi-check-circle me-1"></i> Mark as Completed
-					</button>
+					<button type="submit" class="btn btn-success"><i class="bi bi-check-circle me-1"></i> Mark as Completed</button>
 				</form>
 			}
 
@@ -159,9 +157,7 @@
 					</div>
 				</div>
 
-				<button type="submit" class="btn btn-primary">
-					<i class="bi bi-save me-1"></i> Save Progress
-				</button>
+				<button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i> Save Progress</button>
 			</form>
 
 		</div>

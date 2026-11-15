@@ -6,6 +6,7 @@
 
     // Get task information and logged-in employee
     var task = ViewBag.Task as TasksFollow.Models.ProjectTask;
+
     var currentUserId = ViewBag.CurrentUserId as string;
 
     // Get main comments and hide deleted comments without active replies
@@ -18,13 +19,12 @@
     <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap mb-4">
         <div>
             <h2>Task Comments</h2>
+
             <p class="text-muted mb-0">View discussions and communicate with your team.</p>
         </div>
 
         <!-- Back to Task -->
-        <a asp-action="AllTaskDetails" asp-route-id="@task?.ProjectTaskId" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i> Back to Task
-        </a>
+        <a asp-action="AllTaskDetails" asp-route-id="@task?.ProjectTaskId" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i> Back to Task</a>
     </div>
 
 
@@ -55,6 +55,7 @@
 
     <!-- Task Discussion -->
     <div class="card shadow-sm mb-4">
+
         <div class="card-body p-4">
 
             <!-- Discussion Header -->

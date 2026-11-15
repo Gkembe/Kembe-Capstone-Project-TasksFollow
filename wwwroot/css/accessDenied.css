@@ -1,0 +1,141 @@
+﻿
+/* Access denied page */
+.access-page {
+    min-height: calc(100vh - 76px);
+    background: linear-gradient(135deg, #0b1730, #16345f);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 20px;
+}
+
+/* Main card */
+.access-card {
+    background: white;
+    width: 100%;
+    max-width: 570px;
+    padding: 45px 40px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 15px 45px #00000025;
+}
+
+    .access-card h1 {
+        color: #14213d;
+        font-size: 30px;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+.access-subtitle {
+    color: #64748b;
+    font-size: 15px;
+    margin-bottom: 30px;
+}
+
+/* Error icon */
+.access-icon {
+    width: 85px;
+    height: 85px;
+    background: #fee2e2;
+    color: #dc2626;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 25px;
+}
+
+    .access-icon i {
+        font-size: 40px;
+    }
+
+/* Error explanation */
+.access-message {
+    display: flex;
+    gap: 15px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: left;
+    margin-bottom: 30px;
+}
+
+    .access-message > i {
+        color: #ea580c;
+        font-size: 22px;
+    }
+
+    .access-message h5 {
+        color: #9a3412;
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .access-message p {
+        color: #7c2d12;
+        font-size: 14px;
+        line-height: 1.7;
+        margin-bottom: 10px;
+    }
+
+        .access-message p:last-child {
+            margin-bottom: 0;
+        }
+
+/* Action buttons */
+.access-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+    .access-actions .btn {
+        padding: 12px 22px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .access-actions .btn-primary {
+        background: #2563eb;
+        border-color: #2563eb;
+    }
+
+        .access-actions .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+/* Footer */
+.access-footer {
+    color: #94a3b8;
+    font-size: 12px;
+    margin-top: 30px;
+    margin-bottom: 0;
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+    .access-page {
+        padding: 30px 15px;
+    }
+
+    .access-card {
+        padding: 30px 20px;
+    }
+
+        .access-card h1 {
+            font-size: 25px;
+        }
+
+    .access-message {
+        padding: 15px;
+    }
+
+    .access-actions .btn {
+        width: 100%;
+    }
+}

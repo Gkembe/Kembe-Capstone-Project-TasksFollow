@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <form asp-action="Edit" method="post">
+        <form asp-action="Edit" method="post" id="editEmployeeForm">
 
 
             <input asp-for="EmployeeId" type="hidden" />
@@ -46,21 +46,21 @@
 
                 <div class="col-md-4">
 
-                    <label asp-for="FirstName" class="form-label"></label>
-                    <input asp-for="FirstName" class="form-control" />
+                    <label asp-for="FirstName" class="form-label"></label><span id="firstNameStart"></span>
+                    <input asp-for="FirstName" id="firstName" class="form-control" />
                     <span asp-validation-for="FirstName" class="text-danger"></span>
                 </div>
                 <div class="col-md-4">
 
-                    <label asp-for="MiddleName" class="form-label"></label>
-                    <input asp-for="MiddleName" class="form-control" />
+                    <label asp-for="MiddleName" class="form-label"></label><span id="middleNameStart"></span>
+                    <input asp-for="MiddleName" id="middleName" class="form-control" />
                     <span asp-validation-for="MiddleName" class="text-danger"></span>
                 </div>
                 <div class="col-md-4">
 
 
-                    <label asp-for="LastName" class="form-label"></label>
-                    <input asp-for="LastName" class="form-control" />
+                    <label asp-for="LastName" class="form-label"></label><span id="lastNameStart"></span>
+                    <input asp-for="LastName" id="lastName" class="form-control" />
                     <span asp-validation-for="LastName" class="text-danger"></span>
                 </div>
             </div>
@@ -75,15 +75,15 @@
 
                 <div class="col-md-6">
 
-                    <label asp-for="JobTitle" class="form-label"></label>
-                    <input asp-for="JobTitle" class="form-control" />
+                    <label asp-for="JobTitle" class="form-label"></label><span id="jobTitleStart"></span>
+                    <input asp-for="JobTitle" id="jobTitle" class="form-control" />
                     <span asp-validation-for="JobTitle" class="text-danger"></span>
                 </div>
 
 
                 <div class="col-md-6">
-                    <label asp-for="Department" class="form-label"></label>
-                    <input asp-for="Department" class="form-control" />
+                    <label asp-for="Department" class="form-label"></label><span id="departmentStart"></span>
+                    <input asp-for="Department" id="department" class="form-control" />
                     <span asp-validation-for="Department" class="text-danger"></span>
                 </div>
 
@@ -100,4 +100,5 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/editEmployee.js" asp-append-version="true"></script>
 }

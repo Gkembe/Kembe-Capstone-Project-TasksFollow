@@ -9,8 +9,8 @@
 
     <!-- HEADER -->
     <div class="dashboard-header">
-        <h1>Admin Dashboard</h1>
-        <p>Overview of TasksFollow.</p>
+        <h1 style="color:white">Admin Dashboard</h1>
+        <p style="color:white">Overview of TasksFollow.</p>
     </div>
 
     <!-- DASHBOARD STATISTICS -->
@@ -21,10 +21,7 @@
 
             <div class="dashboard-card">
 
-                <div class="dashboard-icon">
-
-                    <i class="bi bi-building"></i>
-                </div>
+               
                 <div>
                     <p>Total Companies</p>
 
@@ -37,10 +34,6 @@
 
             <div class="dashboard-card">
 
-                <div class="dashboard-icon">
-
-                    <i class="bi bi-building-check"></i>
-                </div>
 
                 <div>
 
@@ -53,12 +46,6 @@
         <div class="col-md-6 col-lg-3">
 
             <div class="dashboard-card">
-
-                <div class="dashboard-icon">
-
-                    <i class="bi bi-people"></i>
-
-                </div>
 
                 <div>
                     <p>Total Managers</p>
@@ -73,12 +60,6 @@
         <div class="col-md-6 col-lg-3">
 
             <div class="dashboard-card">
-
-                <div class="dashboard-icon">
-
-                    <i class="bi bi-person-check"></i>
-
-                </div>
 
                 <div>
                     <p>Active Managers</p>
@@ -100,11 +81,7 @@
 
             <div class="dashboard-card">
 
-                <div class="dashboard-icon">
-
-                    <i class="bi bi-cash-stack"></i>
-
-                </div>
+               
 
                 <div>
 
@@ -121,12 +98,6 @@
 
             <div class="dashboard-card">
 
-                <div class="dashboard-icon">
-
-                    <i class="bi bi-calendar-check"></i>
-
-                </div>
-
                 <div>
                     <p>This Month</p>
                     <h3>$@Model.MonthlyRevenue.ToString("0.00")</h3>
@@ -138,11 +109,6 @@
 
             <div class="dashboard-card">
 
-                <div class="dashboard-icon">
-
-                    <i class="bi bi-check-circle"></i>
-
-                </div>
                 <div>
                     <p>Active Subscriptions</p>
 
@@ -154,12 +120,6 @@
         <div class="col-md-6 col-lg-3">
 
             <div class="dashboard-card">
-
-                <div class="dashboard-icon">
-
-                    <i class="bi bi-exclamation-circle"></i>
-
-                </div>
 
                 <div>
                     <p>Expired Subscriptions</p>
@@ -434,27 +394,27 @@
     <!-- QUICK ACTIONS -->
     <div class="dashboard-info-card mt-4">
 
-        <h5><i class="bi bi-lightning me-2"></i> Quick Actions</h5>
+        <h5> Quick Actions</h5>
 
 
         <div class="dashboard-quick-actions">
 
             <a asp-controller="Company" asp-action="Create" class="btn btn-primary">
-                <i class="bi bi-building-add me-1"></i> Add Company
+                 Add Company
             </a>
 
 
             <a asp-controller="Manager" asp-action="Index" class="btn btn-outline-primary">
-                <i class="bi bi-people me-1"></i> Managers
+              Managers
             </a>
 
 
             <a asp-controller="Payment" asp-action="Index" class="btn btn-outline-primary">
-                <i class="bi bi-credit-card me-1"></i> Payments
+            Payments
             </a>
 
             <a asp-controller="Payment" asp-action="Plans" class="btn btn-outline-primary">
-                <i class="bi bi-tags me-1"></i> Manage Plans
+                Manage Plans
             </a>
 
 

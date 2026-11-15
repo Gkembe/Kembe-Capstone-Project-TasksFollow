@@ -72,10 +72,6 @@
                                         <div>
                                             <a asp-action="Details" asp-route-id="@item.CompanyId" class="company-name-link">@item.Name</a>
 
-                                            @if (!string.IsNullOrWhiteSpace(item.Description))
-                                            {
-                                                <span class="company-description-preview">@item.Description</span>
-                                            }
                                         </div>
                                     </div>
                                 </td>

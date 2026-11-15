@@ -1,0 +1,72 @@
+﻿@model TasksFollow.Models.ManagerProfileViewModel
+
+@{
+    ViewData["Title"] = "My Profile";
+    Layout = "_ManagerLayout";
+}
+
+<div class="container-fluid py-4">
+    <div class="mb-4">
+        <h2 style="color:white">My Profile</h2>
+        
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body p-4">
+
+            <form asp-action="Profile" method="post" id="managerProfileForm">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="FirstName" class="form-label">First Name</label><span id="firstNameStart"></span>
+                        <input asp-for="FirstName" id="firstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="MiddleName" class="form-label">Middle Name</label><span id="middleNameStart"></span>
+                        <input asp-for="MiddleName" id="middleName" class="form-control" />
+                        <span asp-validation-for="MiddleName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="LastName" class="form-label">Last Name</label><span id="lastNameStart"></span>
+                        <input asp-for="LastName" id="lastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="PhoneNumber" class="form-label">Phone Number</label><span id="phoneStart"></span>
+                        <input asp-for="PhoneNumber" id="phone" class="form-control" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Email Address</label>
+                        <input value="@Model.Email" class="form-control" disabled />
+                        <small class="text-muted">Contact the administrator to change your email.</small>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">Save</button>
+
+                    <a asp-action="ChangePassword" class="btn btn-outline-secondary">Change Password</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/managerProfile.js" asp-append-version="true"></script>
+}

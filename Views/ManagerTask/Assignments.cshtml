@@ -1,198 +1,196 @@
 ﻿@model TasksFollow.Models.ProjectTask
 
 @{
-    ViewData["Title"] = "Task Assignments";
-    Layout = "_ManagerLayout";
-    var members = ViewBag.Members as List<TasksFollow.Models.ProjectMember> ?? new List<TasksFollow.Models.ProjectMember>();
-    var assignedIds = Model.TaskAssignments.Select(a => a.EmployeeId).ToList();
+	ViewData["Title"] = "Task Assignments";
+	Layout = "_ManagerLayout";
+	var members = ViewBag.Members as List<TasksFollow.Models.ProjectMember> ?? new List<TasksFollow.Models.ProjectMember>();
+	var assignedIds = Model.TaskAssignments.Select(a => a.EmployeeId).ToList();
 }
 
 <div class="manager-index-page">
 
-    <!-- Header -->
-    <div class="manager-page-header">
-        <div>
-            <h2>Task Assignments</h2>
-            <p>@Model.Title — @Model.Project?.Name</p>
-        </div>
-        <a asp-action="Details" asp-route-id="@Model.ProjectTaskId" class="btn btn-outline-light">
-            <i class="bi bi-arrow-left me-1"></i> Back to Task
-        </a>
-    </div>
+	<!-- Header -->
+	<div class="manager-page-header">
+		<div>
+			<h2>Task Assignments</h2>
+			<p>@Model.Title — @Model.Project?.Name</p>
+		</div>
+		<a asp-action="Details" asp-route-id="@Model.ProjectTaskId" class="btn btn-outline-light">
+			<i class="bi bi-arrow-left me-1"></i> Back to Task
+		</a>
+	</div>
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-    }
+	@if (TempData["SuccessMessage"] != null)
+	{
+		<div class="alert alert-success">@TempData["SuccessMessage"]</div>
+	}
 
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-    }
+	@if (TempData["ErrorMessage"] != null)
+	{
+		<div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+	}
 
-    <!-- Assign Employee -->
+	<!-- Assign Employee -->
 
-    <div class="manager-form-card mb-4">
+	<div class="manager-form-card mb-4">
 
-        <div class="manager-form-header">
+		<div class="manager-form-header">
 
-            <div class="manager-form-icon"><i class="bi bi-person-plus"></i></div>
+			<div class="manager-form-icon"><i class="bi bi-person-plus"></i></div>
 
-            <div>
+			<div>
 
-                <h4>Assign Employee</h4>
+				<h4>Assign Employee</h4>
 
-                <p>Select a project member to assign to this task.</p>
-            </div>
+				<p>Select a project member to assign to this task.</p>
+			</div>
 
-        </div>
+		</div>
 
 
-        <form asp-action="AssignEmployee" method="post">
+		<form asp-action="AssignEmployee" method="post" id="assignEmployeeForm">
 
-            <input type="hidden" name="taskId" value="@Model.ProjectTaskId" />
+			<input type="hidden" name="taskId" value="@Model.ProjectTaskId" />
 
 
-            <div class="row g-3 align-items-end">
+			<div class="row g-3 align-items-end">
 
-                <div class="col-md-9">
+				<div class="col-md-9">
 
-                    <label class="form-label">Select Project Member</label>
+					<label class="form-label">Select Project Member <span id="employeeStart"></span></label>
 
-                    <select name="employeeId" class="form-select" required>
+					<select name="employeeId" id="employeeId" class="form-select">
 
-                        <option value="">Select Project Member</option>
+						<option value="">Select Project Member</option>
 
-                        @foreach (var member in members)
+						@foreach (var member in members)
+						{
+							if (!assignedIds.Contains(member.EmployeeId))
+							{
+								<option value="@member.EmployeeId">@member.Employee.ApplicationUser.FirstName @member.Employee.ApplicationUser.LastName</option>
+							}
+						}
+					</select>
 
-                        {
-                            if (!assignedIds.Contains(member.EmployeeId))
-                            {
-                                <option value="@member.EmployeeId">
+					<span class="text-danger field-validation-valid" data-valmsg-for="employeeId"></span>
+				</div>
 
-                                    @member.Employee.ApplicationUser.FirstName @member.Employee.ApplicationUser.LastName
+				<div class="col-md-3">
 
-                                </option>
-                            }
-                        }
+					<button type="submit" class="btn btn-primary w-100">
 
-                    </select>
+						<i class="bi bi-plus-circle me-1"></i> Assign Employee
 
-                </div>
+					</button>
+				</div>
+			</div>
 
-                <div class="col-md-3">
+			<p class="text-muted mt-3 mb-0">
 
-                    <button type="submit" class="btn btn-primary w-100">
+				<i class="bi bi-info-circle me-1"></i>
 
-                        <i class="bi bi-plus-circle me-1"></i> Assign Employee
+				Only active employees who belong to this project can be assigned.
 
-                    </button>
-                </div>
-            </div>
+			</p>
+		</form>
+	</div>
 
-            <p class="text-muted mt-3 mb-0">
+	<!-- Assigned Employees -->
 
-                <i class="bi bi-info-circle me-1"></i>
+	<div class="manager-table-card">
 
-                Only active employees who belong to this project can be assigned.
+		<div class="manager-table-header">
 
-            </p>
-        </form>
-    </div>
+			<div>
 
-    <!-- Assigned Employees -->
+				<h4><i class="bi bi-people me-2"></i> Assigned Employees</h4>
 
-    <div class="manager-table-card">
+				<p>Employees currently assigned to this task.</p>
 
-        <div class="manager-table-header">
+			</div>
+			<span class="manager-count">@Model.TaskAssignments.Count Employees</span>
 
-            <div>
+		</div>
 
-                <h4><i class="bi bi-people me-2"></i> Assigned Employees</h4>
+		@if (Model.TaskAssignments.Any())
+		{
 
-                <p>Employees currently assigned to this task.</p>
+			<div class="table-responsive">
 
-            </div>
-            <span class="manager-count">@Model.TaskAssignments.Count Employees</span>
+				<table class="table manager-table align-middle mb-0">
 
-        </div>
+					<thead>
 
-        @if (Model.TaskAssignments.Any())
-        {
+						<tr>
+							<th>Employee</th>
+							<th>Email</th>
+							<th>Job Title</th>
+							<th>Action</th>
+						</tr>
 
-            <div class="table-responsive">
+					</thead>
 
-                <table class="table manager-table align-middle mb-0">
+					<tbody>
 
-                    <thead>
+						@foreach (var assignment in Model.TaskAssignments)
+						{
 
-                        <tr>
-                            <th>Employee</th>
-                            <th>Email</th>
-                            <th>Job Title</th>
-                            <th>Action</th>
-                        </tr>
 
-                    </thead>
+							<tr>
+								<td>
+									<div class="manager-table-name">
+										<div class="manager-table-icon"><i class="bi bi-person"></i></div>
+										<span class="manager-name-link">
+											@assignment.Employee.ApplicationUser.FirstName @assignment.Employee.ApplicationUser.LastName
+										</span>
+									</div>
+								</td>
 
-                    <tbody>
+								<td>@assignment.Employee.ApplicationUser.Email</td>
 
-                        @foreach (var assignment in Model.TaskAssignments)
-                        {
+								<td>@assignment.Employee.JobTitle</td>
 
+								<td>
+									<form asp-action="RemoveAssignment" method="post" class="removeAssignmentForm">
 
-                            <tr>
-                                <td>
-                                    <div class="manager-table-name">
-                                        <div class="manager-table-icon"><i class="bi bi-person"></i></div>
-                                        <span class="manager-name-link">
-                                            @assignment.Employee.ApplicationUser.FirstName @assignment.Employee.ApplicationUser.LastName
-                                        </span>
-                                    </div>
-                                </td>
 
-                                <td>@assignment.Employee.ApplicationUser.Email</td>
+										<input type="hidden" name="id" value="@assignment.TaskAssignmentId" />
 
-                                <td>@assignment.Employee.JobTitle</td>
+										<button type="submit" class="btn btn-sm btn-outline-danger">
 
-                                <td>
-                                    <form asp-action="RemoveAssignment" method="post" onsubmit="return confirm('Remove this task assignment?');">
+											<i class="bi bi-person-dash me-1"></i> Remove
 
+										</button>
 
-                                        <input type="hidden" name="id" value="@assignment.TaskAssignmentId" />
 
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+									</form>
 
-                                            <i class="bi bi-person-dash me-1"></i> Remove
+								</td>
 
-                                        </button>
+							</tr>
+						}
 
+					</tbody>
 
-                                    </form>
 
-                                </td>
+				</table>
 
-                            </tr>
-                        }
+			</div>
+		}
+		else
+		{
+			<div class="manager-empty-state">
 
-                    </tbody>
+				<div class="manager-empty-icon"><i class="bi bi-people"></i></div>
 
+				<h5>No Assigned Employees</h5>
 
-                </table>
-
-            </div>
-        }
-        else
-        {
-            <div class="manager-empty-state">
-
-                <div class="manager-empty-icon"><i class="bi bi-people"></i></div>
-
-                <h5>No Assigned Employees</h5>
-
-                <p>No employees have been assigned to this task yet.</p>
-            </div>
-        }
-    </div>
+				<p>No employees have been assigned to this task yet.</p>
+			</div>
+		}
+	</div>
 
 </div>
+@section Scripts {
+	<script src="~/js/taskAssignments.js" asp-append-version="true"></script>
+}

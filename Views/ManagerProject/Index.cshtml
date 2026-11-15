@@ -39,7 +39,7 @@
 
                     <label class="form-label">Search Project</label>
 
-                    <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Search name or description..." />
+                    <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Search name or description..." id="searchIn"/>
                 </div>
                 <div class="col-md-2">
 
@@ -103,7 +103,7 @@
                     <tbody>
                         @foreach (var project in Model)
                         {
-                            <tr>
+                            <tr class="allRow">
                                 <td>
                                     <div class="manager-table-name">
 
@@ -158,3 +158,6 @@
         }
     </div>
 </div>
+@section Scripts {
+    <script src="~/js/search.js" asp-append-version="true"></script>
+}

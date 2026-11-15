@@ -116,7 +116,7 @@
             isValid = false;
         }
         else {
-            document.getElementById("addressStart").textContent = "*";
+            document.getElementById("addressStart").textContent = "";
             address.style.borderColor = "";
         }
 

@@ -1,10 +1,46 @@
 @page
 @model AccessDeniedModel
+
 @{
-    ViewData["Title"] = "Access denied";
+    ViewData["Title"] = "Access Denied";
 }
 
-<header>
-    <h1 class="text-danger">@ViewData["Title"]</h1>
-    <p class="text-danger">You do not have access to this resource.</p>
-</header>
+@section Styles {
+    <link rel="stylesheet" href="~/css/accessDenied.css" asp-append-version="true" />
+}
+
+<div class="access-page">
+    <div class="access-card">
+
+        <!-- Access denied icon -->
+        <div class="access-icon">
+            <i class="bi bi-shield-lock"></i>
+        </div>
+
+        <!-- Error message -->
+        <h1>Access Denied</h1>
+        <p class="access-subtitle">We're sorry, but you cannot access this page.</p>
+
+        <!-- Explanation for the user -->
+        <div class="access-message">
+            <i class="bi bi-exclamation-circle"></i>
+            <div>
+                <h5>There is a problem with your access</h5>
+                <p>Your account does not have permission to access this resource. This may be related to your account status or assigned role.</p>
+                <p>Please contact the <strong>TasksFollow Support Team</strong> or your company administrator for assistance.</p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="access-actions">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                <i class="bi bi-house me-2"></i>Back to Home
+            </a>
+            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline-secondary">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+            </a>
+        </div>
+
+        <p class="access-footer">TasksFollow &copy; @DateTime.Now.Year</p>
+    </div>
+</div>

@@ -51,7 +51,7 @@
             </div>
         </div>
 
-        <form asp-action="AddMember" method="post">
+        <form asp-action="AddMember" method="post" id="addMemberForm">
 
             <input type="hidden" name="projectId" value="@Model.ProjectId" />
 
@@ -61,9 +61,9 @@
 
                 <div class="col-md-9">
 
-                    <label class="form-label">Select Employee</label>
+                    <label class="form-label">Select Employee <span id="employeeStart"></span></label>
 
-                    <select name="employeeId" class="form-select" required>
+                    <select name="employeeId" id="employeeId" class="form-select">
 
                         <option value="">Select Employee</option>
 
@@ -81,7 +81,7 @@
 
 
                     </select>
-
+                    <span id="employeeError" class="text-danger field-validation-valid" data-valmsg-for="employeeId"></span>
 
                 </div>
 
@@ -163,7 +163,7 @@
                                 <td>@member.Employee.Department</td>
 
                                 <td>
-                                    <form asp-action="RemoveMember" method="post" onsubmit="return confirm('Remove this employee from the project?');">
+                                    <form asp-action="RemoveMember" method="post" class="removeMemberForm">
 
                                         <input type="hidden" name="id" value="@member.ProjectMemberId" />
 
@@ -195,3 +195,6 @@
     </div>
 
 </div>
+@section Scripts {
+    <script src="~/js/projectMembers.js" asp-append-version="true"></script>
+}
