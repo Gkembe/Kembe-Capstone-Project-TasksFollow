@@ -1,10 +1,39 @@
 @page
 @model LockoutModel
+
 @{
-    ViewData["Title"] = "Locked out";
+    ViewData["Title"] = "Account Locked";
 }
 
-<header>
-    <h1 class="text-danger">@ViewData["Title"]</h1>
-    <p class="text-danger">This account has been locked out, please try again later.</p>
-</header>
+<div class="container d-flex justify-content-center align-items-center py-5">
+    <div class="card shadow-sm border-0 w-100" style="max-width: 480px;">
+        <div class="card-body p-4 p-md-5 text-center">
+
+            <div class="mb-4">
+                <i class="bi bi-shield-lock-fill text-danger" style="font-size: 4rem;"></i>
+            </div>
+
+            <h2 class="fw-bold mb-3">Account Locked</h2>
+
+            <p class="text-muted mb-3">
+                Your TasksFollow account is currently locked.
+                This may be due to multiple failed login attempts or an account restriction.
+            </p>
+
+            <div class="alert alert-warning text-start mb-4">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                If your account has been deactivated, please contact your company administrator
+                or TasksFollow support for assistance.
+            </div>
+
+            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary w-100 py-2">
+                <i class="bi bi-arrow-left me-2"></i>Back to Login
+            </a>
+
+            <p class="text-muted small mt-4 mb-0">
+                TasksFollow - Project & Task Management Platform
+            </p>
+
+        </div>
+    </div>
+</div>

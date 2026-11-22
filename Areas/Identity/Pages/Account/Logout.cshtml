@@ -1,21 +1,52 @@
 @page
 @model LogoutModel
+
 @{
-    ViewData["Title"] = "Log out";
+    ViewData["Title"] = "Log Out";
 }
 
-<header>
-    <h1>@ViewData["Title"]</h1>
-    @{
-        if (User.Identity?.IsAuthenticated ?? false)
-        {
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-                <button type="submit" class="nav-link btn btn-link text-dark">Click here to Logout</button>
-            </form>
-        }
-        else
-        {
-            <p>You have successfully logged out of the application.</p>
-        }
-    }
-</header>
+<div class="container d-flex justify-content-center align-items-center py-5">
+    <div class="card shadow-sm border-0 w-100" style="max-width: 480px;">
+        <div class="card-body p-4 p-md-5 text-center">
+
+            @if (User.Identity?.IsAuthenticated ?? false)
+            {
+                <div class="mb-4">
+                    <i class="bi bi-box-arrow-right text-primary" style="font-size: 4rem;"></i>
+                </div>
+
+                <h2 class="fw-bold mb-3">Log Out</h2>
+                <p class="text-muted mb-4">
+                    Are you sure you want to log out of your TasksFollow account?
+                </p>
+
+                <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                    <button type="submit" class="btn btn-danger w-100 py-2 mb-3">
+                        <i class="bi bi-box-arrow-right me-2"></i>Yes, Log Out
+                    </button>
+                </form>
+
+                <a href="javascript:history.back()" class="btn btn-outline-secondary w-100 py-2">
+                    <i class="bi bi-arrow-left me-2"></i>Cancel
+                </a>
+            }
+            else
+            {
+                <div class="mb-4">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                </div>
+
+                <h2 class="fw-bold mb-3">Successfully Logged Out!</h2>
+                <p class="text-muted mb-4">
+                    You have successfully logged out of TasksFollow.
+                    Thank you for using our platform.
+                </p>
+
+                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary w-100 py-2">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Back to Login
+                </a>
+            }
+
+        </div>
+    </div>
+</div>

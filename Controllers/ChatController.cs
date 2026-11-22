@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TasksFollow.Data;
 using TasksFollow.Models;
+using TasksFollow.Services;
 
 namespace TasksFollow.Controllers
 {
@@ -17,11 +18,16 @@ namespace TasksFollow.Controllers
       
         private readonly UserManager<ApplicationUser> _userManager;
 
-      
-        public ChatController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        private readonly EmailService _emailService;
+        private readonly ILogger<ChatController> _logger;
+
+
+        public ChatController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, EmailService emailService, ILogger<ChatController> logger)
         {
             _context = context;
             _userManager = userManager;
+            _emailService = emailService;
+            _logger = logger;
         }
 
         // GET: Chat - List all groups the current user can access.
@@ -166,11 +172,13 @@ namespace TasksFollow.Controllers
         }
 
         // POST: Chat/Create - Validate selections and save a new group with its members.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> Create(CreateGroupViewModel model)
         {
+            // Get logged-in manager
             var manager = await _userManager.GetUserAsync(User);
 
             if (manager == null || manager.CompanyID == null || !manager.IsActive)
@@ -180,13 +188,16 @@ namespace TasksFollow.Controllers
 
             int companyId = manager.CompanyID.Value;
 
+            // Check company
             if (!await _context.Companies.AnyAsync(c => c.CompanyId == companyId && c.IsActive))
             {
                 return Forbid();
             }
 
-            // Load active employees in this company to validate submitted member IDs. from this company
-            var employees = await _context.Employees.Include(e => e.ApplicationUser).Where(e => e.CompanyId == companyId && e.IsActive && e.ApplicationUser.IsActive).OrderBy(e => e.ApplicationUser.FirstName).ToListAsync();
+            // Get active employees in this company
+            var employees = await _context.Employees.Include(e => e.ApplicationUser)
+                .Where(e => e.CompanyId == companyId && e.IsActive && e.ApplicationUser.IsActive)
+                .OrderBy(e => e.ApplicationUser.FirstName).ToListAsync();
 
             var selectedIds = model.SelectedEmployeeIds.Distinct().ToList();
 
@@ -203,13 +214,14 @@ namespace TasksFollow.Controllers
 
             if (!ModelState.IsValid)
             {
-                // Reload employee list when validation fails
+                // Reload employee list
+                model.Employees = new List<SelectListItem>();
+
                 foreach (var employee in employees)
                 {
                     model.Employees.Add(new SelectListItem
                     {
                         Value = employee.EmployeeId.ToString(),
-
                         Text = employee.ApplicationUser.FirstName + " " + employee.ApplicationUser.LastName
                     });
                 }
@@ -239,15 +251,56 @@ namespace TasksFollow.Controllers
                 });
             }
 
-            // Save the new group and the related member records in one operation.
-            _context.GroupChats.Add(group);
+            // Create in-app notifications for selected employees
+            foreach (var employee in employees)
+            {
+                if (selectedIds.Contains(employee.EmployeeId))
+                {
+                    _context.Notifications.Add(new Notification
+                    {
+                        UserId = employee.ApplicationUserId,
+                        Title = "Added to Group Chat",
+                        Message = "You have been added to the group chat: " + group.Name,
+                        IsRead = false,
+                        CreatedDate = DateTime.Now
+                    });
+                }
+            }
 
+            // Save group, members and notifications
+            _context.GroupChats.Add(group);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Group created successfully.";
+            // Send email notifications
+            foreach (var employee in employees)
+            {
+                if (selectedIds.Contains(employee.EmployeeId) && !string.IsNullOrWhiteSpace(employee.ApplicationUser.Email))
+                {
+                    try
+                    {
+                        string subject = "Added to Group Chat - TasksFollow";
 
+                        string body = "Hello " + employee.ApplicationUser.FirstName + ",\n\n" +
+                                      "You have been added to a new group chat in TasksFollow.\n\n" +
+                                      "Group: " + group.Name + "\n" +
+                                      "Created By: " + manager.FirstName + " " + manager.LastName + "\n\n" +
+                                      "You can now communicate with other group members.\n\n" +
+                                      "Please log in to TasksFollow to view your group chat.\n\n" +
+                                      "TasksFollow Team";
+
+                        await _emailService.SendEmailAsync(employee.ApplicationUser.Email, subject, body);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to send group invitation email to employee {EmployeeId}", employee.EmployeeId);
+                    }
+                }
+            }
+
+            
             return RedirectToAction("Details", new { id = group.GroupChatId });
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -363,12 +416,13 @@ namespace TasksFollow.Controllers
             return View(model);
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Manager")]
-        // POST: Chat/ManageMembers - Update group membership without deleting history.
         public async Task<IActionResult> ManageMembers(ManageGroupMembersViewModel model)
         {
+            // Get logged-in manager
             var manager = await _userManager.GetUserAsync(User);
 
             if (manager == null || manager.CompanyID == null || !manager.IsActive)
@@ -379,17 +433,19 @@ namespace TasksFollow.Controllers
             int companyId = manager.CompanyID.Value;
 
             // Get group and existing members
-            var group = await _context.GroupChats.Include(g => g.GroupMembers).FirstOrDefaultAsync(g => g.GroupChatId == model.GroupChatId && g.CompanyId == companyId && g.Company.IsActive && g.IsActive);
+            var group = await _context.GroupChats.Include(g => g.GroupMembers)
+                .FirstOrDefaultAsync(g => g.GroupChatId == model.GroupChatId && g.CompanyId == companyId && g.Company.IsActive && g.IsActive);
 
             if (group == null)
             {
                 return NotFound();
             }
 
-            // Load active employees in this company to validate submitted member IDs.
-            var employees = await _context.Employees.Include(e => e.ApplicationUser).Where(e => e.CompanyId == companyId && e.IsActive && e.ApplicationUser.IsActive).ToListAsync();
+            // Get active employees in the company
+            var employees = await _context.Employees.Include(e => e.ApplicationUser)
+                .Where(e => e.CompanyId == companyId && e.IsActive && e.ApplicationUser.IsActive).ToListAsync();
 
-            var selectedIds = model.SelectedEmployeeIds.Distinct().ToList();
+            var selectedIds = (model.SelectedEmployeeIds ?? new List<int>()).Distinct().ToList();
 
             // Validate selected employees
             if (employees.Count(e => selectedIds.Contains(e.EmployeeId)) != selectedIds.Count)
@@ -400,6 +456,7 @@ namespace TasksFollow.Controllers
             if (!ModelState.IsValid)
             {
                 model.GroupName = group.Name;
+                model.Employees = new List<SelectListItem>();
 
                 foreach (var employee in employees)
                 {
@@ -413,13 +470,31 @@ namespace TasksFollow.Controllers
                 return View(model);
             }
 
-            // Activate selected existing members and deactivate unselected ones.
+            // Track members whose status changes
+            var addedIds = new List<int>();
+            var removedIds = new List<int>();
+
+            // Update existing memberships
             foreach (var member in group.GroupMembers)
             {
-                member.IsActive = selectedIds.Contains(member.EmployeeId);
+                bool shouldBeActive = selectedIds.Contains(member.EmployeeId);
+
+                if (member.IsActive != shouldBeActive)
+                {
+                    if (shouldBeActive)
+                    {
+                        addedIds.Add(member.EmployeeId);
+                    }
+                    else
+                    {
+                        removedIds.Add(member.EmployeeId);
+                    }
+
+                    member.IsActive = shouldBeActive;
+                }
             }
 
-            // Add membership records for selected employees who were not previously members.
+            // Add new members
             foreach (int employeeId in selectedIds)
             {
                 if (!group.GroupMembers.Any(m => m.EmployeeId == employeeId))
@@ -430,13 +505,104 @@ namespace TasksFollow.Controllers
                         JoinedDate = DateTime.Now,
                         IsActive = true
                     });
+
+                    addedIds.Add(employeeId);
                 }
             }
 
+            // Create in-app notifications
+            foreach (int employeeId in addedIds)
+            {
+                var employee = employees.FirstOrDefault(e => e.EmployeeId == employeeId);
+
+                if (employee != null)
+                {
+                    _context.Notifications.Add(new Notification
+                    {
+                        UserId = employee.ApplicationUserId,
+                        Title = "Added to Group Chat",
+                        Message = "You have been added to the group chat: " + group.Name,
+                        IsRead = false,
+                        CreatedDate = DateTime.Now
+                    });
+                }
+            }
+
+            foreach (int employeeId in removedIds)
+            {
+                var employee = employees.FirstOrDefault(e => e.EmployeeId == employeeId);
+
+                if (employee != null)
+                {
+                    _context.Notifications.Add(new Notification
+                    {
+                        UserId = employee.ApplicationUserId,
+                        Title = "Removed from Group Chat",
+                        Message = "You have been removed from the group chat: " + group.Name,
+                        IsRead = false,
+                        CreatedDate = DateTime.Now
+                    });
+                }
+            }
+
+            // Save group memberships and notifications
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Group members updated successfully.";
+            // Send emails to added members
+            foreach (int employeeId in addedIds)
+            {
+                var employee = employees.FirstOrDefault(e => e.EmployeeId == employeeId);
 
+                if (employee != null && !string.IsNullOrWhiteSpace(employee.ApplicationUser.Email))
+                {
+                    try
+                    {
+                        string subject = "Added to Group Chat - TasksFollow";
+
+                        string body = "Hello " + employee.ApplicationUser.FirstName + ",\n\n" +
+                                      "You have been added to a group chat.\n\n" +
+                                      "Group: " + group.Name + "\n\n" +
+                                      "You can now communicate with other members in this group.\n\n" +
+                                      "Please log in to TasksFollow to view your group chat.\n\n" +
+                                      "TasksFollow Team";
+
+                        await _emailService.SendEmailAsync(employee.ApplicationUser.Email, subject, body);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to send group addition email to employee {EmployeeId}", employeeId);
+                    }
+                }
+            }
+
+            // Send emails to removed members
+            foreach (int employeeId in removedIds)
+            {
+                var employee = employees.FirstOrDefault(e => e.EmployeeId == employeeId);
+
+                if (employee != null && !string.IsNullOrWhiteSpace(employee.ApplicationUser.Email))
+                {
+                    try
+                    {
+                        string subject = "Removed from Group Chat - TasksFollow";
+
+                        string body = "Hello " + employee.ApplicationUser.FirstName + ",\n\n" +
+                                      "You have been removed from the following group chat:\n\n" +
+                                      "Group: " + group.Name + "\n\n" +
+                                      "You no longer have access to this group chat.\n\n" +
+                                      "Please log in to TasksFollow for more information.\n\n" +
+                                      "TasksFollow Team";
+
+                        await _emailService.SendEmailAsync(employee.ApplicationUser.Email, subject, body);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to send group removal email to employee {EmployeeId}", employeeId);
+                    }
+                }
+            }
+
+            TempData["SuccessMessage"] = "Group members updated successfully.";
             return RedirectToAction("Details", new { id = group.GroupChatId });
         }
 

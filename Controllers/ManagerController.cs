@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TasksFollow.Data;
 using TasksFollow.Models;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text;
+using TasksFollow.Services;
 
 namespace TasksFollow.Controllers
 {
@@ -17,13 +20,17 @@ namespace TasksFollow.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
 
-       
-        public ManagerController(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
-        {
-            _userManager = userManager;
-            _context = context;
-        }
+        private readonly EmailService _emailService;
+        private readonly ILogger<ManagerController> _logger;
 
+
+        public ManagerController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, EmailService emailService, ILogger<ManagerController> logger)
+        {
+            _context = context;
+            _userManager = userManager;
+            _emailService = emailService;
+            _logger = logger;
+        }
         // GET: Manager/Index
         // Show all users in the Manager role and their company information.
 
@@ -128,11 +135,13 @@ namespace TasksFollow.Controllers
 
         // POST: Manager/Create
         // Validate the form and create a new Identity user in the Manager role.
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Manager model)
         {
-            // Make sure the manager will be associated with an existing company.
+            // Check company
             var company = await _context.Companies.FindAsync(model.CompanyId);
 
             if (company == null)
@@ -140,26 +149,24 @@ namespace TasksFollow.Controllers
                 return NotFound();
             }
 
-            // Redisplay the form when the submitted data is invalid.
+            // Validate form
             if (!ModelState.IsValid)
             {
                 ViewBag.CompanyName = company.Name;
                 return View(model);
             }
 
-            // Prevent creating two accounts with the same email address.
+            // Check if email already exists
             var existingUser = await _userManager.FindByEmailAsync(model.Email);
 
             if (existingUser != null)
             {
                 ModelState.AddModelError(nameof(model.Email), "An account with this email already exists.");
-
                 ViewBag.CompanyName = company.Name;
-
                 return View(model);
             }
 
-            // Prepare the new manager's Identity account and company association.
+            // Create manager account without password
             var manager = new ApplicationUser
             {
                 FirstName = model.FirstName,
@@ -168,29 +175,89 @@ namespace TasksFollow.Controllers
                 UserName = model.Email,
                 Email = model.Email,
                 CompanyID = company.CompanyId,
-                EmailConfirmed = true,
+                EmailConfirmed = false,
                 IsActive = true
             };
 
-            // Create the account using the submitted password.
-            var result = await _userManager.CreateAsync(manager, model.Password);
+            var result = await _userManager.CreateAsync(manager);
 
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                // Assign the Manager role and return to the company's details page.
-                await _userManager.AddToRoleAsync(manager, "Manager");
-                return RedirectToAction("Details", "Company", new { id = company.CompanyId });
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+
+                ViewBag.CompanyName = company.Name;
+                return View(model);
             }
 
-            // Display any Identity validation or account creation errors.
-            foreach (var error in result.Errors)
+            // Assign Manager role
+            var roleResult = await _userManager.AddToRoleAsync(manager, "Manager");
+
+            if (!roleResult.Succeeded)
             {
-                ModelState.AddModelError(string.Empty, error.Description);
+                foreach (var error in roleResult.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+
+                await _userManager.DeleteAsync(manager);
+                ViewBag.CompanyName = company.Name;
+                return View(model);
             }
 
-            ViewBag.CompanyName = company.Name;
-            return View(model);
+            // Generate password setup token
+            string token = await _userManager.GeneratePasswordResetTokenAsync(manager);
+            string code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+            // Generate password setup link
+            string? setupLink = Url.Page("/Account/ResetPassword", pageHandler: null,
+                values: new { area = "Identity", code = code, email = manager.Email },
+                protocol: Request.Scheme);
+
+            // Send welcome email
+            bool emailSent = false;
+
+            if (!string.IsNullOrWhiteSpace(setupLink) && !string.IsNullOrWhiteSpace(manager.Email))
+            {
+                try
+                {
+                    string subject = "Welcome to TasksFollow - Manager Account";
+
+                    string body = "Hello " + manager.FirstName + ",\n\n" +
+                                  "Your manager account has been created successfully.\n\n" +
+                                  "Company: " + company.Name + "\n" +
+                                  "Role: Manager\n" +
+                                  "Username: " + manager.Email + "\n\n" +
+                                  "Please click the link below to create your password:\n" +
+                                  setupLink + "\n\n" +
+                                  "After setting your password, you can log in to TasksFollow and manage your company's projects, tasks, and employees.\n\n" +
+                                  "If you did not expect this invitation, please contact your administrator.\n\n" +
+                                  "TasksFollow Team";
+
+                    await _emailService.SendEmailAsync(manager.Email, subject, body);
+                    emailSent = true;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send manager invitation to user {UserId}", manager.Id);
+                }
+            }
+
+            //if (emailSent)
+            //{
+            //    TempData["SuccessMessage"] = "Manager created successfully. Invitation email submitted.";
+            //}
+            //else
+            //{
+            //    TempData["ErrorMessage"] = "Manager created, but the invitation email could not be sent.";
+            //}
+
+            return RedirectToAction("Details", "Company", new { id = company.CompanyId });
         }
+
+
 
 
 
@@ -365,68 +432,137 @@ namespace TasksFollow.Controllers
 
         // POST: Manager/Deactivate
         // Disable a manager account without deleting it from the database.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Deactivate(string id)
         {
-            // Confirm that an account ID was supplied.
-            if (id == null)
+            // Find manager
+            if (string.IsNullOrWhiteSpace(id))
             {
                 return NotFound();
             }
 
             var manager = await _userManager.FindByIdAsync(id);
 
-            if (manager == null)
+            if (manager == null || !await _userManager.IsInRoleAsync(manager, "Manager"))
             {
                 return NotFound();
             }
 
-            // Make sure the target account belongs to the Manager role.
-            var isManager = await _userManager.IsInRoleAsync(manager, "Manager");
-
-            if (!isManager)
+            // Prevent duplicate deactivation
+            if (!manager.IsActive)
             {
-                return NotFound();
+              
+                return RedirectToAction(nameof(Index));
             }
 
-            // Set the manager's application-level active flag to false.
+            // Deactivate manager and block login
             manager.IsActive = false;
-            await _userManager.UpdateAsync(manager);
+            manager.LockoutEnabled = true;
+            manager.LockoutEnd = DateTimeOffset.MaxValue;
 
+            var result = await _userManager.UpdateAsync(manager);
+
+            if (!result.Succeeded)
+            {
+                
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Invalidate existing login sessions
+            var stampResult = await _userManager.UpdateSecurityStampAsync(manager);
+
+            if (!stampResult.Succeeded)
+            {
+                _logger.LogWarning("Unable to invalidate sessions for manager {ManagerId}", manager.Id);
+            }
+
+            // Send email notification
+            if (!string.IsNullOrWhiteSpace(manager.Email))
+            {
+                try
+                {
+                    string subject = "Account Deactivated - TasksFollow";
+
+                    string body = "Hello " + manager.FirstName + ",\n\n" +
+                                  "Your TasksFollow manager account has been deactivated by an administrator.\n\n" +
+                                  "Username: " + manager.Email + "\n" +
+                                  "Account Status: Deactivated\n\n" +
+                                  "You can no longer log in to your TasksFollow account.\n\n" +
+                                  "If you believe this is a mistake, please contact your administrator.\n\n" +
+                                  "TasksFollow Team";
+
+                    await _emailService.SendEmailAsync(manager.Email, subject, body);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send deactivation email to manager {ManagerId}", manager.Id);
+                }
+            }
+
+           
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: Manager/Activate
-        // Reactivate a previously deactivated manager account.
+
+        // Reactivate manager account
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Activate(string id)
         {
-            if (id == null)
+            // Find manager
+            if (string.IsNullOrWhiteSpace(id))
             {
                 return NotFound();
             }
 
             var manager = await _userManager.FindByIdAsync(id);
 
-            if (manager == null)
+            if (manager == null || !await _userManager.IsInRoleAsync(manager, "Manager"))
             {
                 return NotFound();
             }
 
-            // Ensure only Manager-role accounts can be activated here.
-            var isManager = await _userManager.IsInRoleAsync(manager, "Manager");
+          
 
-            if (!isManager)
-            {
-                return NotFound();
-            }
-
-            // Restore the manager's application-level active flag.
+            // Reactivate manager and allow login
             manager.IsActive = true;
-            await _userManager.UpdateAsync(manager);
+            manager.LockoutEnabled = true;
+            manager.LockoutEnd = null;
+            manager.AccessFailedCount = 0;
 
+            var result = await _userManager.UpdateAsync(manager);
+
+            if (!result.Succeeded)
+            {
+                
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Send email notification
+            if (!string.IsNullOrWhiteSpace(manager.Email))
+            {
+                try
+                {
+                    string subject = "Account Reactivated - TasksFollow";
+
+                    string body = "Hello " + manager.FirstName + ",\n\n" +
+                                  "Your TasksFollow manager account has been reactivated by an administrator.\n\n" +
+                                  "Username: " + manager.Email + "\n" +
+                                  "Account Status: Active\n\n" +
+                                  "You can now log in to TasksFollow using your existing credentials.\n\n" +
+                                  "TasksFollow Team";
+
+                    await _emailService.SendEmailAsync(manager.Email, subject, body);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send activation email to manager {ManagerId}", manager.Id);
+                }
+            }
+
+            
             return RedirectToAction(nameof(Index));
         }
 
@@ -453,11 +589,12 @@ namespace TasksFollow.Controllers
         }
 
         // POST: Manager/ResetPassword
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(AdminResetPasswordViewModel model)
         {
-            // Verify that the selected account belongs to a manager
+            // Find the manager account
             var manager = await _userManager.FindByIdAsync(model.ManagerId);
 
             if (manager == null || !await _userManager.IsInRoleAsync(manager, "Manager"))
@@ -465,33 +602,47 @@ namespace TasksFollow.Controllers
                 return NotFound();
             }
 
-            if (!ModelState.IsValid)
+            // Generate password reset token
+            string token = await _userManager.GeneratePasswordResetTokenAsync(manager);
+            string code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+            // Generate secure reset link
+            string? resetLink = Url.Page("/Account/ResetPassword", pageHandler: null,
+                values: new { area = "Identity", code = code, email = manager.Email },
+                protocol: Request.Scheme);
+
+            if (string.IsNullOrWhiteSpace(manager.Email) || string.IsNullOrWhiteSpace(resetLink))
             {
-                model.ManagerName = manager.FirstName + " " + manager.LastName;
-                return View(model);
+               
+                return RedirectToAction("Details", new { id = manager.Id });
             }
 
-            // Generate a password reset token using ASP.NET Core Identity
-            var token = await _userManager.GeneratePasswordResetTokenAsync(manager);
-
-            // Reset the manager's password without requiring the old password
-            var result = await _userManager.ResetPasswordAsync(manager, token, model.NewPassword);
-
-            if (!result.Succeeded)
+            // Send password reset email
+            try
             {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError("", error.Description);
-                }
+                string subject = "Reset Your Password - TasksFollow";
 
-                model.ManagerName = manager.FirstName + " " + manager.LastName;
-                return View(model);
+                string body = "Hello " + manager.FirstName + ",\n\n" +
+                              "An administrator has requested a password reset for your TasksFollow manager account.\n\n" +
+                              "Username: " + manager.Email + "\n\n" +
+                              "Please click the secure link below to create a new password:\n" +
+                              resetLink + "\n\n" +
+                              "If you did not expect this request, please contact your administrator.\n\n" +
+                              "TasksFollow Team";
+
+                await _emailService.SendEmailAsync(manager.Email, subject, body);
+
+             
             }
-
-            TempData["SuccessMessage"] = "Manager password has been reset successfully.";
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send password reset email to manager {ManagerId}", manager.Id);
+                TempData["ErrorMessage"] = "Unable to send password reset email. Please try again.";
+            }
 
             return RedirectToAction("Details", new { id = manager.Id });
         }
+
 
 
     }

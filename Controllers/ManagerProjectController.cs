@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TasksFollow.Data;
 using TasksFollow.Models;
+using TasksFollow.Services;
 
 namespace TasksFollow.Controllers
 {
@@ -15,11 +16,13 @@ namespace TasksFollow.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-       
-        public ManagerProjectController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        private readonly EmailService _emailService;
+
+        public ManagerProjectController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, EmailService emailService)
         {
             _context = context;
             _userManager = userManager;
+            _emailService = emailService;
         }
 
         // GET: ManagerProject/Index
@@ -295,18 +298,20 @@ namespace TasksFollow.Controllers
 
 
         // Add an eligible employee to this project if not already a member.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddMember(int projectId, int employeeId)
         {
-            // Identify the signed-in manager before accessing company information.
+            // Get the logged-in manager
             var manager = await _userManager.GetUserAsync(User);
 
-            if (manager == null || manager.CompanyID == null)
+            if (manager == null || manager.CompanyID == null || !manager.IsActive)
             {
                 return Forbid();
             }
 
+            // Find the project in the manager's company
             var project = await _context.Projects.FirstOrDefaultAsync(p => p.ProjectId == projectId && p.CompanyId == manager.CompanyID.Value);
 
             if (project == null)
@@ -314,78 +319,152 @@ namespace TasksFollow.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.Employees.Include(e => e.ApplicationUser).FirstOrDefaultAsync(e => e.EmployeeId == employeeId && e.CompanyId == manager.CompanyID.Value && e.IsActive && e.ApplicationUser.IsActive);
+            // Find the active employee
+            var employee = await _context.Employees.Include(e => e.ApplicationUser)
+                .FirstOrDefaultAsync(e => e.EmployeeId == employeeId && e.CompanyId == manager.CompanyID.Value && e.IsActive && e.ApplicationUser.IsActive);
 
             if (employee == null)
             {
                 return NotFound();
             }
 
-            // Prevent duplicate project memberships.
+            // Prevent duplicate project memberships
             bool exists = await _context.ProjectMembers.AnyAsync(pm => pm.ProjectId == projectId && pm.EmployeeId == employeeId);
 
             if (exists)
             {
                 TempData["ErrorMessage"] = "Employee is already a member of this project.";
-
                 return RedirectToAction("Members", new { id = projectId });
             }
 
-            // Create the relationship between the project and employee.
-            var member = new ProjectMember
+            // Add the employee to the project
+            _context.ProjectMembers.Add(new ProjectMember
             {
                 ProjectId = projectId,
-
                 EmployeeId = employeeId
-            };
+            });
 
-            // Save the new project membership.
-            _context.ProjectMembers.Add(member);
+            // Create in-app notification
+            _context.Notifications.Add(new Notification
+            {
+                UserId = employee.ApplicationUserId,
+                Title = "Added to Project",
+                Message = "You have been added to the project: " + project.Name,
+                IsRead = false,
+                CreatedDate = DateTime.Now
+            });
+
+            // Save membership and notification
             await _context.SaveChangesAsync();
 
+            // Send email notification
+            if (!string.IsNullOrWhiteSpace(employee.ApplicationUser.Email))
+            {
+                try
+                {
+                    string subject = "Added to Project - TasksFollow";
+
+                    string body = "Hello " + employee.ApplicationUser.FirstName + ",\n\n" +
+                                  "You have been added to a new project.\n\n" +
+                                  "Project: " + project.Name + "\n\n" +
+                                  "You can now view this project and its assigned tasks in TasksFollow.\n\n" +
+                                  "Please log in to TasksFollow for more information.\n\n" +
+                                  "TasksFollow Team";
+
+                    await _emailService.SendEmailAsync(employee.ApplicationUser.Email, subject, body);
+                }
+                catch (Exception)
+                {
+                    // Email failure should not cancel the project membership
+                }
+            }
+
+            TempData["SuccessMessage"] = "Employee added to the project successfully.";
             return RedirectToAction("Members", new { id = projectId });
         }
 
 
 
+
         // Remove an employee from a project only when they have no assigned project tasks.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveMember(int id)
         {
-            // Identify the signed-in manager before accessing company information.
+            // Get the logged-in manager
             var manager = await _userManager.GetUserAsync(User);
 
-            if (manager == null || manager.CompanyID == null)
+            if (manager == null || manager.CompanyID == null || !manager.IsActive)
             {
                 return Forbid();
             }
 
-            var member = await _context.ProjectMembers.Include(pm => pm.Project).FirstOrDefaultAsync(pm => pm.ProjectMemberId == id && pm.Project.CompanyId == manager.CompanyID.Value);
+            // Find the project member in the manager's company
+            var member = await _context.ProjectMembers
+                .Include(pm => pm.Project)
+                .Include(pm => pm.Employee).ThenInclude(e => e.ApplicationUser)
+                .FirstOrDefaultAsync(pm => pm.ProjectMemberId == id && pm.Project.CompanyId == manager.CompanyID.Value);
 
             if (member == null)
             {
                 return NotFound();
             }
 
-            // Save the project ID so the user can return to its member list.
             int projectId = member.ProjectId;
 
-            // Do not remove employees who still have tasks assigned in this project
-            bool hasTasks = await _context.TaskAssignments.AnyAsync(a => a.EmployeeId == member.EmployeeId && a.ProjectTask.ProjectId == projectId);
+            // Prevent removing employees with assigned tasks
+            bool hasTasks = await _context.TaskAssignments
+                .AnyAsync(a => a.EmployeeId == member.EmployeeId && a.ProjectTask.ProjectId == projectId);
 
             if (hasTasks)
             {
                 TempData["ErrorMessage"] = "Remove this employee's task assignments before removing them from the project.";
-
                 return RedirectToAction("Members", new { id = projectId });
             }
 
-            // Delete the membership record and save the change.
+            // Create in-app notification
+            _context.Notifications.Add(new Notification
+            {
+                UserId = member.Employee.ApplicationUserId,
+                Title = "Removed from Project",
+                Message = "You have been removed from the project: " + member.Project.Name,
+                IsRead = false,
+                CreatedDate = DateTime.Now
+            });
+
+            // Remove project membership
             _context.ProjectMembers.Remove(member);
+
+            // Save removal and notification
             await _context.SaveChangesAsync();
+
+            // Send email notification
+            if (!string.IsNullOrWhiteSpace(member.Employee.ApplicationUser.Email))
+            {
+                try
+                {
+                    string subject = "Removed from Project - TasksFollow";
+
+                    string body = "Hello " + member.Employee.ApplicationUser.FirstName + ",\n\n" +
+                                  "You have been removed from the following project:\n\n" +
+                                  "Project: " + member.Project.Name + "\n\n" +
+                                  "You are no longer a member of this project.\n\n" +
+                                  "Please log in to TasksFollow for more information.\n\n" +
+                                  "TasksFollow Team";
+
+                    await _emailService.SendEmailAsync(member.Employee.ApplicationUser.Email, subject, body);
+                }
+                catch (Exception)
+                {
+                    // Email failure should not cancel the project membership removal
+                }
+            }
+
+            TempData["SuccessMessage"] = "Employee removed from the project successfully.";
 
             return RedirectToAction("Members", new { id = projectId });
         }
+
     }
 }

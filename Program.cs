@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using TasksFollow.Data;
 using TasksFollow.Data.Migrations;
 using TasksFollow.Models;
+using Resend;
+using TasksFollow.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,22 @@ builder.Services.AddControllersWithViews(options =>
     options.ModelBindingMessageProvider.SetValueMustBeANumberAccessor(
         fieldName => $"{fieldName} is required.");
 });
+
+builder.Services.Configure<SecurityStampValidatorOptions>(options =>
+{
+    options.ValidationInterval = TimeSpan.Zero;
+});
+
+//*********************EMAIL SET UP*****************
+builder.Services.AddOptions();
+builder.Services.Configure<ResendClientOptions>(options =>
+{
+    options.ApiToken = builder.Configuration["Resend:ApiKey"]!;
+});
+
+builder.Services.AddHttpClient<IResend, ResendClient>();
+builder.Services.AddScoped<EmailService>(); //Elle indique à ASP.NET Core comment créer ton EmailService lorsque EmailTestController en a besoin
+
 
 var app = builder.Build();
 

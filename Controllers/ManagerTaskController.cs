@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TasksFollow.Data;
 using TasksFollow.Models;
+using TasksFollow.Services;
 
 namespace TasksFollow.Controllers
 {
@@ -15,11 +16,13 @@ namespace TasksFollow.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly EmailService _emailService;
 
-        public ManagerTaskController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public ManagerTaskController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, EmailService emailService)
         {
             _context = context;
             _userManager = userManager;
+            _emailService = emailService;
         }
 
         // GET: ManagerTask/Create
@@ -447,6 +450,7 @@ namespace TasksFollow.Controllers
         }
 
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignEmployee(int taskId, int employeeId)
@@ -467,9 +471,9 @@ namespace TasksFollow.Controllers
                 return NotFound();
             }
 
-            // Verify that the employee is an active member of the project
-            var employee = await _context.Employees
-                .FirstOrDefaultAsync(e => e.EmployeeId == employeeId && e.CompanyId == manager.CompanyID.Value &&  e.IsActive && e.ApplicationUser.IsActive && _context.ProjectMembers.Any(pm => pm.ProjectId == task.ProjectId && pm.EmployeeId == e.EmployeeId));
+            // Verify that the employee is an active project member
+            var employee = await _context.Employees.Include(e => e.ApplicationUser).FirstOrDefaultAsync(e => e.EmployeeId == employeeId && e.CompanyId == manager.CompanyID.Value &&
+                    e.IsActive && e.ApplicationUser.IsActive && _context.ProjectMembers.Any(pm => pm.ProjectId == task.ProjectId && pm.EmployeeId == e.EmployeeId));
 
             if (employee == null)
             {
@@ -477,7 +481,7 @@ namespace TasksFollow.Controllers
                 return RedirectToAction("Assignments", new { id = taskId });
             }
 
-            // Prevent assigning the same employee twice
+            // Prevent duplicate assignments
             bool exists = await _context.TaskAssignments.AnyAsync(a => a.ProjectTaskId == taskId && a.EmployeeId == employeeId);
 
             if (exists)
@@ -486,7 +490,7 @@ namespace TasksFollow.Controllers
                 return RedirectToAction("Assignments", new { id = taskId });
             }
 
-            // Create the task assignment
+            // Create task assignment
             _context.TaskAssignments.Add(new TaskAssignment
             {
                 ProjectTaskId = taskId,
@@ -496,24 +500,48 @@ namespace TasksFollow.Controllers
                 IsCompleted = false
             });
 
-            // Notify the employee about the new assignment
+            // Create in-app notification
             _context.Notifications.Add(new Notification
             {
                 UserId = employee.ApplicationUserId,
                 Title = "New Task Assigned",
-                Message = "You have been assigned to the task: " + task.Title + "that has been created on " + task.CreatedDate + " and due on " + task.DueDate,
+                Message = "You have been assigned to the task: " + task.Title +
+                          ". Created on " + task.CreatedDate + " and due on " + task.DueDate,
                 ProjectTaskId = task.ProjectTaskId,
                 IsRead = false,
                 CreatedDate = DateTime.Now
             });
 
-            // Save the assignment and notification together
+            // Save assignment and notification
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Employee assigned successfully.";
+            // Send email notification
+            if (!string.IsNullOrWhiteSpace(employee.ApplicationUser.Email))
+            {
+                try
+                {
+                    string subject = "New Task Assigned - TasksFollow";
 
+                    string body = "Hello " + employee.ApplicationUser.FirstName + ",\n\n"+
+                                  "You have been assigned a new task.\n\n" +
+                                  "Task: " + task.Title + "\n" +
+                                  "Created Date: " + task.CreatedDate.ToString("MMM dd, yyyy") + "\n" +
+                                  "Due Date: " + task.DueDate?.ToString("MMM dd, yyyy") + "\n\n" +
+                                  "Please log in to TasksFollow to view your assignment.\n\n" +
+                                  "TasksFollow Team";
+
+                    await _emailService.SendEmailAsync(employee.ApplicationUser.Email, subject, body);
+                }
+                catch (Exception)
+                {
+                    // Email failure should not cancel the task assignment
+                }
+            }
+
+            TempData["SuccessMessage"] = "Employee assigned successfully.";
             return RedirectToAction("Assignments", new { id = taskId });
         }
+
 
 
         [HttpPost]
@@ -529,7 +557,10 @@ namespace TasksFollow.Controllers
             }
 
             // Find the assignment in the manager's company
-            var assignment = await _context.TaskAssignments.Include(a => a.Employee).Include(a => a.ProjectTask).FirstOrDefaultAsync(a => a.TaskAssignmentId == id && a.ProjectTask.Project!.CompanyId == manager.CompanyID.Value);
+            var assignment = await _context.TaskAssignments
+                .Include(a => a.Employee).ThenInclude(e => e.ApplicationUser)
+                .Include(a => a.ProjectTask)
+                .FirstOrDefaultAsync(a => a.TaskAssignmentId == id && a.ProjectTask.Project!.CompanyId == manager.CompanyID.Value);
 
             if (assignment == null)
             {
@@ -538,7 +569,7 @@ namespace TasksFollow.Controllers
 
             int taskId = assignment.ProjectTaskId;
 
-            // Notify the employee that they have been removed from the task
+            // Notify the employee about the removal
             _context.Notifications.Add(new Notification
             {
                 UserId = assignment.Employee.ApplicationUserId,
@@ -552,11 +583,32 @@ namespace TasksFollow.Controllers
             // Remove the assignment
             _context.TaskAssignments.Remove(assignment);
 
-            // Save the removal and notification together
+            // Save removal and notification
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Task assignment removed successfully.";
+            // Send email notification
+            if (!string.IsNullOrWhiteSpace(assignment.Employee.ApplicationUser.Email))
+            {
+                try
+                {
+                    string subject = "Task Assignment Removed - TasksFollow";
 
+                    string body = "Hello " + assignment.Employee.ApplicationUser.FirstName + ",\n\n" +
+                                  "You have been removed from the following task:\n\n" +
+                                  "Task: " + assignment.ProjectTask.Title + "\n\n" +
+                                  "You are no longer responsible for completing this task.\n\n" +
+                                  "Please log in to TasksFollow for more information.\n\n" +
+                                  "TasksFollow Team";
+
+                    await _emailService.SendEmailAsync(assignment.Employee.ApplicationUser.Email, subject, body);
+                }
+                catch (Exception)
+                {
+                    // Email failure should not cancel the assignment removal
+                }
+            }
+
+            TempData["SuccessMessage"] = "Task assignment removed successfully.";
             return RedirectToAction("Assignments", new { id = taskId });
         }
 

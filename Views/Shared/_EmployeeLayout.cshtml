@@ -111,9 +111,10 @@
 
                 <div class="employee-menu-title">ACCOUNT</div>
 
-                <a asp-area="Identity" asp-page="/Account/Manage/Index">
-                    <i class="bi bi-person-circle"></i> My Profile
-                </a>
+                <!-- Employee account settings -->
+                <a asp-controller="EmployeeSettings" asp-action="Profile" class="sidebar-link"><i class="bi bi-person-gear"></i><span>My Profile</span></a>
+
+                <a asp-controller="EmployeeSettings" asp-action="ChangePassword" class="sidebar-link"><i class="bi bi-shield-lock"></i><span>Change Password</span></a>
             </nav>
 
             <div class="employee-sidebar-bottom">
