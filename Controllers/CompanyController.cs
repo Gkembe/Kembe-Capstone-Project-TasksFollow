@@ -52,10 +52,7 @@ public class CompanyController : Controller
             return NotFound();
         }
 
-        var company = await _context.Companies
-            .Include(c => c.Payments)
-            .ThenInclude(p => p.SubscriptionPlan)
-            .FirstOrDefaultAsync(c => c.CompanyId == id);
+        var company = await _context.Companies.Include(c => c.Payments).ThenInclude(p => p.SubscriptionPlan).FirstOrDefaultAsync(c => c.CompanyId == id);
 
         if (company == null)
         {

@@ -23,7 +23,7 @@ namespace TasksFollow.Controllers
             _userManager = userManager;
         }
 
-        // GET: EmployeeNotification/Index
+      
         // Display all notifications belonging to the logged-in employee
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -47,7 +47,6 @@ namespace TasksFollow.Controllers
 
 
 
-        // POST: EmployeeNotification/MarkAsRead
         // Mark a single notification as read
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -88,7 +87,7 @@ namespace TasksFollow.Controllers
 
 
 
-        // POST: EmployeeNotification/MarkAllAsRead
+      
         // Mark all unread notifications belonging to the employee as read
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -126,7 +125,6 @@ namespace TasksFollow.Controllers
 
 
 
-        // POST: EmployeeNotification/OpenTask
         // Open an assigned task when an employee clicks its notification
         [HttpPost]
         [ValidateAntiForgeryToken]
