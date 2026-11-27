@@ -18,5 +18,10 @@
     </PackageReference>
     <PackageReference Include="Resend" Version="0.27.0" />
   </ItemGroup>
-
+	<ItemGroup>
+		<Compile Remove="TasksFollowTest\**\*.cs" />
+		<Content Remove="TasksFollowTest\**" />
+		<None Remove="TasksFollowTest\**" />
+		<EmbeddedResource Remove="TasksFollowTest\**" />
+	</ItemGroup>
 </Project>
